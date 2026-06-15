@@ -9,6 +9,7 @@ import { RestrictToWindow } from "@dnd-kit/dom/modifiers";
 import { Accessibility, AutoScroller } from "@dnd-kit/dom";
 import { useEffect, useRef, useState } from "react";
 import { move } from "@dnd-kit/helpers";
+import { useDragContext } from "@/contexts/DragContext";
 
 interface HomeClientProps {
   unClassifiedKanjis: Kanji[];
@@ -22,13 +23,17 @@ export default function HomeClient({ unClassifiedKanjis, classifiedKanjis }: Hom
 
   const [unclassified, setUnclassified] = useState(unClassifiedKanjis);
 
+
+
   const dragRef = useRef({
     kanjiId: null,
     sourceGroupId: null,
     sourceIndex: null,
   });
-
-  function handleDragEnd(event: any) {
+const {
+    setHoverGroupId,
+  } = useDragContext();
+  function handleDragOver(event: any) {
     const target = event.operation.target;
 
     if (!target) return;
@@ -40,42 +45,11 @@ export default function HomeClient({ unClassifiedKanjis, classifiedKanjis }: Hom
     } = dragRef.current;
 
     if (!kanjiId || !sourceGroupId) return;
+ setHoverGroupId(
+      target.group ?? target.id
+    );
 
-    const targetGroupId =
-      target.group ?? target.id;
 
-    const targetIndex =
-      target.type === "item"
-        ? target.index
-        : groups.find(
-          (g) => g.id === targetGroupId
-        )?.kanjis.length ?? 0;
-
-    console.log({
-      kanjiId,
-      sourceGroupId,
-      sourceIndex,
-      targetGroupId,
-      targetIndex,
-    });
-
-    if (
-      kanjiId === null ||
-      sourceGroupId === null ||
-      sourceIndex === null
-    ) {
-      return;
-    }
-
-    const kanji = unclassified[sourceIndex];
-   
-    
-
-    const targetGroup = groups.find(
-  group => group.id === targetGroupId
-);
-
-console.log("Target group found:", targetGroup);
 
 
 
@@ -92,6 +66,10 @@ console.log("Target group found:", targetGroup);
 
 
   }
+
+  function handleDragEnd(event:any){
+    setHoverGroupId(null)
+  }
  
   return (
     <DragDropProvider
@@ -100,8 +78,9 @@ console.log("Target group found:", targetGroup);
         RestrictToWindow,
       ]}
 
-      onDragEnd={handleDragEnd}
+      onDragOver={handleDragOver}
       onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
 
 
     >

@@ -5,7 +5,7 @@ export default function EmptyDropZone({ groupId }: { groupId: string }) {
   const { ref, isDropTarget } = useSortable({
        id: "placeholder-" + groupId,
     index: 0,
-    type: 'item',
+    type: 'placeholder',
     accept: 'item',
     group: groupId,
   });
@@ -15,6 +15,7 @@ export default function EmptyDropZone({ groupId }: { groupId: string }) {
       ref={ref}
       className={`
         h-32
+        
         rounded-lg
         border-2
         border-dashed
@@ -22,6 +23,7 @@ export default function EmptyDropZone({ groupId }: { groupId: string }) {
       `}
     >
       Drop kanji here
+
     </div>
   );
 }

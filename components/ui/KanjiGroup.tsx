@@ -4,7 +4,8 @@ import { DragDropProvider, useDroppable } from "@dnd-kit/react";
 import { useEffect } from "react";
 import AddPlaceHolder from "./AddPlaceHolder";
 import { useSortable } from "@dnd-kit/react/sortable";
-
+import { CollisionPriority } from '@dnd-kit/abstract';
+import { useDragContext } from "@/contexts/DragContext";
 
 interface KanjiGroupProps {
   index: number;
@@ -14,34 +15,42 @@ interface KanjiGroupProps {
 }
 
 export default function KanjiGroup({ index, id, description, children }: KanjiGroupProps) {
+  const {
+    hoverGroupId,
+  } = useDragContext();
 
-  const { isDropTarget, ref } = useDroppable({
-    id: id,
-    type: 'column',
-    accept: 'item',
-  });
+  
 
-  const {ref: sortableRef} = useSortable({
+
+  const { isDragSource, ref: sortableRef } = useSortable({
     id: id,
     index: index,
-    type: 'item',
-    accept: 'item',
+    type: 'group',
+    accept: 'group',
   });
 
-  useEffect(() => {
+  const {ref} = useDroppable({
+    id: id+"_droppable",
+    type:"group",
+    accept:"item"
+  })
+const hovered =
+  hoverGroupId === `${id}_droppable`;
 
-}, [id, isDropTarget]);
 
 
   return (
 
 
-    <section ref={sortableRef} className={`border-l-4 border-l-kanji-primary  p-4 shadow-sm ${isDropTarget ? 'bg-blue-100' : '  bg-white/80'}  `}>
-
-      <div className="grid gap-4 sm:grid-cols-6 xl:grid-cols-10">{children}
-      
-
-      </div>
+    <section ref={(node)=>{
+       
+    sortableRef(node);
+     ref(node);
+    }} className={`border-l-4 border-l-kanji-primary  p-4 shadow-sm   ${hovered ? 'bg-blue-100' : 'bg-white/80'}
+  ${isDragSource ? 'opacity-50' : ''} `}>
+    
+        <div className="grid gap-4 sm:grid-cols-6 xl:grid-cols-10">{children}
+        </div>
     </section>
 
 

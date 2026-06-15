@@ -6,7 +6,7 @@ import { useDroppable } from "@dnd-kit/react";
 export default function UnClassifiedKanjis({data}: {data: Kanji[]}) {
   const {ref} = useDroppable({
     id: "unclassified",
-    type: 'column',
+    type: 'board',
     accept: 'item',
    
   });
