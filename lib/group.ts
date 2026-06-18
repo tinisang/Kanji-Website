@@ -5,19 +5,22 @@ export async function getGroupsWithKanjis() {
   const rows = await sql`
     SELECT
       kg.id,
+      kg.name,
       kg.position,
 
-      json_agg(
-        json_build_object(
-          'id', k.id,
-          'character', k.character,
-          'han_viet', k.han_viet,
-          'example', k.example,
-          'short_description', k.short_description
-        )
-        ORDER BY kgi.position
-      ) FILTER (WHERE k.id IS NOT NULL)
-      AS kanjis
+      COALESCE(
+        json_agg(
+          json_build_object(
+            'id', k.id,
+            'character', k.character,
+            'han_viet', k.han_viet,
+            'example', k.example,
+            'short_description', k.short_description
+          )
+          ORDER BY kgi.position
+        ) FILTER (WHERE k.id IS NOT NULL),
+        '[]'::json
+      ) AS kanjis
 
     FROM kanji_group kg
 
@@ -29,6 +32,7 @@ export async function getGroupsWithKanjis() {
 
     GROUP BY
       kg.id,
+      kg.name,
       kg.position
 
     ORDER BY
@@ -40,7 +44,7 @@ export async function getGroupsWithKanjis() {
 
 export interface KanjiGroupProps {
   id: string;
+  name: string;
   position: number;
-
   kanjis: Kanji[];
 }

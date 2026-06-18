@@ -12,8 +12,9 @@ import { getUnclassifiedKanji } from "@/lib/kanji";
 
 export default async function Home() {
 
-   const unClassifiedKanjis = await getUnclassifiedKanji();
-  const classifiedKanjis = await getGroupsWithKanjis();
+  const kanjiGroups = await getGroupsWithKanjis();
+
+  
 
   return (
     <div>
@@ -29,7 +30,7 @@ export default async function Home() {
       <div className="mt-8 grid grid-cols-[1fr_3fr] gap-4">
         
  <DragProvider>
-          <HomeClient unClassifiedKanjis={unClassifiedKanjis} classifiedKanjis={classifiedKanjis} />
+          <HomeClient kanjiGroups={kanjiGroups} />
 </DragProvider>
       
       </div>

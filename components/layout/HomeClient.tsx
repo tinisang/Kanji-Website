@@ -12,27 +12,32 @@ import { move } from "@dnd-kit/helpers";
 import { useDragContext } from "@/contexts/DragContext";
 
 interface HomeClientProps {
-  unClassifiedKanjis: Kanji[];
-  classifiedKanjis: KanjiGroupProps[];
+  kanjiGroups: KanjiGroupProps[];
 }
 
-export default function HomeClient({ unClassifiedKanjis, classifiedKanjis }: HomeClientProps) {
+export default function HomeClient({ kanjiGroups }: HomeClientProps) {
 
 
-  const [groups, setGroups] = useState(classifiedKanjis);
-
-  const [unclassified, setUnclassified] = useState(unClassifiedKanjis);
+  const [groups, setGroups] = useState(kanjiGroups);
 
 
+  const unclassifiedGroup = groups.find(
+    group => group.name === "Unclassified"
+  );
+
+
+
+  const classifiedGroups = groups.filter(
+    group => group.name !== "Unclassified"
+  );
 
   const dragRef = useRef({
     kanjiId: null,
     sourceGroupId: null,
     sourceIndex: null,
   });
-const {
-    setHoverGroupId,
-  } = useDragContext();
+  const { setHoverGroupId, hoverGroupId } = useDragContext();
+
   function handleDragOver(event: any) {
     const target = event.operation.target;
 
@@ -45,13 +50,9 @@ const {
     } = dragRef.current;
 
     if (!kanjiId || !sourceGroupId) return;
- setHoverGroupId(
+    setHoverGroupId(
       target.group ?? target.id
     );
-
-
-
-
 
   }
 
@@ -66,11 +67,78 @@ const {
 
 
   }
+function moveKanji(
+  sourceGroupId: string,
+  sourceIndex: number,
+  targetGroupId: string,
+  targetIndex: number | null
+) {
+  setGroups(prev => {
+    const next = structuredClone(prev);
 
-  function handleDragEnd(event:any){
-    setHoverGroupId(null)
-  }
- 
+    const sourceGroup = next.find(
+      group => group.id === sourceGroupId
+    );
+
+    const targetGroup = next.find(
+      group => group.id === targetGroupId
+    );
+
+    if (!sourceGroup || !targetGroup) {
+      return prev;
+    }
+
+    const [kanji] = sourceGroup.kanjis.splice(
+      sourceIndex,
+      1
+    );
+
+    if (!kanji) {
+      return prev;
+    }
+
+    const insertIndex =
+      targetIndex ?? targetGroup.kanjis.length;
+
+    targetGroup.kanjis.splice(
+      insertIndex,
+      0,
+      kanji
+    );
+
+    return next;
+  });
+}
+  function handleDragEnd(event: any) {
+  const target = event.operation.target;
+
+  const source = {
+    id: dragRef.current.kanjiId,
+    group: dragRef.current.sourceGroupId,
+    index: dragRef.current.sourceIndex,
+  };
+
+  if (!target) return;
+
+  const targetGroupId =
+    (target.group ?? target.id)
+      .split("::")[0];
+
+  moveKanji(
+    source.group!,
+    source.index!,
+    targetGroupId,
+    target.index ?? null
+  );
+
+  setHoverGroupId(null);
+}
+
+useEffect(() => {
+  console.log("Groups changed:");
+  console.log(groups);
+}, [groups]);
+
   return (
     <DragDropProvider
 
@@ -84,8 +152,10 @@ const {
 
 
     >
-      <UnClassifiedKanjis data={unclassified} />
-      <ClassifiedKanjis data={groups} />
+      {unclassifiedGroup && (
+        <UnClassifiedKanjis data={unclassifiedGroup} />
+      )}
+      <ClassifiedKanjis data={classifiedGroups} />
     </DragDropProvider>
   );
 }

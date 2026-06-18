@@ -30,12 +30,12 @@ export default function KanjiGroup({ index, id, description, children }: KanjiGr
   });
 
   const {ref} = useDroppable({
-    id: id+"_droppable",
+    id: id+"::droppable",
     type:"group",
     accept:"item"
   })
 const hovered =
-  hoverGroupId === `${id}_droppable`;
+  hoverGroupId === `${id}::droppable`;
 
 
 

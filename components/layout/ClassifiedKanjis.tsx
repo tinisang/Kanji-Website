@@ -23,9 +23,9 @@ export default function ClassifiedKanjis({ data }: { data: KanjiGroupProps[] }) 
             />
           ))}
 
-          {!group.kanjis && (
+          {/* {!group.kanjis && (
             <EmptyDropZone groupId={group.id} />
-          )}
+          )} */}
 
           <AddPlaceHolder groupId={group.id} index={group.kanjis?.length || 0} />
         </KanjiGroup>
