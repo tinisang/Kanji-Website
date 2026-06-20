@@ -26,7 +26,7 @@ const groupId = Object.values(globalData.groups)?.find(group => group.name=="Unc
         <div ref={ref} className="bg-white h-min  bg-white/80 p-4 shadow-sm grid gap-0 sm:grid-cols-3 xl:grid-cols-5 grid-rows-auto">
         {
           data[groupId]?.map((item, index)=>(
-            <KanjiItem key={item} kanji={globalData.kanjis[item]} groupId={groupId} index={index} />
+            <KanjiItem isClassified={false} key={item} kanji={globalData.kanjis[item]} groupId={groupId} index={index} />
           ))
         }
         

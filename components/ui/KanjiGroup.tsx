@@ -64,7 +64,7 @@ export default function KanjiGroup({data, id, index, children }: KanjiGroupProps
           
           {
             itemArray?.map((item,index)=>(
-              <KanjiItem key={item.id} index={index} kanji={globalData.kanjis[item.id]} groupId={id}>
+              <KanjiItem isClassified={true} key={item.id} index={index} kanji={globalData.kanjis[item.id]} groupId={id}>
 
               </KanjiItem>
             ))
