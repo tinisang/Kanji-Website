@@ -1,18 +1,15 @@
 import { sql } from "./db";
 
-export async function getUnclassifiedKanji() {
+export async function getAllKanji() {
   const rows = await sql`
-    SELECT DISTINCT
-      k.id,
-      k.character,
-      k.han_viet,
-      k.example,
-      k.short_description
-    FROM kanji k
-    LEFT JOIN kanji_group_item kgi
-      ON k.id = kgi.kanji_id
-    WHERE kgi.kanji_id IS NULL
-    ORDER BY k.character;
+    SELECT
+      id,
+      character,
+      han_viet,
+      example,
+      short_description
+    FROM kanji
+    ORDER BY character;
   `;
 
   return rows as Kanji[];

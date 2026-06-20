@@ -5,37 +5,39 @@ import { useEffect } from "react";
 import AddPlaceHolder from "./AddPlaceHolder";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { CollisionPriority } from '@dnd-kit/abstract';
-import { useDragContext } from "@/contexts/DragContext";
+import { group } from "console";
+import { useKanji } from "@/contexts/Context";
+import KanjiItem from "./KanjiItem";
+
 
 interface KanjiGroupProps {
-  index: number;
+ 
   id: string;
+  index: number;
   children: React.ReactNode;
-  description?: string;
+  data: String[]
+ 
 }
 
-export default function KanjiGroup({ index, id, description, children }: KanjiGroupProps) {
-  const {
-    hoverGroupId,
-  } = useDragContext();
+export default function KanjiGroup({data, id, index, children }: KanjiGroupProps) {
 
   
 
+  const {data: globalData}=useKanji();
+
+  const itemIdList = data;
+  const itemArray = itemIdList?.map(item => globalData.kanjis[item]);
 
   const { isDragSource, ref: sortableRef } = useSortable({
     id: id,
     index: index,
     type: 'group',
-    accept: 'group',
+    accept: ['item','group'],
+    group:"classified",
+    collisionPriority: CollisionPriority.Low
+    
   });
-
-  const {ref} = useDroppable({
-    id: id+"::droppable",
-    type:"group",
-    accept:"item"
-  })
-const hovered =
-  hoverGroupId === `${id}::droppable`;
+  
 
 
 
@@ -45,11 +47,30 @@ const hovered =
     <section ref={(node)=>{
        
     sortableRef(node);
-     ref(node);
-    }} className={`border-l-4 border-l-kanji-primary  p-4 shadow-sm   ${hovered ? 'bg-blue-100' : 'bg-white/80'}
-  ${isDragSource ? 'opacity-50' : ''} `}>
     
-        <div className="grid gap-4 sm:grid-cols-6 xl:grid-cols-10">{children}
+    }} className={`
+  border-l-4 border-l-kanji-primary
+  p-4
+  bg-white
+
+  
+  ${isDragSource
+    ? ' scale-110 shadow-xl  z-50'
+    : 'shadow-sm hover:shadow-md'
+  }
+`}>
+    
+        <div className="grid gap-4 sm:grid-cols-6 xl:grid-cols-10">
+          
+          {
+            itemArray?.map((item,index)=>(
+              <KanjiItem key={item.id} index={index} kanji={globalData.kanjis[item.id]} groupId={id}>
+
+              </KanjiItem>
+            ))
+          }
+          
+          {children}
         </div>
     </section>
 

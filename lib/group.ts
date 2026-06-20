@@ -1,50 +1,20 @@
-import { sql } from './db';
-import { Kanji } from './kanji';
+import { sql } from "./db";
 
-export async function getGroupsWithKanjis() {
+export async function getAllGroups() {
   const rows = await sql`
     SELECT
-      kg.id,
-      kg.name,
-      kg.position,
-
-      COALESCE(
-        json_agg(
-          json_build_object(
-            'id', k.id,
-            'character', k.character,
-            'han_viet', k.han_viet,
-            'example', k.example,
-            'short_description', k.short_description
-          )
-          ORDER BY kgi.position
-        ) FILTER (WHERE k.id IS NOT NULL),
-        '[]'::json
-      ) AS kanjis
-
-    FROM kanji_group kg
-
-    LEFT JOIN kanji_group_item kgi
-      ON kgi.group_id = kg.id
-
-    LEFT JOIN kanji k
-      ON k.id = kgi.kanji_id
-
-    GROUP BY
-      kg.id,
-      kg.name,
-      kg.position
-
-    ORDER BY
-      kg.position
+      id,
+      name,
+      position
+    FROM kanji_group
+    ORDER BY position;
   `;
 
-  return rows as KanjiGroupProps[];
+  return rows as KanjiGroup[];
 }
 
-export interface KanjiGroupProps {
+export interface KanjiGroup {
   id: string;
   name: string;
   position: number;
-  kanjis: Kanji[];
 }

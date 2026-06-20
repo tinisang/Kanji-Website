@@ -1,35 +1,31 @@
-import { getGroupsWithKanjis, KanjiGroupProps } from "@/lib/group";
-import KanjiGroup from "../ui/KanjiGroup";
-import KanjiItem from "../ui/KanjiItem";
-import { Kanji } from "@/types/kanji";
+
+import { useContext } from "react";
 import AddGroup from "../ui/AddGroup";
+
+import { KanjiGroup as KanjiGroupType } from "@/types/group";
+import { useKanji } from "@/contexts/Context";
+import KanjiGroup from "../ui/KanjiGroup";
 import AddPlaceHolder from "../ui/AddPlaceHolder";
-import EmptyDropZone from "../ui/EmptyDropZone";
 
 
-export default function ClassifiedKanjis({ data }: { data: KanjiGroupProps[] }) {
+
+export default function ClassifiedKanjis({
+  data,
+}: {
+  data: Record<string, string[]>;
+}) {
+
+   const {data: globalData} = useKanji();
+ const groupIds = Object.values(globalData.groups).filter(group => group.name !="Unclassified")?.map(group => group.id);
 
   return (
     <div className="flex flex-col gap-4">
 
-      {data.map((group) => (
-        <KanjiGroup id={group.id} key={group.id}>
-          {group.kanjis?.map((kanji: Kanji, index) => (
-            <KanjiItem
-              key={kanji.id}
-              index={index}
-              groupId={group.id}
-              kanji={kanji}
-            />
-          ))}
-
-          {/* {!group.kanjis && (
-            <EmptyDropZone groupId={group.id} />
-          )} */}
-
-          <AddPlaceHolder groupId={group.id} index={group.kanjis?.length || 0} />
-        </KanjiGroup>
-      ))}
+      {
+        groupIds?.map((group, index)=>(
+          <KanjiGroup key={group} id={group} index={index} data={data[group]}><AddPlaceHolder groupId={group.id} index={group.kanjis?.length || 0} /></KanjiGroup>
+        ))
+      }
 
       <AddGroup />
     </div>
