@@ -13,14 +13,22 @@ import { useState } from "react";
 import TiptapEditor from "./TipTapEditor";
 import { Kanji } from "@/lib/kanji";
 import { createKanji } from "@/types/kanji";
+import { addKanjiUI, useKanji } from "@/contexts/Context";
 
 interface AddKanjiModalProps {
     groupId: string;
+     setItemArray: React.Dispatch<
+    React.SetStateAction<Kanji[]>
+  >;
 }
 
 export default function AddKanjiModal({
     groupId,
+    setItemArray
 }: AddKanjiModalProps) {
+const [open, setOpen] =
+  useState(false);
+    const {data,setData} = useKanji();
     const [content, setContent] = useState("");
     const [vocabularies, setVocabularies] = useState([
         {
@@ -88,22 +96,45 @@ export default function AddKanjiModal({
 
     
     async function handleAdd(kanji: Partial<Kanji>, groupId: string) {
-        console.log("goi")
-        await createKanji(
-            kanji, groupId
-        )
+       createKanji(
+  kanji,
+  groupId
+).then(newKanji => {
+  addKanjiUI(   
+  setData,
+  newKanji,
+  groupId
+);
+
+});
 
     }
 
     return (
-        <Dialog>
+        <Dialog
+        open={open}
+  onOpenChange={setOpen}
+        >
             <DialogTrigger asChild>
-                <div className="cursor-pointer add-place bg-gray-100/80 rounded-md border-2 border-dashed border-gray-400 p-4">
-                    <div className="flex flex-col items-center justify-center h-full">
-                        <div className="text-4xl text-gray-400">+</div>
+                <div
+  className="
+    cursor-pointer
+    rounded-lg
+    border border-neutral-200
+    bg-neutral-50
+    p-4
 
-                    </div>
-                </div>
+    transition-all
+    hover:border-neutral-300
+    hover:bg-neutral-100
+  "
+>
+  <div className="flex h-full flex-col items-center justify-center">
+    <div className="text-2xl font-light text-neutral-400">
+      +
+    </div>
+  </div>
+</div>
             </DialogTrigger>
 
             <DialogContent
@@ -218,11 +249,15 @@ export default function AddKanjiModal({
                         <Button
                             type="button"
                             variant="outline"
+                            onClick={() => setOpen(false)}
                         >
                             Huỷ
                         </Button>
 
-                        <Button type="submit">
+                        <Button
+                        type="submit"
+                        onClick={() => setOpen(false)}
+                        >
                             Lưu
                         </Button>
                     </DialogFooter>

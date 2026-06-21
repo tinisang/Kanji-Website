@@ -2,6 +2,9 @@
 import { useKanji } from "@/contexts/Context";
 import KanjiItem from "../ui/KanjiItem";
 import { useDraggable, useDroppable } from "@dnd-kit/react";
+import AddPlaceHolder from "../ui/AddPlaceHolder";
+import AddKanjiModal from "../ui/AddKanjiModal";
+import { useState } from "react";
 
 export default function UnClassifiedKanjis({
   data,
@@ -12,7 +15,8 @@ export default function UnClassifiedKanjis({
 
 const groupId = Object.values(globalData.groups)?.find(group => group.name=="Unclassified")?.id;
 
-
+const itemArray =data[groupId]?.map(item=> globalData.kanjis[item]).filter(Boolean);
+  function setItemArray() { };
  
   const {ref} = useDroppable({
   id: groupId,
@@ -25,10 +29,12 @@ const groupId = Object.values(globalData.groups)?.find(group => group.name=="Unc
     return (
         <div ref={ref} className="bg-white h-min  bg-white/80 p-4 shadow-sm grid gap-0 sm:grid-cols-3 xl:grid-cols-5 grid-rows-auto">
         {
-          data[groupId]?.map((item, index)=>(
-            <KanjiItem isClassified={false} key={item} kanji={globalData.kanjis[item]} groupId={groupId} index={index} />
+          itemArray.map((item, index)=>(
+            <KanjiItem isClassified={false} key={item.id} kanji={item} groupId={groupId} index={index} />
           ))
         }
+
+        <AddKanjiModal setItemArray={setItemArray}   groupId={groupId}/>
         
                 </div>
     );

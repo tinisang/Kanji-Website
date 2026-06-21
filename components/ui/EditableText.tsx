@@ -55,10 +55,14 @@ export function EditableText({
 
   return (
     <span
-      onClick={() => setEditing(true)}
-      className={className}
-    >
-      {value}
-    </span>
+  onClick={() => setEditing(true)}
+  className={`${className} ${
+    !value
+      ? "italic text-neutral-400 opacity-60"
+      : ""
+  }`}
+>
+  {value || placeholder}
+</span>
   );
 }

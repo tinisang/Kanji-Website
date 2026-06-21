@@ -123,3 +123,17 @@ export async function createKanjiAndAssignGroup(
 
   return newKanji;
 }
+
+export async function deleteKanji(
+  kanjiId: string
+) {
+  await sql`
+    DELETE FROM kanji_group_item
+    WHERE kanji_id = ${kanjiId}
+  `;
+
+  await sql`
+    DELETE FROM kanji
+    WHERE id = ${kanjiId}
+  `;
+}

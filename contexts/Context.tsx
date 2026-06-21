@@ -1,5 +1,7 @@
 "use client";
 
+import { KanjiGroup } from "@/lib/group";
+import { Kanji } from "@/lib/kanji";
 import {
   createContext,
   useContext,
@@ -8,8 +10,8 @@ import {
 } from "react";
 
 type KanjiData = {
-  groups: Record<string, any>;
-  kanjis: Record<string, any>;
+  groups: Record<string, KanjiGroup>;
+  kanjis: Record<string, Kanji>;
   kanji_group_items: Record<string, string[]>;
 };
 
@@ -46,4 +48,65 @@ export function useKanji() {
   }
 
   return context;
+}
+
+
+export function addKanjiUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  kanji: Kanji,
+  groupId: string
+) {
+  setData(prev => ({
+    ...prev,
+
+    kanjis: {
+      ...prev.kanjis,
+      [kanji.id]: kanji,
+    },
+
+    kanji_group_items: {
+      ...prev.kanji_group_items,
+
+      [groupId]: [
+        ...(prev.kanji_group_items[groupId] ??
+          []),
+        kanji.id,
+      ],
+    },
+  }));
+}
+
+
+export function removeKanjiUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  kanjiId: string
+) {
+  setData(prev => {
+    const nextKanjis = {
+      ...prev.kanjis,
+    };
+
+    delete nextKanjis[kanjiId];
+
+    return {
+      ...prev,
+
+      kanjis: nextKanjis,
+
+      kanji_group_items: Object.fromEntries(
+        Object.entries(
+          prev.kanji_group_items
+        ).map(([groupId, kanjiIds]) => [
+          groupId,
+          kanjiIds.filter(
+            id => id !== kanjiId
+          ),
+        ])
+      ),
+    };
+  });
 }

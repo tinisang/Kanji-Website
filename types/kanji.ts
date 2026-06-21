@@ -1,4 +1,4 @@
-import type { Kanji } from "@/lib/kanji";
+import  {  Kanji } from "@/lib/kanji";
 
 
 export async function createKanji(

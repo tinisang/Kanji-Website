@@ -6,6 +6,7 @@ import { KanjiGroup as KanjiGroupType } from "@/types/group";
 import { useKanji } from "@/contexts/Context";
 import KanjiGroup from "../ui/KanjiGroup";
 import AddPlaceHolder from "../ui/AddPlaceHolder";
+import AddKanjiModal from "../ui/AddKanjiModal";
 
 
 
@@ -23,7 +24,9 @@ export default function ClassifiedKanjis({
 
       {
         groupIds?.map((group, index)=>(
-          <KanjiGroup key={group} id={group} index={index} data={data[group]}><AddPlaceHolder groupId={group} index={group.kanjis?.length || 0} /></KanjiGroup>
+          <KanjiGroup key={group} id={group} index={index} data={data[group]}>
+            {<></>}
+            </KanjiGroup>
         ))
       }
 
