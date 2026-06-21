@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -7,126 +8,305 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { EditableText } from "./EditableText";
-export default function KanjiDetailModal() {
+import { Kanji, updateKanji } from "@/lib/kanji";
+import { useState } from "react";
+import { handleSaveKanji } from "../server/handleSaveKanji";
+import { Input } from "./input";
+import { Button } from "./button";
+import TiptapEditor from "./TipTapEditor";
+
+interface KanjiDetailModalProps {
+  kanji: Kanji;
+  setKanji: React.Dispatch<
+    React.SetStateAction<Kanji>
+  >;
+}
+export default function KanjiDetailModal({
+  kanji,
+  setKanji,
+}: KanjiDetailModalProps) {
+
+const [editingContent, setEditingContent] = useState(false);
+const [content, setContent] = useState(
+  kanji.content ?? ""
+);
+  const [vocabularies, setVocabularies] = useState(
+    kanji.vocabularies ?? []
+  );
+
+  const addVocabulary = () => {
+    setVocabularies((prev) => [
+      ...prev,
+      {
+        word: "",
+        reading: "",
+        meaning: "",
+      },
+    ]);
+  };
+  const removeVocabulary = (index: number) => {
+    const updated = vocabularies.filter(
+      (_, i) => i !== index
+    );
+
+    setVocabularies(updated);
+
+    const updatedKanji = {
+      ...kanji,
+      vocabularies: updated,
+    };
+
+    setKanji(updatedKanji);
+
+    handleSave(updatedKanji);
+  };
+  const updateVocabulary = (
+    index: number,
+    field: "word" | "reading" | "meaning",
+    value: string
+  ) => {
+    const updated = vocabularies.map((item, i) =>
+      i === index
+        ? {
+          ...item,
+          [field]: value,
+        }
+        : item
+    );
+
+    setVocabularies(updated);
+
+    const updatedKanji = {
+      ...kanji,
+      vocabularies: updated,
+    };
+
+    setKanji(updatedKanji);
+
+    handleSave(updatedKanji);
+  };
+
+  async function handleSave(kanji: Kanji) {
+    // console.log(value);
+    setKanji(kanji);
+    await handleSaveKanji(kanji);
+  }
+
   return (
     <Dialog>
-  <DialogTrigger>Open</DialogTrigger>
-  <DialogContent  showCloseButton={false}  className="!max-w-5xl p-0 font-inherit">
-   
-    <div className="overflow-hidden rounded-lg border-l-4 border-l-lime-500">
-      {/* Header */}
-      <div className="flex bg-neutral-50 p-6">
-        {/* Kanji */}
-        <div className="w-32 shrink-0 text-center">
-          <div className="text-8xl font-bold leading-none">
-            漢
-          </div>
+      <DialogTrigger>Open</DialogTrigger>
+      <DialogContent showCloseButton={false} className="!max-w-5xl p-0 font-inherit">
 
-          <EditableText
-  defaultValue="HÁN"
-  className="mt-4 text-3xl font-semibold text-neutral-400"
-/>
-        </div>
-
-        {/* Info */}
-        <div className="flex flex-1 flex-col justify-center gap-4">
-          <div className="flex gap-6">
-            <span className="w-24 font-semibold">
-              Kunyomi
-            </span>
-
-            <div className="flex flex-wrap gap-4">
-              <span>みと</span>
-              <span>したため</span>
+        <div className="overflow-hidden rounded-lg border-l-4 border-l-lime-500">
+          {/* Header */}
+          <div className="flex bg-neutral-50 p-6">
+            {/* Kanji */}
+            <div className="  text-center">
+              <div className="text-7xl font-bold leading-none">{kanji.character}</div>
+              <EditableText
+                defaultValue={kanji.han_viet}
+                className="mt-4 text-2xl font-semibold text-neutral-400"
+                onSave={(value) => {
+                  const updated = {
+                    ...kanji,
+                    han_viet: value,
+                  };
+                  handleSave(updated);
+                }
+                }
+              />
             </div>
+
+
           </div>
 
-          <div className="flex gap-6">
-            <span className="w-24 font-semibold">
-              Onyomi
-            </span>
+          {/* Vocabulary */}
+          <div className="space-y-4 border-t p-6">
+            {vocabularies.map((vocabulary, index) => {
 
-            <span>カン</span>
+              return (
+                <div
+                  key={index}
+                  className="flex items-center gap-4"
+                >
+                  <Input
+                    value={vocabulary.word}
+                    placeholder="漢字"
+                    onChange={(e) =>
+                      updateVocabulary(
+                        index,
+                        "word",
+                        e.target.value
+                      )
+                    }
+                    className="
+    h-auto
+    w-[180px]
+    border-0
+    bg-transparent
+    p-0
+
+    !text-4xl
+    font-bold
+    leading-none
+
+    shadow-none
+    focus-visible:ring-0
+
+    placeholder:text-neutral-300
+    placeholder:italic
+  "
+                  />
+
+                  <Input
+                    value={vocabulary.reading}
+                    placeholder="かんじ"
+                    onChange={(e) =>
+                      updateVocabulary(
+                        index,
+                        "reading",
+                        e.target.value
+                      )
+                    }
+                    className="
+    h-auto
+    w-[140px]
+    border-0
+    bg-transparent
+    p-0
+
+    !text-2xl
+    leading-none
+
+    shadow-none
+    focus-visible:ring-0
+
+    placeholder:text-neutral-300
+    placeholder:italic
+  "
+                  />
+
+                  <Input
+                    value={vocabulary.meaning}
+                    placeholder="Hán tự"
+                    onChange={(e) =>
+                      updateVocabulary(
+                        index,
+                        "meaning",
+                        e.target.value
+                      )
+                    }
+                    className="
+    h-auto
+    flex-1
+    border-0
+    bg-transparent
+    p-0
+
+    !text-xl
+    leading-none
+
+    shadow-none
+    focus-visible:ring-0
+
+    placeholder:text-neutral-300
+    placeholder:italic
+  "
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      removeVocabulary(index)
+                    }
+                    className="
+      ml-auto
+      rounded
+      px-2
+      py-1
+      text-red-500
+      hover:bg-red-50
+    "
+                  >
+                    ✕
+                  </button>
+                </div>
+              )
+            })}
+
+            <button
+              type="button"
+              onClick={addVocabulary}
+              className="rounded border px-3 py-1 text-sm hover:bg-neutral-100"
+            >
+              + Thêm từ vựng
+            </button>
           </div>
+         <div className="bg-lime-50 p-6">
+  <h3 className="mb-3">
+    Ghi chú
+  </h3>
 
-          <div className="flex gap-6">
-            <span className="w-24 font-semibold">
-              Số nét
-            </span>
+  {editingContent ? (
+    <TiptapEditor
+      value={content}
+      onChange={setContent}
+    />
+  ) : (
+    <div
+      onClick={() =>
+        setEditingContent(true)
+      }
+      className="
+        prose prose-sm max-w-none
+        min-h-[120px]
+        cursor-text
+        rounded
+        p-2
+        hover:bg-lime-100/50
+      "
+      dangerouslySetInnerHTML={{
+        __html:
+          content ||
+          "<p class='text-neutral-400'>Click để thêm ghi chú...</p>",
+      }}
+    />
+  )}
 
-            <EditableText defaultValue="13" />
-          </div>
-        </div>
-      </div>
+  {editingContent && (
+    <div className="mt-4 flex justify-end gap-2">
+      <Button
+        variant="outline"
+        onClick={() =>
+          setEditingContent(false)
+        }
+      >
+        Huỷ
+      </Button>
 
-      {/* Vocabulary */}
-      <div className="space-y-4 border-t p-6">
-        <div className="flex items-center gap-4">
-          <EditableText
-  defaultValue="漢字"
-  className="text-3xl font-bold"
-/>
+      <Button
+        onClick={async () => {
+          const updated = {
+            ...kanji,
+            content,
+          };
 
-          <EditableText
-  defaultValue="(かんじ)"
-  className="text-lg"
-/>
+          setKanji(updated);
 
-          <EditableText defaultValue="Hán tự" />
-        </div>
+          await handleSave(updated);
 
-        
-        <div className="flex items-center gap-4">
-          <EditableText
-  defaultValue="漢字"
-  className="text-3xl font-bold"
-/>
-
-          <EditableText
-  defaultValue="(かんじ)"
-  className="text-lg"
-/>
-
-          <EditableText defaultValue="Hán tự" />
-        </div>
-
-        
-        <div className="flex items-center gap-4">
-          <EditableText
-  defaultValue="漢字"
-  className="text-3xl font-bold"
-/>
-
-          <EditableText
-  defaultValue="(かんじ)"
-  className="text-lg"
-/>
-
-          <EditableText defaultValue="Hán tự" />
-        </div>
-
-        
-
-      </div>
-
-      {/* Description */}
-      <div className="bg-lime-50 p-6">
-        <h3 className="mb-3 ">
-          Ghi chú
-        </h3>
-
-        <EditableText
-  defaultValue="Chữ 漢 mang nghĩa Hán, thường dùng để chỉ dân tộc Hán..."
-  className="block leading-7 text-neutral-700"
-  onSave={(value)=>{
-    console.log(value)
-  }}
-/>
-      </div>
+          setEditingContent(false);
+        }}
+      >
+        Lưu
+      </Button>
     </div>
-      
-  </DialogContent>
-</Dialog>
-    
+  )}
+</div>
+        </div>
+
+      </DialogContent>
+    </Dialog>
+
   );
 }

@@ -1,14 +1,19 @@
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-
 export function EditableText({
   defaultValue,
   className = "",
   onSave,
+  onFocus,
+  onBlur,
+  placeholder,
 }: {
   defaultValue: string;
   className?: string;
   onSave?: (value: string) => void;
+  onFocus?: React.FocusEventHandler<HTMLInputElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
+  placeholder?: string;
 }) {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(defaultValue);
@@ -22,15 +27,28 @@ export function EditableText({
     return (
       <input
         autoFocus
+        size={Math.max(value.length, 1)}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onBlur={handleSave}
+         onFocus={onFocus}
+         placeholder={placeholder}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             handleSave();
           }
         }}
-        className={className}
+        className={`
+  inline-block
+  w-auto
+  min-w-0
+  bg-white
+  
+  p-0
+  font-inherit
+  text-inherit
+  ${className}
+`}
       />
     );
   }

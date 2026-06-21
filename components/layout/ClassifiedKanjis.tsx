@@ -23,7 +23,7 @@ export default function ClassifiedKanjis({
 
       {
         groupIds?.map((group, index)=>(
-          <KanjiGroup key={group} id={group} index={index} data={data[group]}><AddPlaceHolder groupId={group.id} index={group.kanjis?.length || 0} /></KanjiGroup>
+          <KanjiGroup key={group} id={group} index={index} data={data[group]}><AddPlaceHolder groupId={group} index={group.kanjis?.length || 0} /></KanjiGroup>
         ))
       }
 

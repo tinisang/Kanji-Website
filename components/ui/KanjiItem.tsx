@@ -3,7 +3,9 @@
 
 import { Kanji } from '@/types/kanji';
 import { useSortable } from '@dnd-kit/react/sortable';
-import KanjiDetailModal from "./KanjiModalItem";
+
+import { useState } from 'react';
+import KanjiDetailModal from './KanjiModalItem';
 
 interface KanjiItemProps {
   kanji: Kanji;
@@ -23,28 +25,31 @@ export default function KanjiItem({
     group: groupId,
   });
 
+  const [data, setData] = useState(kanji);
+
   return (
     <article
       ref={ref}
       className="cursor-pointer flex flex-col items-start justify-center"
     >
-      <KanjiDetailModal></KanjiDetailModal>
+      <KanjiDetailModal  kanji={data}
+      setKanji={setData}></KanjiDetailModal>
       <div className="m-auto text-[2rem]">
-        {kanji.character}
+        {data.character}
       </div>
 
       <div className="m-auto text-[0.8rem]">
-        {kanji.han_viet}
+        {data.han_viet}
       </div>
 
 {
   isClassified &&  <div className="m-auto text-[0.6em]">
-        {kanji.example}
+        {data.example}
       </div>
 }
      {
       isClassified && <p className="m-auto text-[0.6em]">
-        ({kanji.short_description})
+        ({data.short_description})
       </p>
      }
 
