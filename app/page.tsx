@@ -1,4 +1,5 @@
 
+import { auth } from "@/auth";
 import Header from "@/components/layout/Header";
 import HomeClient from "@/components/layout/HomeClient";
 
@@ -9,16 +10,21 @@ import { KanjiProvider } from "@/contexts/Context";
 import { getAllGroups } from "@/lib/group";
 import { getAllKanji } from "@/lib/kanji";
 import { getAllKanjiGroupItems } from "@/lib/kanjiGroupItem";
+import { redirect } from "next/navigation";
 
 
 export default async function Home() {
+ const session = await auth();
 
+  if (!session) {
+    redirect("/login");
+  }
   const groups = await getAllGroups();
   const kanjis = await getAllKanji();
   const kanjiGroupItems = await getAllKanjiGroupItems();
   const groupItems = {};
 
-  const data = {
+ const data = {
   groups: Object.fromEntries(
     groups.map(group => [group.id, group])
   ),
@@ -28,18 +34,21 @@ export default async function Home() {
   ),
 
   kanji_group_items: (() => {
-    const result: Record<string, string[]> = Object.fromEntries(
-      groups.map(group => [group.id, [] as string[]])
+    const result: Record<string, string[]> =
+      Object.fromEntries(
+        groups.map(group => [group.id, []])
+      );
+
+    kanjiGroupItems.forEach(
+      ({ group_id, kanji_id }) => {
+        result[group_id] ??= [];
+        result[group_id].push(kanji_id);
+      }
     );
 
-    kanjiGroupItems.forEach(({ group_id, kanji_id }) => {
-      result[group_id].push(kanji_id);
-    });
-
     return result;
-  })()
+  })(),
 };
-
 
   
 

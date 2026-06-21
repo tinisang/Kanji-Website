@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LogoutButton } from "../ui/LogOut";
 
 export default function Header() {
     return (
@@ -22,7 +23,7 @@ export default function Header() {
                         </nav>
                     </div>
                 </div>
-                <div>Tinisang</div>
+                <div><LogoutButton/></div>
 
                 <img src="/images/Mask group-1.png" alt="" className="absolute z-[-1] h-48 bottom-0 -right-30" />
                 <img src="/images/Mask group.png" alt="" className="absolute z-[-1] w-200 -bottom-20 -left-80" />

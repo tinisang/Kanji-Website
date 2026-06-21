@@ -1,6 +1,13 @@
+import { auth } from "@/auth";
 import { sql } from "./db";
 
 export async function getAllKanji() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
   const rows = await sql`
     SELECT
       id,
@@ -14,6 +21,7 @@ export async function getAllKanji() {
       created_at,
       updated_at
     FROM kanji
+    WHERE user_id = ${session.user.id}
     ORDER BY character;
   `;
 
@@ -46,7 +54,15 @@ export interface Kanji {
 }
 
 
-export async function updateKanji(kanji: Kanji) {
+export async function updateKanji(
+  kanji: Kanji
+) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
   const rows = await sql`
     UPDATE kanji
     SET
@@ -58,13 +74,14 @@ export async function updateKanji(kanji: Kanji) {
       content = ${kanji.content},
       vocabularies = ${JSON.stringify(kanji.vocabularies)}::jsonb,
       updated_at = NOW()
-    WHERE id = ${kanji.id}
+    WHERE
+      id = ${kanji.id}
+      AND user_id = ${session.user.id}
     RETURNING *;
   `;
 
   return rows[0] as Kanji;
 }
-
 export async function createKanjiAndAssignGroup(
   kanji: Omit<
     Kanji,
@@ -72,8 +89,25 @@ export async function createKanjiAndAssignGroup(
   >,
   groupId: string
 ) {
+  const session = await auth();
+const groups = await sql`
+  SELECT id
+  FROM kanji_group
+  WHERE
+    id = ${groupId}
+    AND user_id = ${session.user.id}
+`;
+
+if (!groups.length) {
+  throw new Error("Group not found");
+}
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
   const insertedKanji = await sql`
     INSERT INTO kanji (
+      user_id,
       character,
       han_viet,
       onyomi,
@@ -83,6 +117,7 @@ export async function createKanjiAndAssignGroup(
       content
     )
     VALUES (
+      ${session.user.id},
       ${kanji.character},
       ${kanji.han_viet},
       ${kanji.onyomi},
@@ -128,13 +163,27 @@ export async function createKanjiAndAssignGroup(
 export async function deleteKanji(
   kanjiId: string
 ) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
   await sql`
     DELETE FROM kanji_group_item
-    WHERE kanji_id = ${kanjiId}
+    WHERE kanji_id IN (
+      SELECT id
+      FROM kanji
+      WHERE
+        id = ${kanjiId}
+        AND user_id = ${session.user.id}
+    )
   `;
 
   await sql`
     DELETE FROM kanji
-    WHERE id = ${kanjiId}
+    WHERE
+      id = ${kanjiId}
+      AND user_id = ${session.user.id}
   `;
 }

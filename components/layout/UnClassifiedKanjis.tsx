@@ -12,7 +12,7 @@ export default function UnClassifiedKanjis({
   data: Record<string, string[]>;
 }) {
  const {data: globalData} = useKanji();
-
+console.log('un')
 const groupId = Object.values(globalData.groups)?.find(group => group.name == "Unclassified")?.id;
 if (!groupId) return null;
 
@@ -25,6 +25,8 @@ const itemArray: any[] = data[groupId]?.map((item: string) => globalData.kanjis[
     accept: 'item',
  })
    
+
+ 
 
 
     return (
