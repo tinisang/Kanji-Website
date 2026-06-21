@@ -28,8 +28,8 @@ export default async function Home() {
   ),
 
   kanji_group_items: (() => {
-    const result = Object.fromEntries(
-      groups.map(group => [group.id, []])
+    const result: Record<string, string[]> = Object.fromEntries(
+      groups.map(group => [group.id, [] as string[]])
     );
 
     kanjiGroupItems.forEach(({ group_id, kanji_id }) => {

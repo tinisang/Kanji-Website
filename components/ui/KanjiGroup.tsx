@@ -22,7 +22,7 @@ interface KanjiGroupProps {
   id: string;
   index: number;
   children: React.ReactNode;
-  data: String[]
+  data: string[]
 
 }
 

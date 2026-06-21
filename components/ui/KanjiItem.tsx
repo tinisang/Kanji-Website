@@ -1,7 +1,7 @@
 'use client';
 
 
-import { Kanji } from '@/types/kanji';
+
 import { useSortable } from '@dnd-kit/react/sortable';
 import { GripHorizontal } from "lucide-react";
 import { useState } from 'react';
@@ -28,6 +28,7 @@ import {
 import { Trash2 } from "lucide-react";
 import { handleDeleteKanji } from '@/lib/db/KanjiItem';
 import { removeKanjiUI, useKanji } from '@/contexts/Context';
+import { Kanji } from '@/lib/kanji';
 interface KanjiItemProps {
   kanji: Kanji;
   groupId: string;

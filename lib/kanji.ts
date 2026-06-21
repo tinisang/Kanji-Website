@@ -27,6 +27,7 @@ export interface Vocabulary {
 }
 
 export interface Kanji {
+  example: string| null;
   id: string;
 
   character: string;
