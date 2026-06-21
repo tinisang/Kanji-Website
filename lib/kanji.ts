@@ -90,19 +90,21 @@ export async function createKanjiAndAssignGroup(
   groupId: string
 ) {
   const session = await auth();
-const groups = await sql`
-  SELECT id
-  FROM kanji_group
-  WHERE
-    id = ${groupId}
-    AND user_id = ${session.user.id}
-`;
 
-if (!groups.length) {
-  throw new Error("Group not found");
-}
   if (!session?.user?.id) {
     throw new Error("Unauthorized");
+  }
+
+  const groups = await sql`
+    SELECT id
+    FROM kanji_group
+    WHERE
+      id = ${groupId}
+      AND user_id = ${session.user.id}
+  `;
+
+  if (!groups.length) {
+    throw new Error("Group not found");
   }
 
   const insertedKanji = await sql`
