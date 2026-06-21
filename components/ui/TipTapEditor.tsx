@@ -6,10 +6,14 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Placeholder from "@tiptap/extension-placeholder";
+import Highlight from "@tiptap/extension-highlight";
+
+import Color from "@tiptap/extension-color";
 
 import { Bold, Italic, UnderlineIcon, List, ListOrdered, Heading2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { TextStyle } from "@tiptap/extension-text-style";
 
 type Props = {
   value: string;
@@ -23,10 +27,15 @@ export default function TiptapEditor({
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Underline,
-      Placeholder.configure({
-        placeholder: "Nhập ghi chú...",
-      }),
+  Underline,
+  TextStyle,
+  Color,
+  Highlight.configure({
+    multicolor: true,
+  }),
+  Placeholder.configure({
+    placeholder: "Nhập ghi chú...",
+  }),
     ],
 
     content: value,
@@ -48,6 +57,65 @@ export default function TiptapEditor({
   return (
     <div className="overflow-hidden rounded-md border bg-white">
       <div className="flex gap-2 border-b p-2">
+        <Button
+  size="icon"
+  type="button"
+  variant={
+    editor.isActive("highlight")
+      ? "default"
+      : "outline"
+  }
+  onClick={() =>
+    editor
+      .chain()
+      .focus()
+      .toggleHighlight()
+      .run()
+  }
+>
+  H
+</Button>
+<Button
+  type="button"
+  variant="outline"
+  onClick={() =>
+    editor
+      .chain()
+      .focus()
+      .toggleHighlight({
+        color: "#fef08a",
+      })
+      .run()
+  }
+>
+  🖍️
+</Button>
+<Button
+  type="button"
+  variant="outline"
+  onClick={() =>
+    editor
+      .chain()
+      .focus()
+      .setColor("#ef4444")
+      .run()
+  }
+>
+  🔴
+</Button>
+<Button
+  type="button"
+  variant="outline"
+  onClick={() =>
+    editor
+      .chain()
+      .focus()
+      .unsetColor()
+      .run()
+  }
+>
+  Reset
+</Button>
         <Button
           size="icon"
           type="button"

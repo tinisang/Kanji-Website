@@ -110,3 +110,24 @@ export function removeKanjiUI(
     };
   });
 }
+
+export function addGroupUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  group: KanjiGroup
+) {
+  setData(prev => ({
+    ...prev,
+
+    groups: {
+      ...prev.groups,
+      [group.id]: group,
+    },
+
+    kanji_group_items: {
+      ...prev.kanji_group_items,
+      [group.id]: [],
+    },
+  }));
+}
