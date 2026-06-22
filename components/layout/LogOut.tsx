@@ -1,4 +1,5 @@
-import { logout } from "@/app/features/auth/register/action";
+import { logout } from "@/app/register/action";
+
 
 
 export function LogoutButton() {
