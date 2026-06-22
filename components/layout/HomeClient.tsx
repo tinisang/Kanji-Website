@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import ClassifiedKanjis from "./ClassifiedKanjis";
 import UnClassifiedKanjis from "./UnClassifiedKanjis";
 import { useKanji } from "@/contexts/Context";
+import { updateGroupsAPI } from "@/app/features/group/api/group.client";
+import { updateGroupItemsAPI } from "@/app/features/collection/api/kanji-group-item.client";
 
 export default function HomeClient() {
   const { data } = useKanji();
@@ -26,32 +28,34 @@ useEffect(() => {
 
 
   const saveChanges = async () => {
-    await Promise.all([
-      fetch("/api/kanji-group/update", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(
-          groups.map((groupId, position) => ({
-            groupId,
-            position,
-          }))
-        ),
-      }),
 
-      fetch("/api/kanji-group-item/update", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(items),
-      }),
-    ]);
-  };
-console.log(
-  data.kanji_group_items
+
+    const groupUpdates = groups.map(
+  (groupId, position) => ({
+    groupId,
+    position,
+  })
 );
+
+await updateGroupsAPI(groupUpdates);
+
+  const itemUpdates = Object.entries(items)
+  .flatMap(
+    ([groupId, groupItems]) =>
+      groupItems.map((kanjiId, position) => ({
+        kanjiId,
+        groupId,
+        position,
+      }))
+  );
+
+await updateGroupItemsAPI(
+  itemUpdates
+);
+  };
+
+
+  console.log(items)
   return (
     <DragDropProvider
       onDragEnd={saveChanges}

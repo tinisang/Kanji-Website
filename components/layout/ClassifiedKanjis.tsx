@@ -1,12 +1,12 @@
 
 import { useContext } from "react";
-import AddGroup from "../ui/AddGroup";
+import AddGroup from "../../app/features/group/components/AddGroup";
 
 import { KanjiGroup as KanjiGroupType } from "@/types/group";
 import { useKanji } from "@/contexts/Context";
-import KanjiGroup from "../ui/KanjiGroup";
-import AddPlaceHolder from "../ui/AddPlaceHolder";
-import AddKanjiModal from "../ui/AddKanjiModal";
+import KanjiGroup from "../../app/features/group/components/KanjiGroup";
+import AddPlaceHolder from "../../app/features/group/components/AddPlaceHolder";
+import AddKanjiModal from "../../app/features/kanji/components/AddKanjiModal";
 
 
 

@@ -1,11 +1,11 @@
 // app/api/group/create/route.ts
 
+import { createNewGroup } from "@/app/features/group/services/group.service";
 import { NextResponse } from "next/server";
-import { createGroup } from "@/lib/group";
 
 export async function POST() {
   const group =
-    await createGroup();
+    await createNewGroup();
 
   return NextResponse.json(
     group

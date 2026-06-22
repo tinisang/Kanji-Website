@@ -5,19 +5,14 @@ export interface KanjiGroup {
   position: number;
 }
 
-export async function createGroup() {
-  const response = await fetch(
-    "/api/kanji-group/create",
-    {
-      method: "POST",
-    }
-  );
 
-  if (!response.ok) {
-    throw new Error(
-      "Failed to create group"
-    );
-  }
-
-  return response.json();
+export interface KanjiGroupItem {
+  group_id: string;
+  kanji_id: string;
+  position: number;
 }
+
+export type GroupUpdate = {
+  groupId: string;
+  position: number;
+};

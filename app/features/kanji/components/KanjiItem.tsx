@@ -26,9 +26,13 @@ import {
 
 
 import { Trash2 } from "lucide-react";
-import { handleDeleteKanji } from '@/lib/db/KanjiItem';
+
 import { removeKanjiUI, useKanji } from '@/contexts/Context';
-import { Kanji } from '@/lib/kanji';
+import { Kanji } from '@/types/kanji';
+
+import { deleteKanji } from '../services/kanji.service';
+import { deleteKanjiAPI } from '../api/kanji.client';
+
 interface KanjiItemProps {
   kanji: Kanji;
   groupId: string;
@@ -163,7 +167,7 @@ export default function KanjiItem({
           hover:bg-red-700
         "
               onClick={async () => {
-                await handleDeleteKanji(
+                await deleteKanjiAPI(
                   kanji.id
                 );
 

@@ -1,7 +1,9 @@
 "use client";
 
-import { KanjiGroup } from "@/lib/group";
-import { Kanji } from "@/lib/kanji";
+
+import { KanjiGroup } from "@/types/group";
+import { Kanji } from "@/types/kanji";
+
 import {
   createContext,
   useContext,

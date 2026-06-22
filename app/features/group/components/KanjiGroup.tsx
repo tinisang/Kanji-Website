@@ -7,15 +7,15 @@ import { useSortable } from "@dnd-kit/react/sortable";
 import { CollisionPriority } from '@dnd-kit/abstract';
 import { group } from "console";
 import { useKanji } from "@/contexts/Context";
-import KanjiItem from "./KanjiItem";
+import KanjiItem from "../../kanji/components/KanjiItem";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
-import AddKanjiModal from "./AddKanjiModal";
-import { Kanji } from "@/lib/kanji";
+import AddKanjiModal from "../../kanji/components/AddKanjiModal";
+
 
 interface KanjiGroupProps {
 

@@ -1,21 +1,33 @@
 // app/api/kanji/update/route.ts
 
+import { updateKanji } from "@/app/features/kanji/services/kanji.service";
 import { NextResponse } from "next/server";
-import { updateKanji } from "@/lib/kanji";
 
-export async function POST(request: Request) {
+
+export async function POST(
+  request: Request
+) {
   try {
-    const kanji = await request.json();
+    const kanji =
+      await request.json();
 
-    const result = await updateKanji(kanji);
+    const result =
+      await updateKanji(
+        kanji
+      );
 
-    return NextResponse.json(result);
+    return NextResponse.json(
+      result
+    );
   } catch (error) {
     console.error(error);
 
     return NextResponse.json(
       {
-        error: "Update failed",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Update failed",
       },
       {
         status: 500,

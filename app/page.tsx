@@ -4,13 +4,16 @@ import Header from "@/components/layout/Header";
 import HomeClient from "@/components/layout/HomeClient";
 
 
-import StatusTitle from "@/components/ui/StatusTitle";
-import ToolBar from "@/components/ui/ToolBar";
+import StatusTitle from "@/components/layout/StatusTitle";
+import ToolBar from "@/components/layout/ToolBar";
 import { KanjiProvider } from "@/contexts/Context";
-import { getAllGroups } from "@/lib/group";
-import { getAllKanji } from "@/lib/kanji";
-import { getAllKanjiGroupItems } from "@/lib/kanjiGroupItem";
+import { getAllGroups } from "@/app/features/group/services/group.service";
+
+
 import { redirect } from "next/navigation";
+
+import { getAllKanji } from "./features/kanji/services/kanji.service";
+import { getAllGroupItems } from "./features/collection/services/kanji-group.service";
 
 
 export default async function Home() {
@@ -21,8 +24,8 @@ export default async function Home() {
   }
   const groups = await getAllGroups();
   const kanjis = await getAllKanji();
-  const kanjiGroupItems = await getAllKanjiGroupItems();
-  const groupItems = {};
+  const kanjiGroupItems = await getAllGroupItems();
+
 
  const data = {
   groups: Object.fromEntries(
@@ -49,6 +52,8 @@ export default async function Home() {
     return result;
   })(),
 };
+
+
 
   
 

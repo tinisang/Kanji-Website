@@ -8,11 +8,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { EditableText } from "./EditableText";
-import { Kanji, updateKanji } from "@/lib/kanji";
+import { Kanji, updateKanji } from "@/lib/repositories/kanji.repository";
 import { useState } from "react";
-import { handleSaveKanji } from "../server/handleSaveKanji";
-import { Input } from "./input";
-import { Button } from "./button";
+import { handleSaveKanji } from "./handleSaveKanji";
+import { Input } from "../../../../components/ui/input";
+import { Button } from "../../../../components/ui/button";
 import TiptapEditor from "./TipTapEditor";
 
 interface KanjiDetailModalProps {

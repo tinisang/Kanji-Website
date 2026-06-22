@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LogoutButton } from "../ui/LogOut";
+import { LogoutButton } from "./LogOut";
 
 export default function Header() {
     return (

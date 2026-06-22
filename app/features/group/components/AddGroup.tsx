@@ -1,6 +1,10 @@
 
 import { addGroupUI, useKanji } from "@/contexts/Context";
-import { createGroup } from "@/types/group";
+
+import { createGroupAPI } from "../api/group.client";
+
+
+
 
 
 export default function AddGroup() {
@@ -8,7 +12,7 @@ export default function AddGroup() {
   const { setData } = useKanji();
 
   async function handleCreateGroup() {
-   createGroup().then(newGroup => {
+   createGroupAPI().then(newGroup => {
   addGroupUI(
     setData,
     newGroup

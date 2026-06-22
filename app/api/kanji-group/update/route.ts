@@ -1,18 +1,37 @@
-import { updateKanjiGroups } from "@/lib/db/KanjiGroup";
+// app/api/kanji-group/update/route.ts
 
-export async function POST(req: Request) {
+import { reorderGroups } from "@/app/features/group/services/group.service";
+import { NextResponse } from "next/server";
+
+
+export async function POST(
+  request: Request
+) {
   try {
-    const updates = await req.json();
+    const updates =
+      await request.json();
+ 
+    await reorderGroups(
+      updates
+    );
 
-    await updateKanjiGroups(updates);
-
-    return Response.json({ success: true });
+    return NextResponse.json({
+      success: true,
+    });
   } catch (error) {
     console.error(error);
 
-    return Response.json(
-      { success: false, error: String(error) },
-      { status: 500 }
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Internal Server Error",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

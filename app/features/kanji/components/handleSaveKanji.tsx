@@ -1,4 +1,4 @@
-import { Kanji } from "@/lib/kanji";
+import { Kanji } from "@/lib/repositories/kanji.repository";
 
 export async function handleSaveKanji(kanji: Kanji) {
   const response = await fetch(

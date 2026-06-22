@@ -8,15 +8,17 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+
 import { useState } from "react";
 import TiptapEditor from "./TipTapEditor";
-import { Kanji } from "@/lib/kanji";
-import { createKanji } from "@/types/kanji";
+
 import { addKanjiUI, useKanji } from "@/contexts/Context";
+import { Kanji } from "@/types/kanji";
+
+import { createKanjiAndAssignGroupAPI } from "../api/kanji.client";
 
 interface AddKanjiModalProps {
-    groupId: string;
+    groupId?: string;
      setItemArray: React.Dispatch<
     React.SetStateAction<Kanji[]>
   >;
@@ -66,7 +68,16 @@ const [open, setOpen] =
         );
     };
 
-    const kanji: Partial<Kanji> = {};
+    const kanji: Omit<Kanji, "id" | "created_at" | "updated_at"> = {
+        example: null,
+        character: "",
+        han_viet: "",
+        onyomi: null,
+        kunyomi: null,
+        vocabularies: [],
+        short_description: null,
+        content: null,
+    };
     const handleSubmit = async (
         e: React.FormEvent<HTMLFormElement>
     ) => {
@@ -91,12 +102,19 @@ const [open, setOpen] =
         kanji.content = content;
         kanji.vocabularies = vocabularies;
 
-        handleAdd(kanji, groupId)
+        if (!groupId) {
+            return;
+        }
+
+        handleAdd(kanji, groupId);
     };
 
     
-    async function handleAdd(kanji: Partial<Kanji>, groupId: string) {
-       createKanji(
+    async function handleAdd(
+        kanji: Omit<Kanji, "id" | "created_at" | "updated_at">,
+        groupId: string
+    ) {
+       createKanjiAndAssignGroupAPI(
   kanji,
   groupId
 ).then(newKanji => {

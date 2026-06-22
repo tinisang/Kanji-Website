@@ -1,31 +1,30 @@
-import  {  Kanji } from "@/lib/kanji";
 
-
-export async function createKanji(
-  kanji: Partial<Kanji>,
-  groupId: string
-) {
-  console.log("yo")
-  const response = await fetch(
-    "/api/kanji/create",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type":
-          "application/json",
-      },
-      body: JSON.stringify({
-        kanji,
-        groupId,
-      }),
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error(
-      "Failed to create kanji"
-    );
-  }
-
-  return response.json();
+export interface Vocabulary {
+  word: string;
+  reading: string;
+  meaning: string;
 }
+
+export interface Kanji {
+  example: string| null;
+  id: string;
+
+  character: string;
+  han_viet: string;
+
+  onyomi: string | null;
+  kunyomi: string | null;
+
+  vocabularies: Vocabulary[] | null;
+
+  short_description: string | null;
+  content: string | null;
+
+  created_at: string;
+  updated_at: string;
+}
+
+export type CreateKanjiInput = Omit<
+  Kanji,
+  "id" | "created_at" | "updated_at"
+>;

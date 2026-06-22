@@ -1,21 +1,40 @@
 // app/api/kanji/create/route.ts
 
+import { createKanjiAndAssignGroup } from "@/app/features/kanji/services/kanji.service";
 import { NextResponse } from "next/server";
-import { createKanjiAndAssignGroup } from "@/lib/kanji";
+
 
 export async function POST(
   request: Request
 ) {
-  const {
-    kanji,
-    groupId,
-  } = await request.json();
-
-  const result =
-    await createKanjiAndAssignGroup(
+  try {
+    const {
       kanji,
-      groupId
-    );
+      groupId,
+    } = await request.json();
 
-  return NextResponse.json(result);
+    const result =
+      await createKanjiAndAssignGroup(
+        kanji,
+        groupId
+      );
+
+    return NextResponse.json(
+      result
+    );
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Internal Server Error",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }

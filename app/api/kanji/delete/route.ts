@@ -1,36 +1,34 @@
-// app/api/kanji-group-item/update/route.ts
+// app/api/kanji/delete/route.ts
 
-import { reorderGroupItems } from "@/app/features/collection/services/kanji-group.service";
 import { NextResponse } from "next/server";
 
+import {
+  deleteKanji,
+} from "@/app/features/kanji/services/kanji.service";
 
 export async function POST(
   request: Request
 ) {
   try {
-    const updates =
-      await request.json();
-console.log(
-    "ITEM UPDATES",
-    updates
-  );
-    await reorderGroupItems(
-      updates
+    const {
+      kanjiId,
+    } = await request.json();
+
+    await deleteKanji(
+      kanjiId
     );
 
     return NextResponse.json({
       success: true,
     });
   } catch (error) {
-    console.error(error);
-
     return NextResponse.json(
       {
         success: false,
         error:
           error instanceof Error
             ? error.message
-            : "Internal Server Error",
+            : "Delete failed",
       },
       {
         status: 500,
