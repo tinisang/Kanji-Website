@@ -1,6 +1,7 @@
-import { Kanji } from "@/lib/repositories/kanji.repository";
+
 import { SetStateAction } from "react";
 import AddKanjiModal from "../../kanji/components/AddKanjiModal";
+import { Kanji } from "@/types/kanji";
 
 
 export default function AddPlaceHolder({ groupId, index }: { groupId: string; index: number }) {
