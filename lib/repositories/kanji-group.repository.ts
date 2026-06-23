@@ -145,3 +145,14 @@ export async function deleteGroupItemsByGroupId(
     WHERE group_id = ${groupId};
   `;
 }
+
+export async function moveGroupItems(
+  fromGroupId: string,
+  toGroupId: string
+) {
+  await sql`
+    UPDATE kanji_group_item
+    SET group_id = ${toGroupId}
+    WHERE group_id = ${fromGroupId};
+  `;
+}

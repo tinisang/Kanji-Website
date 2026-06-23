@@ -133,3 +133,51 @@ export function addGroupUI(
     },
   }));
 }
+
+export function removeGroupUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  groupId: string
+) {
+  setData(prev => {
+    const nextGroups = {
+      ...prev.groups,
+    };
+
+    delete nextGroups[groupId];
+
+    const movedKanjiIds =
+      prev.kanji_group_items[groupId] ?? [];
+
+    const nextGroupItems = {
+      ...prev.kanji_group_items,
+    };
+
+    delete nextGroupItems[groupId];
+
+    const unclassifiedGroup = Object.values(
+      prev.groups
+    ).find(
+      group =>
+        group.name === "Unclassified"
+    );
+
+    if (unclassifiedGroup) {
+      nextGroupItems[
+        unclassifiedGroup.id
+      ] = [
+        ...(nextGroupItems[
+          unclassifiedGroup.id
+        ] ?? []),
+        ...movedKanjiIds,
+      ];
+    }
+
+    return {
+      ...prev,
+      groups: nextGroups,
+      kanji_group_items: nextGroupItems,
+    };
+  });
+}

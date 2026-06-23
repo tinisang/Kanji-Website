@@ -5,7 +5,10 @@ import {
     DialogHeader,
     DialogTrigger,
 } from "@/components/ui/dialog";
-
+import {
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -39,6 +42,48 @@ const [open, setOpen] =
             meaning: "",
         },
     ]);
+
+    const moveVocabularyUp = (
+  index: number
+) => {
+  if (index === 0) return;
+
+  const updated = [...vocabularies];
+
+  [updated[index - 1], updated[index]] = [
+    updated[index],
+    updated[index - 1],
+  ];
+
+  setVocabularies(updated);
+};
+
+const moveVocabularyDown = (
+  index: number
+) => {
+  if (
+    index ===
+    vocabularies.length - 1
+  )
+    return;
+
+  const updated = [...vocabularies];
+
+  [updated[index], updated[index + 1]] = [
+    updated[index + 1],
+    updated[index],
+  ];
+
+  setVocabularies(updated);
+};
+
+const removeVocabulary = (
+  index: number
+) => {
+  setVocabularies(prev =>
+    prev.filter((_, i) => i !== index)
+  );
+};
 
     const addVocabulary = () => {
         setVocabularies((prev) => [
@@ -237,6 +282,49 @@ const [open, setOpen] =
                                         }
                                         className="max-w-[250px] border-0 shadow-none focus-visible:ring-0"
                                     />
+                                    <div className="ml-auto flex gap-1">
+  <Button
+    type="button"
+    size="icon"
+    variant="ghost"
+    disabled={index === 0}
+    onClick={() =>
+      moveVocabularyUp(index)
+    }
+  >
+    <ChevronUp className="h-4 w-4" />
+  </Button>
+
+  <Button
+    type="button"
+    size="icon"
+    variant="ghost"
+    disabled={
+      index ===
+      vocabularies.length - 1
+    }
+    onClick={() =>
+      moveVocabularyDown(index)
+    }
+  >
+    <ChevronDown className="h-4 w-4" />
+  </Button>
+
+  <Button
+    type="button"
+    size="icon"
+    variant="ghost"
+    className="
+      text-red-500
+      hover:text-red-600
+    "
+    onClick={() =>
+      removeVocabulary(index)
+    }
+  >
+    ✕
+  </Button>
+</div>
                                 </div>
                             ))}
 

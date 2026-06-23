@@ -60,7 +60,8 @@ export default function KanjiItem({
   });
   const [kanjiData, setKanjiData] = useState(kanji);
   const [openDelete, setOpenDelete] = useState(false);
-
+const firstVocabulary =
+  kanjiData.vocabularies?.[0];
   return (
     <div ref={ref}>
       <ContextMenu>
@@ -108,17 +109,22 @@ export default function KanjiItem({
                 <div className="m-auto text-[0.8rem]">
                   {kanjiData.han_viet}
                 </div>
-                {isClassified && (
-                  <>
-                    <div className="m-auto text-[0.6em]">
-                      {kanjiData.example}
-                    </div>
+                {isClassified &&
+  firstVocabulary && (
+    <>
+      <div className="m-auto text-[0.6em] font-medium">
+        {firstVocabulary.word}
+      </div>
 
-                    <p className="m-auto text-[0.6em]">
-                      ({kanjiData.short_description})
-                    </p>
-                  </>
-                )}
+      <div className="m-auto text-[0.6em]">
+        {firstVocabulary.reading}
+      </div>
+
+      <div className="m-auto text-[0.6em] text-neutral-500">
+        {firstVocabulary.meaning}
+      </div>
+    </>
+)}
               </div>
             </KanjiDetailModal>
 

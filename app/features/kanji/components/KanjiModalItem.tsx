@@ -16,6 +16,10 @@ import { Button } from "../../../../components/ui/button";
 import TiptapEditor from "./TipTapEditor";
 import { Kanji } from "@/types/kanji";
 
+import {
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
 interface KanjiDetailModalProps {
   kanji: Kanji;
   setKanji: React.Dispatch<
@@ -37,6 +41,50 @@ export default function KanjiDetailModal({
     kanji.vocabularies ?? []
   );
 
+
+  const moveVocabularyUp = (
+  index: number
+) => {
+  if (index === 0) return;
+
+  const updated = [...vocabularies];
+
+  [updated[index - 1], updated[index]] = [
+    updated[index],
+    updated[index - 1],
+  ];
+
+  setVocabularies(updated);
+
+  handleSave({
+    ...kanji,
+    vocabularies: updated,
+  });
+};
+
+const moveVocabularyDown = (
+  index: number
+) => {
+  if (
+    index ===
+    vocabularies.length - 1
+  )
+    return;
+
+  const updated = [...vocabularies];
+
+  [updated[index], updated[index + 1]] = [
+    updated[index + 1],
+    updated[index],
+  ];
+
+  setVocabularies(updated);
+
+  handleSave({
+    ...kanji,
+    vocabularies: updated,
+  });
+};
   const addVocabulary = () => {
     setVocabularies((prev) => [
       ...prev,
@@ -255,22 +303,54 @@ export default function KanjiDetailModal({
   "
                   />
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      removeVocabulary(index)
-                    }
-                    className="
-      ml-auto
-      rounded
-      px-2
-      py-1
+                  <div className="ml-auto flex gap-1">
+  <button
+    type="button"
+    onClick={() =>
+      moveVocabularyUp(index)
+    }
+    disabled={index === 0}
+    className="
+      rounded p-1
+      hover:bg-neutral-100
+      disabled:opacity-30
+    "
+  >
+    <ChevronUp className="h-4 w-4" />
+  </button>
+
+  <button
+    type="button"
+    onClick={() =>
+      moveVocabularyDown(index)
+    }
+    disabled={
+      index ===
+      vocabularies.length - 1
+    }
+    className="
+      rounded p-1
+      hover:bg-neutral-100
+      disabled:opacity-30
+    "
+  >
+    <ChevronDown className="h-4 w-4" />
+  </button>
+
+  <button
+    type="button"
+    onClick={() =>
+      removeVocabulary(index)
+    }
+    className="
+      rounded p-1
       text-red-500
       hover:bg-red-50
     "
-                  >
-                    ✕
-                  </button>
+  >
+    ✕
+  </button>
+</div>
                 </div>
               )
             })}

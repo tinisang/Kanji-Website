@@ -1,4 +1,18 @@
 'use client';
+import { Trash2 } from "lucide-react";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+
 
 import { DragDropProvider, useDroppable } from "@dnd-kit/react";
 import { useEffect, useState } from "react";
@@ -6,7 +20,7 @@ import AddPlaceHolder from "./AddPlaceHolder";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { CollisionPriority } from '@dnd-kit/abstract';
 import { group } from "console";
-import { useKanji } from "@/contexts/Context";
+import { removeGroupUI, useKanji } from "@/contexts/Context";
 import KanjiItem from "../../kanji/components/KanjiItem";
 import {
   ContextMenu,
@@ -15,6 +29,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import AddKanjiModal from "../../kanji/components/AddKanjiModal";
+import { deleteGroupAPI } from "../api/group.client";
 
 
 interface KanjiGroupProps {
@@ -29,8 +44,8 @@ interface KanjiGroupProps {
 export default function KanjiGroup({ data, id, index, children }: KanjiGroupProps) {
 
 
-
-  const { data: globalData } = useKanji();
+const [openDelete, setOpenDelete] = useState(false);
+  const { data: globalData, setData } = useKanji();
 
   const itemIdList = data;
 
@@ -83,7 +98,7 @@ data-[state=open]:bg-lime-50
 
 
 
-            <div className="grid gap-4 sm:grid-cols-6 xl:grid-cols-8">
+            <div className="grid gap-2 sm:grid-cols-6 xl:grid-cols-12">
 
               {
                 itemArray?.map((item, index) => (
@@ -98,11 +113,58 @@ data-[state=open]:bg-lime-50
           </section>
         </ContextMenuTrigger>
         <ContextMenuContent>
-          <ContextMenuItem>Delete Group</ContextMenuItem>
-
-        </ContextMenuContent>
+  <ContextMenuItem
+    onSelect={() => setOpenDelete(true)}
+    className="
+      text-red-600
+      focus:bg-red-50
+      focus:text-red-700
+    "
+  >
+    <Trash2 className="mr-2 h-4 w-4" />
+    Delete Group
+  </ContextMenuItem>
+</ContextMenuContent>
       </ContextMenu>
+<AlertDialog
+  open={openDelete}
+  onOpenChange={setOpenDelete}
+>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>
+        Delete Group?
+      </AlertDialogTitle>
 
+      <AlertDialogDescription>
+        This action cannot be undone.
+        All kanji inside this group will be removed.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+
+    <AlertDialogFooter>
+      <AlertDialogCancel>
+        Cancel
+      </AlertDialogCancel>
+
+      <AlertDialogAction
+        className="
+          bg-red-600
+          hover:bg-red-700
+        "
+        onClick={async () => {
+          await deleteGroupAPI(id);
+
+          removeGroupUI(setData, id);
+
+          setOpenDelete(false);
+        }}
+      >
+        Delete
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
 
 
     </div>

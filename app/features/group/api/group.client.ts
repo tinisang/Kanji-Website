@@ -42,3 +42,22 @@ export async function updateGroupsAPI(
 
   return response.json();
 }
+
+// group.client.ts
+
+export async function deleteGroupAPI(
+  groupId: string
+) {
+  await fetch(
+  "/api/kanji-group/delete",
+  {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      groupId,
+    }),
+  }
+);
+}
