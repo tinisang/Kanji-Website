@@ -98,7 +98,7 @@ data-[state=open]:bg-lime-50
 
 
 
-            <div className="grid gap-2 sm:grid-cols-6 xl:grid-cols-12">
+            <div className="flex gap-2">
 
               {
                 itemArray?.map((item, index) => (

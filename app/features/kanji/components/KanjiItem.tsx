@@ -48,7 +48,7 @@ export default function KanjiItem({
 }: KanjiItemProps) {
 
 
-  const {data, setData} = useKanji();
+  const { data, setData } = useKanji();
 
 
   const { ref, handleRef } = useSortable({
@@ -60,15 +60,15 @@ export default function KanjiItem({
   });
   const [kanjiData, setKanjiData] = useState(kanji);
   const [openDelete, setOpenDelete] = useState(false);
-const firstVocabulary =
-  kanjiData.vocabularies?.[0];
+  const firstVocabulary =
+    kanjiData.vocabularies?.[0];
   return (
     <div ref={ref}>
       <ContextMenu>
         <ContextMenuTrigger asChild>
 
           <article
-            
+
             className="
     group relative
     cursor-pointer
@@ -101,31 +101,35 @@ const firstVocabulary =
               kanji={kanjiData}
               setKanji={setKanjiData}
             >
-              <div className='w-full text-center'>
-                <div className="m-auto text-[2rem]">
-                  {kanjiData.character}
-                </div>
+              <div className="w-full text-center">
+  <div className="text-[2.8rem] leading-none">
+    {kanjiData.character}
+  </div>
 
-                <div className="m-auto text-[0.8rem]">
-                  {kanjiData.han_viet}
-                </div>
-                {isClassified &&
-  firstVocabulary && (
+  <div className="mt-1 text-xs font-semibold text-lime-600">
+    {kanjiData.han_viet}
+  </div>
+
+  {isClassified && firstVocabulary && (
     <>
-      <div className="m-auto text-[0.6em] font-medium">
-        {firstVocabulary.word}
+      <div className="mx-auto mt-3 inline-flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-xs">
+        <span className="font-semibold">
+          {firstVocabulary.word}
+        </span>
+
+        <span className="text-neutral-400">•</span>
+
+        <span className="text-neutral-500">
+          {firstVocabulary.reading}
+        </span>
       </div>
 
-      <div className="m-auto text-[0.6em]">
-        {firstVocabulary.reading}
-      </div>
-
-      <div className="m-auto text-[0.6em] text-neutral-500">
+      <div className="mt-2 text-[11px] text-neutral-500">
         {firstVocabulary.meaning}
       </div>
     </>
-)}
-              </div>
+  )}
+</div>
             </KanjiDetailModal>
 
           </article>
@@ -181,7 +185,7 @@ const firstVocabulary =
                   setData,
                   kanji.id
                 )
-                
+
                 setOpenDelete(false);
               }}
             >

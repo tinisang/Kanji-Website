@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TiptapEditor from "./TipTapEditor";
 
 import { addKanjiUI, useKanji } from "@/contexts/Context";
@@ -35,13 +35,39 @@ const [open, setOpen] =
   useState(false);
     const {data,setData} = useKanji();
     const [content, setContent] = useState("");
-    const [vocabularies, setVocabularies] = useState([
-        {
-            word: "",
-            reading: "",
-            meaning: "",
-        },
+    const defaultVocabulary = {
+  word: "",
+  reading: "",
+  meaning: "",
+};
+
+const [character, setCharacter] = useState("");
+const [hanViet, setHanViet] = useState("");
+const [onyomi, setOnyomi] = useState("");
+const [kunyomi, setKunyomi] = useState("");
+
+
+const [vocabularies, setVocabularies] = useState([
+  defaultVocabulary,
+]);
+
+useEffect(() => {
+  if (!open) {
+    setCharacter("");
+    setHanViet("");
+    setOnyomi("");
+    setKunyomi("");
+    setContent("");
+    setVocabularies([
+      {
+        word: "",
+        reading: "",
+        meaning: "",
+      },
     ]);
+  }
+}, [open]);
+
 
     const moveVocabularyUp = (
   index: number
@@ -128,21 +154,11 @@ const removeVocabulary = (
     ) => {
         e.preventDefault();
 
-        const formData = new FormData(
-            e.currentTarget
-        );
-
-        kanji.character =
-            formData.get("character")?.toString() ?? "";
-
-        kanji.han_viet =
-            formData.get("han_viet")?.toString() ?? "";
-
-        kanji.onyomi =
-            formData.get("onyomi")?.toString() ?? "";
-
-        kanji.kunyomi =
-            formData.get("kunyomi")?.toString() ?? "";
+     
+       kanji.character = character;
+kanji.han_viet = hanViet;
+kanji.onyomi = onyomi;
+kanji.kunyomi = kunyomi;
 
         kanji.content = content;
         kanji.vocabularies = vocabularies;
@@ -151,7 +167,8 @@ const removeVocabulary = (
             return;
         }
 
-        handleAdd(kanji, groupId);
+        await handleAdd(kanji, groupId);
+       setOpen(false)
     };
 
     
@@ -211,12 +228,20 @@ const removeVocabulary = (
                             <Input
                                 name="character"
                                 placeholder="漢"
+                                 value={character}
+  onChange={(e) =>
+    setCharacter(e.target.value)
+  }
                                 className="h-auto border-0 p-0 !text-7xl font-bold shadow-none focus-visible:ring-0"
                             />
 
                             <Input
                                 name="han_viet"
                                 placeholder="HÁN"
+                                value={hanViet}
+  onChange={(e) =>
+    setHanViet(e.target.value)
+  }
                                 className="h-auto border-0 p-0 !text-2xl font-semibold text-neutral-400 shadow-none focus-visible:ring-0"
                             />
 
@@ -231,6 +256,10 @@ const removeVocabulary = (
                                 <Input
                                     name="onyomi"
                                     placeholder="カン"
+                                    value={onyomi}
+  onChange={(e) =>
+    setOnyomi(e.target.value)
+  }
                                 />
                             </div>
 
@@ -242,6 +271,10 @@ const removeVocabulary = (
                                 <Input
                                     name="kunyomi"
                                     placeholder="あや"
+                                    value={kunyomi}
+  onChange={(e) =>
+    setKunyomi(e.target.value)
+  }
                                 />
                             </div>
                         </div>
@@ -362,7 +395,7 @@ const removeVocabulary = (
 
                         <Button
                         type="submit"
-                        onClick={() => setOpen(false)}
+                    
                         >
                             Lưu
                         </Button>
