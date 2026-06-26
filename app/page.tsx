@@ -14,6 +14,7 @@ import { redirect } from "next/navigation";
 
 import { getAllKanji } from "./features/kanji/services/kanji.service";
 import { getAllGroupItems } from "./features/collection/services/kanji-group.service";
+import ReferenceSection from "@/app/features/reference/components/ReferenceSection";
 
 
 export default async function Home() {
@@ -61,6 +62,7 @@ export default async function Home() {
     <div>
       <Header />
       <ToolBar />
+      <ReferenceSection/>
       <div className="grid grid-cols-[1fr_3fr] gap-8">
         <StatusTitle>未分類</StatusTitle>
         <StatusTitle>分類済み</StatusTitle>
