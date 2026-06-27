@@ -15,6 +15,9 @@ import { redirect } from "next/navigation";
 import { getAllKanji } from "./features/kanji/services/kanji.service";
 import { getAllGroupItems } from "./features/collection/services/kanji-group.service";
 import ReferenceSection from "@/app/features/reference/components/ReferenceSection";
+import { getAllReferenceSets } from "./features/reference/services/reference.service";
+import { getAllKanjiReferenceItems } from "./features/reference/services/reference-item.service";
+import { KanjiReferenceItem } from "@/types/reference-item";
 
 
 export default async function Home() {
@@ -23,24 +26,33 @@ export default async function Home() {
   if (!session) {
     redirect("/login");
   }
-  const groups = await getAllGroups();
-  const kanjis = await getAllKanji();
-  const kanjiGroupItems = await getAllGroupItems();
+ const groups = await getAllGroups();
+const kanjis = await getAllKanji();
+const kanjiGroupItems = await getAllGroupItems();
 
+const referenceSets = await getAllReferenceSets();
+const kanjiReferenceItems = await getAllKanjiReferenceItems();
 
- const data = {
+const data = {
   groups: Object.fromEntries(
-    groups.map(group => [group.id, group])
+    groups.map((group) => [group.id, group])
   ),
 
   kanjis: Object.fromEntries(
-    kanjis.map(kanji => [kanji.id, kanji])
+    kanjis.map((kanji) => [kanji.id, kanji])
+  ),
+
+  reference_sets: Object.fromEntries(
+    referenceSets.map((referenceSet) => [
+      referenceSet.id,
+      referenceSet,
+    ])
   ),
 
   kanji_group_items: (() => {
     const result: Record<string, string[]> =
       Object.fromEntries(
-        groups.map(group => [group.id, []])
+        groups.map((group) => [group.id, []])
       );
 
     kanjiGroupItems.forEach(
@@ -52,14 +64,29 @@ export default async function Home() {
 
     return result;
   })(),
+
+  kanji_reference_items: (() => {
+    const result: Record<
+      string,
+      KanjiReferenceItem[]
+    > = Object.fromEntries(
+      kanjis.map((kanji) => [kanji.id, []])
+    );
+
+    kanjiReferenceItems.forEach((item) => {
+      result[item.kanji_id] ??= [];
+      result[item.kanji_id].push(item);
+    });
+
+    return result;
+  })(),
 };
-
-
 
   
 
   return (
     <div>
+       <KanjiProvider initialData={data}>
       <Header />
       <ToolBar />
       <ReferenceSection/>
@@ -73,13 +100,14 @@ export default async function Home() {
       <div className="mt-8 grid grid-cols-[1fr_3fr] gap-4">
         
 
-        <KanjiProvider initialData={data}>
+       
           <HomeClient />
-        </KanjiProvider>
+      
 
 
       
       </div>
+      </KanjiProvider>
 
     </div>
   );

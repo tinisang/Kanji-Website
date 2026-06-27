@@ -15,24 +15,31 @@ import { Input } from "../../../../components/ui/input";
 import { Button } from "../../../../components/ui/button";
 import TiptapEditor from "./TipTapEditor";
 import { Kanji } from "@/types/kanji";
-
+import { updateKanjiUI, useKanji } from "@/contexts/Context";
 import {
   ChevronUp,
   ChevronDown,
 } from "lucide-react";
+import ReferenceBadge from "../../reference/components/ReferenceBadge";
 interface KanjiDetailModalProps {
   kanji: Kanji;
-  setKanji: React.Dispatch<
-    React.SetStateAction<Kanji>
-  >;
-   children: React.ReactNode;
+  
+  children: React.ReactNode;
 }
 export default function KanjiDetailModal({
   kanji,
-  setKanji,
+
   children
 }: KanjiDetailModalProps) {
 
+  const { data, setData } = useKanji();
+
+const references = Object.values(data.reference_sets).sort(
+  (a, b) => a.position - b.position
+);
+
+
+const referenceItems = data.kanji_reference_items[kanji.id] ?? [];
   const [editingContent, setEditingContent] = useState(false);
   const [content, setContent] = useState(
     kanji.content ?? ""
@@ -43,48 +50,48 @@ export default function KanjiDetailModal({
 
 
   const moveVocabularyUp = (
-  index: number
-) => {
-  if (index === 0) return;
+    index: number
+  ) => {
+    if (index === 0) return;
 
-  const updated = [...vocabularies];
+    const updated = [...vocabularies];
 
-  [updated[index - 1], updated[index]] = [
-    updated[index],
-    updated[index - 1],
-  ];
+    [updated[index - 1], updated[index]] = [
+      updated[index],
+      updated[index - 1],
+    ];
 
-  setVocabularies(updated);
+    setVocabularies(updated);
 
-  handleSave({
-    ...kanji,
-    vocabularies: updated,
-  });
-};
+    handleSave({
+      ...kanji,
+      vocabularies: updated,
+    });
+  };
 
-const moveVocabularyDown = (
-  index: number
-) => {
-  if (
-    index ===
-    vocabularies.length - 1
-  )
-    return;
+  const moveVocabularyDown = (
+    index: number
+  ) => {
+    if (
+      index ===
+      vocabularies.length - 1
+    )
+      return;
 
-  const updated = [...vocabularies];
+    const updated = [...vocabularies];
 
-  [updated[index], updated[index + 1]] = [
-    updated[index + 1],
-    updated[index],
-  ];
+    [updated[index], updated[index + 1]] = [
+      updated[index + 1],
+      updated[index],
+    ];
 
-  setVocabularies(updated);
+    setVocabularies(updated);
 
-  handleSave({
-    ...kanji,
-    vocabularies: updated,
-  });
-};
+    handleSave({
+      ...kanji,
+      vocabularies: updated,
+    });
+  };
   const addVocabulary = () => {
     setVocabularies((prev) => [
       ...prev,
@@ -107,7 +114,7 @@ const moveVocabularyDown = (
       vocabularies: updated,
     };
 
-    setKanji(updatedKanji);
+  
 
     handleSave(updatedKanji);
   };
@@ -132,15 +139,18 @@ const moveVocabularyDown = (
       vocabularies: updated,
     };
 
-    setKanji(updatedKanji);
+    
 
     handleSave(updatedKanji);
   };
 
   async function handleSave(kanji: Kanji) {
-    // console.log(value);
-    setKanji(kanji);
-    await handleSaveKanji(kanji);
+   
+    const update = await handleSaveKanji(kanji);
+    updateKanjiUI(
+      setData,
+      update
+    )
   }
 
   return (
@@ -168,45 +178,50 @@ const moveVocabularyDown = (
                 }
               />
             </div>
-              <div className="mt-4 space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="w-20 text-sm font-medium text-neutral-500">
-                    Onyomi
-                  </span>
+            <div className="mt-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="w-20 text-sm font-medium text-neutral-500">
+                  Onyomi
+                </span>
 
-                  <EditableText
-                    defaultValue={kanji.onyomi ?? ""}
-                    className="text-lg"
-                    placeholder="オンヨミ"
-                    onSave={(value) => {
-                      handleSave({
-                        ...kanji,
-                        onyomi: value,
-                      });
-                    }}
-                  />
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="w-20 text-sm font-medium text-neutral-500">
-                    Kunyomi
-                  </span>
-
-                  <EditableText
-                    defaultValue={kanji.kunyomi ?? ""}
-                    className="text-lg"
-                    placeholder="くんよみ"
-                    onSave={(value) => {
-                      handleSave({
-                        ...kanji,
-                        kunyomi: value,
-                      });
-                    }}
-                  />
-                </div>
+                <EditableText
+                  defaultValue={kanji.onyomi ?? ""}
+                  className="text-lg"
+                  placeholder="オンヨミ"
+                  onSave={(value) => {
+                    handleSave({
+                      ...kanji,
+                      onyomi: value,
+                    });
+                  }}
+                />
               </div>
 
+              <div className="flex items-center gap-2">
+                <span className="w-20 text-sm font-medium text-neutral-500">
+                  Kunyomi
+                </span>
 
+                <EditableText
+                  defaultValue={kanji.kunyomi ?? ""}
+                  className="text-lg"
+                  placeholder="くんよみ"
+                  onSave={(value) => {
+                    handleSave({
+                      ...kanji,
+                      kunyomi: value,
+                    });
+                  }}
+                />
+              </div>
+            </div>
+
+
+                <ReferenceBadge
+  kanji={kanji}
+  references={references}
+  referenceItems={referenceItems}
+/>
           </div>
 
           {/* Vocabulary */}
@@ -304,53 +319,53 @@ const moveVocabularyDown = (
                   />
 
                   <div className="ml-auto flex gap-1">
-  <button
-    type="button"
-    onClick={() =>
-      moveVocabularyUp(index)
-    }
-    disabled={index === 0}
-    className="
+                    <button
+                      type="button"
+                      onClick={() =>
+                        moveVocabularyUp(index)
+                      }
+                      disabled={index === 0}
+                      className="
       rounded p-1
       hover:bg-neutral-100
       disabled:opacity-30
     "
-  >
-    <ChevronUp className="h-4 w-4" />
-  </button>
+                    >
+                      <ChevronUp className="h-4 w-4" />
+                    </button>
 
-  <button
-    type="button"
-    onClick={() =>
-      moveVocabularyDown(index)
-    }
-    disabled={
-      index ===
-      vocabularies.length - 1
-    }
-    className="
+                    <button
+                      type="button"
+                      onClick={() =>
+                        moveVocabularyDown(index)
+                      }
+                      disabled={
+                        index ===
+                        vocabularies.length - 1
+                      }
+                      className="
       rounded p-1
       hover:bg-neutral-100
       disabled:opacity-30
     "
-  >
-    <ChevronDown className="h-4 w-4" />
-  </button>
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </button>
 
-  <button
-    type="button"
-    onClick={() =>
-      removeVocabulary(index)
-    }
-    className="
+                    <button
+                      type="button"
+                      onClick={() =>
+                        removeVocabulary(index)
+                      }
+                      className="
       rounded p-1
       text-red-500
       hover:bg-red-50
     "
-  >
-    ✕
-  </button>
-</div>
+                    >
+                      ✕
+                    </button>
+                  </div>
                 </div>
               )
             })}
@@ -412,7 +427,7 @@ const moveVocabularyDown = (
                       content,
                     };
 
-                    setKanji(updated);
+                    
 
                     await handleSave(updated);
 

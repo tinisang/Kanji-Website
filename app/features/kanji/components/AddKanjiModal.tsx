@@ -6,8 +6,8 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  ChevronUp,
-  ChevronDown,
+    ChevronUp,
+    ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,94 +22,94 @@ import { createKanjiAndAssignGroupAPI } from "../api/kanji.client";
 
 interface AddKanjiModalProps {
     groupId?: string;
-     setItemArray: React.Dispatch<
-    React.SetStateAction<Kanji[]>
-  >;
+    setItemArray: React.Dispatch<
+        React.SetStateAction<Kanji[]>
+    >;
 }
 
 export default function AddKanjiModal({
     groupId,
     setItemArray
 }: AddKanjiModalProps) {
-const [open, setOpen] =
-  useState(false);
-    const {data,setData} = useKanji();
+    const [open, setOpen] =
+        useState(false);
+    const { data, setData } = useKanji();
     const [content, setContent] = useState("");
     const defaultVocabulary = {
-  word: "",
-  reading: "",
-  meaning: "",
-};
-
-const [character, setCharacter] = useState("");
-const [hanViet, setHanViet] = useState("");
-const [onyomi, setOnyomi] = useState("");
-const [kunyomi, setKunyomi] = useState("");
-
-
-const [vocabularies, setVocabularies] = useState([
-  defaultVocabulary,
-]);
-
-useEffect(() => {
-  if (!open) {
-    setCharacter("");
-    setHanViet("");
-    setOnyomi("");
-    setKunyomi("");
-    setContent("");
-    setVocabularies([
-      {
         word: "",
         reading: "",
         meaning: "",
-      },
+    };
+
+    const [character, setCharacter] = useState("");
+    const [hanViet, setHanViet] = useState("");
+    const [onyomi, setOnyomi] = useState("");
+    const [kunyomi, setKunyomi] = useState("");
+
+
+    const [vocabularies, setVocabularies] = useState([
+        defaultVocabulary,
     ]);
-  }
-}, [open]);
+
+    useEffect(() => {
+        if (!open) {
+            setCharacter("");
+            setHanViet("");
+            setOnyomi("");
+            setKunyomi("");
+            setContent("");
+            setVocabularies([
+                {
+                    word: "",
+                    reading: "",
+                    meaning: "",
+                },
+            ]);
+        }
+    }, [open]);
 
 
     const moveVocabularyUp = (
-  index: number
-) => {
-  if (index === 0) return;
+        index: number
+    ) => {
+        if (index === 0) return;
 
-  const updated = [...vocabularies];
+        const updated = [...vocabularies];
 
-  [updated[index - 1], updated[index]] = [
-    updated[index],
-    updated[index - 1],
-  ];
+        [updated[index - 1], updated[index]] = [
+            updated[index],
+            updated[index - 1],
+        ];
 
-  setVocabularies(updated);
-};
+        setVocabularies(updated);
+    };
 
-const moveVocabularyDown = (
-  index: number
-) => {
-  if (
-    index ===
-    vocabularies.length - 1
-  )
-    return;
+    const moveVocabularyDown = (
+        index: number
+    ) => {
+        if (
+            index ===
+            vocabularies.length - 1
+        )
+            return;
 
-  const updated = [...vocabularies];
+        const updated = [...vocabularies];
 
-  [updated[index], updated[index + 1]] = [
-    updated[index + 1],
-    updated[index],
-  ];
+        [updated[index], updated[index + 1]] = [
+            updated[index + 1],
+            updated[index],
+        ];
 
-  setVocabularies(updated);
-};
+        setVocabularies(updated);
+    };
 
-const removeVocabulary = (
-  index: number
-) => {
-  setVocabularies(prev =>
-    prev.filter((_, i) => i !== index)
-  );
-};
+    const removeVocabulary = (
+        index: number
+    ) => {
+        setVocabularies(prev =>
+            prev.filter((_, i) => i !== index)
+        );
+    };
 
     const addVocabulary = () => {
         setVocabularies((prev) => [
@@ -154,11 +154,11 @@ const removeVocabulary = (
     ) => {
         e.preventDefault();
 
-     
-       kanji.character = character;
-kanji.han_viet = hanViet;
-kanji.onyomi = onyomi;
-kanji.kunyomi = kunyomi;
+
+        kanji.character = character;
+        kanji.han_viet = hanViet;
+        kanji.onyomi = onyomi;
+        kanji.kunyomi = kunyomi;
 
         kanji.content = content;
         kanji.vocabularies = vocabularies;
@@ -168,36 +168,36 @@ kanji.kunyomi = kunyomi;
         }
 
         await handleAdd(kanji, groupId);
-       setOpen(false)
+        setOpen(false)
     };
 
-    
+
     async function handleAdd(
         kanji: Omit<Kanji, "id" | "created_at" | "updated_at">,
         groupId: string
     ) {
-       createKanjiAndAssignGroupAPI(
-  kanji,
-  groupId
-).then(newKanji => {
-  addKanjiUI(   
-  setData,
-  newKanji,
-  groupId
-);
+        createKanjiAndAssignGroupAPI(
+            kanji,
+            groupId
+        ).then(newKanji => {
+            addKanjiUI(
+                setData,
+                newKanji,
+                groupId
+            );
 
-});
+        });
 
     }
 
     return (
         <Dialog
-        open={open}
-  onOpenChange={setOpen}
+            open={open}
+            onOpenChange={setOpen}
         >
             <DialogTrigger asChild>
                 <div
-  className="
+                    className="
     cursor-pointer
     rounded-lg
     border border-neutral-200
@@ -208,13 +208,13 @@ kanji.kunyomi = kunyomi;
     hover:border-neutral-300
     hover:bg-neutral-100
   "
->
-  <div className="flex h-full flex-col items-center justify-center">
-    <div className="text-2xl font-light text-neutral-400">
-      +
-    </div>
-  </div>
-</div>
+                >
+                    <div className="flex h-full flex-col items-center justify-center">
+                        <div className="text-2xl font-light text-neutral-400">
+                            +
+                        </div>
+                    </div>
+                </div>
             </DialogTrigger>
 
             <DialogContent
@@ -228,10 +228,10 @@ kanji.kunyomi = kunyomi;
                             <Input
                                 name="character"
                                 placeholder="漢"
-                                 value={character}
-  onChange={(e) =>
-    setCharacter(e.target.value)
-  }
+                                value={character}
+                                onChange={(e) =>
+                                    setCharacter(e.target.value)
+                                }
                                 className="h-auto border-0 p-0 !text-7xl font-bold shadow-none focus-visible:ring-0"
                             />
 
@@ -239,9 +239,9 @@ kanji.kunyomi = kunyomi;
                                 name="han_viet"
                                 placeholder="HÁN"
                                 value={hanViet}
-  onChange={(e) =>
-    setHanViet(e.target.value)
-  }
+                                onChange={(e) =>
+                                    setHanViet(e.target.value)
+                                }
                                 className="h-auto border-0 p-0 !text-2xl font-semibold text-neutral-400 shadow-none focus-visible:ring-0"
                             />
 
@@ -257,9 +257,9 @@ kanji.kunyomi = kunyomi;
                                     name="onyomi"
                                     placeholder="カン"
                                     value={onyomi}
-  onChange={(e) =>
-    setOnyomi(e.target.value)
-  }
+                                    onChange={(e) =>
+                                        setOnyomi(e.target.value)
+                                    }
                                 />
                             </div>
 
@@ -272,9 +272,9 @@ kanji.kunyomi = kunyomi;
                                     name="kunyomi"
                                     placeholder="あや"
                                     value={kunyomi}
-  onChange={(e) =>
-    setKunyomi(e.target.value)
-  }
+                                    onChange={(e) =>
+                                        setKunyomi(e.target.value)
+                                    }
                                 />
                             </div>
                         </div>
@@ -316,48 +316,48 @@ kanji.kunyomi = kunyomi;
                                         className="max-w-[250px] border-0 shadow-none focus-visible:ring-0"
                                     />
                                     <div className="ml-auto flex gap-1">
-  <Button
-    type="button"
-    size="icon"
-    variant="ghost"
-    disabled={index === 0}
-    onClick={() =>
-      moveVocabularyUp(index)
-    }
-  >
-    <ChevronUp className="h-4 w-4" />
-  </Button>
+                                        <Button
+                                            type="button"
+                                            size="icon"
+                                            variant="ghost"
+                                            disabled={index === 0}
+                                            onClick={() =>
+                                                moveVocabularyUp(index)
+                                            }
+                                        >
+                                            <ChevronUp className="h-4 w-4" />
+                                        </Button>
 
-  <Button
-    type="button"
-    size="icon"
-    variant="ghost"
-    disabled={
-      index ===
-      vocabularies.length - 1
-    }
-    onClick={() =>
-      moveVocabularyDown(index)
-    }
-  >
-    <ChevronDown className="h-4 w-4" />
-  </Button>
+                                        <Button
+                                            type="button"
+                                            size="icon"
+                                            variant="ghost"
+                                            disabled={
+                                                index ===
+                                                vocabularies.length - 1
+                                            }
+                                            onClick={() =>
+                                                moveVocabularyDown(index)
+                                            }
+                                        >
+                                            <ChevronDown className="h-4 w-4" />
+                                        </Button>
 
-  <Button
-    type="button"
-    size="icon"
-    variant="ghost"
-    className="
+                                        <Button
+                                            type="button"
+                                            size="icon"
+                                            variant="ghost"
+                                            className="
       text-red-500
       hover:text-red-600
     "
-    onClick={() =>
-      removeVocabulary(index)
-    }
-  >
-    ✕
-  </Button>
-</div>
+                                            onClick={() =>
+                                                removeVocabulary(index)
+                                            }
+                                        >
+                                            ✕
+                                        </Button>
+                                    </div>
                                 </div>
                             ))}
 
@@ -394,8 +394,8 @@ kanji.kunyomi = kunyomi;
                         </Button>
 
                         <Button
-                        type="submit"
-                    
+                            type="submit"
+
                         >
                             Lưu
                         </Button>

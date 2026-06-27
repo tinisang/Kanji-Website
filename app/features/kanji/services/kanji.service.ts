@@ -1,5 +1,3 @@
-import { auth } from "@/auth";
-
 import {
   createKanji,
   deleteKanjiById,
@@ -7,9 +5,7 @@ import {
   updateKanjiById,
 } from "@/lib/repositories/kanji.repository";
 
-import {
-  getGroupById,
-} from "@/lib/repositories/group.repository";
+import { getGroupById } from "@/lib/repositories/group.repository";
 
 import {
   createGroupItem,
@@ -18,71 +14,33 @@ import {
 } from "@/lib/repositories/kanji-group.repository";
 
 import { Kanji } from "@/types/kanji";
+import { getCurrentUserId } from "@/lib/auth/auth-user";
 
 export async function getAllKanji() {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  return getAllKanjiByUserId(
-    session.user.id
-  );
+  const userId = await getCurrentUserId();
+  return getAllKanjiByUserId(userId);
 }
 
-export async function updateKanji(
-  kanji: Kanji
-) {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  return updateKanjiById(
-    session.user.id,
-    kanji
-  );
+export async function updateKanji(kanji: Kanji) {
+  const userId = await getCurrentUserId();
+  return updateKanjiById(userId, kanji);
 }
 
 export async function createKanjiAndAssignGroup(
-  kanji: Omit<
-    Kanji,
-    "id" | "created_at" | "updated_at"
-  >,
+  kanji: Omit<Kanji, "id" | "created_at" | "updated_at">,
   groupId: string
 ) {
-  const session = await auth();
+  const userId = await getCurrentUserId();
 
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  const userId = session.user.id;
-
-  const group =
-    await getGroupById(
-      userId,
-      groupId
-    );
+  const group = await getGroupById(userId, groupId);
 
   if (!group) {
-    throw new Error(
-      "Group not found"
-    );
+    throw new Error("Group not found");
   }
 
-  const newKanji =
-    await createKanji(
-      userId,
-      kanji
-    );
+  const newKanji = await createKanji(userId, kanji);
 
-  const maxPosition =
-    await getMaxPosition(
-      groupId
-    );
+  const maxPosition = await getMaxPosition(groupId);
 
   await createGroupItem(
     newKanji.id,
@@ -93,21 +51,10 @@ export async function createKanjiAndAssignGroup(
   return newKanji;
 }
 
-export async function deleteKanji(
-  kanjiId: string
-) {
-  const session = await auth();
+export async function deleteKanji(kanjiId: string) {
+  const userId = await getCurrentUserId();
 
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
+  await deleteGroupItemsByKanjiId(kanjiId);
 
-  await deleteGroupItemsByKanjiId(
-    kanjiId
-  );
-
-  await deleteKanjiById(
-    session.user.id,
-    kanjiId
-  );
+  await deleteKanjiById(userId, kanjiId);
 }

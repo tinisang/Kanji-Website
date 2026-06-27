@@ -17,7 +17,7 @@ export async function GET() {
 
     const referenceSets =
       await getAllReferenceSets(
-        session.user.id
+       
       );
 
     return NextResponse.json(

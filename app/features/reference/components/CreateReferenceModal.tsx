@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { createReferenceSetAPI } from "../api/reference.client";
+import { addReferenceSetUI, useKanji } from "@/contexts/Context";
 
 
 interface AddReferenceModalProps {
   open: boolean;
   onClose: () => void;
-  onCreated: () => void;
+  
 }
 
 const COLORS = [
@@ -23,15 +24,14 @@ const COLORS = [
 export default function AddReferenceModal({
   open,
   onClose,
-  onCreated,
+
 }: AddReferenceModalProps) {
+
+  const {setData} = useKanji();
   const [name, setName] = useState("");
-  const [description, setDescription] =
-    useState("");
-  const [color, setColor] =
-    useState(COLORS[0]);
-  const [loading, setLoading] =
-    useState(false);
+  const [description, setDescription] =useState("");
+  const [color, setColor] =useState(COLORS[0]);
+  const [loading, setLoading] = useState(false);
 
   if (!open) return null;
 
@@ -41,17 +41,18 @@ export default function AddReferenceModal({
     try {
       setLoading(true);
 
-      await createReferenceSetAPI({
+      const newRef= await createReferenceSetAPI({
         name,
         description,
         color,
       });
 
+      addReferenceSetUI(setData, newRef);
+
       setName("");
       setDescription("");
       setColor(COLORS[0]);
 
-      onCreated();
       onClose();
     } finally {
       setLoading(false);
@@ -120,11 +121,10 @@ export default function AddReferenceModal({
                   onClick={() =>
                     setColor(c)
                   }
-                  className={`h-8 w-8 rounded-full border-2 ${
-                    color === c
+                  className={`h-8 w-8 rounded-full border-2 ${color === c
                       ? "border-black"
                       : "border-transparent"
-                  }`}
+                    }`}
                   style={{
                     backgroundColor: c,
                   }}

@@ -18,7 +18,7 @@ export async function PUT(req: NextRequest) {
 
     const updatedReferenceSet =
       await updateReferenceSet(
-        session.user.id,
+        
         referenceSet
       );
 

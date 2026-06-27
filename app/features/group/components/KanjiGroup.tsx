@@ -44,17 +44,17 @@ interface KanjiGroupProps {
 export default function KanjiGroup({ data, id, index, children }: KanjiGroupProps) {
 
 
-const [openDelete, setOpenDelete] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const { data: globalData, setData } = useKanji();
 
   const itemIdList = data;
 
-  
 
 
-const itemArray = itemIdList
-  ?.map(item => globalData.kanjis[item])
-  .filter(Boolean);
+
+  const itemArray = itemIdList
+    ?.map(item => globalData.kanjis[item])
+    .filter(Boolean);
 
 
   function setItemArray() { };
@@ -113,58 +113,58 @@ data-[state=open]:bg-lime-50
           </section>
         </ContextMenuTrigger>
         <ContextMenuContent>
-  <ContextMenuItem
-    onSelect={() => setOpenDelete(true)}
-    className="
+          <ContextMenuItem
+            onSelect={() => setOpenDelete(true)}
+            className="
       text-red-600
       focus:bg-red-50
       focus:text-red-700
     "
-  >
-    <Trash2 className="mr-2 h-4 w-4" />
-    Delete Group
-  </ContextMenuItem>
-</ContextMenuContent>
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete Group
+          </ContextMenuItem>
+        </ContextMenuContent>
       </ContextMenu>
-<AlertDialog
-  open={openDelete}
-  onOpenChange={setOpenDelete}
->
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle>
-        Delete Group?
-      </AlertDialogTitle>
+      <AlertDialog
+        open={openDelete}
+        onOpenChange={setOpenDelete}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Delete Group?
+            </AlertDialogTitle>
 
-      <AlertDialogDescription>
-        This action cannot be undone.
-        All kanji inside this group will be removed.
-      </AlertDialogDescription>
-    </AlertDialogHeader>
+            <AlertDialogDescription>
+              This action cannot be undone.
+              All kanji inside this group will be removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
 
-    <AlertDialogFooter>
-      <AlertDialogCancel>
-        Cancel
-      </AlertDialogCancel>
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              Cancel
+            </AlertDialogCancel>
 
-      <AlertDialogAction
-        className="
+            <AlertDialogAction
+              className="
           bg-red-600
           hover:bg-red-700
         "
-        onClick={async () => {
-          await deleteGroupAPI(id);
+              onClick={async () => {
+                await deleteGroupAPI(id);
 
-          removeGroupUI(setData, id);
+                removeGroupUI(setData, id);
 
-          setOpenDelete(false);
-        }}
-      >
-        Delete
-      </AlertDialogAction>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
+                setOpenDelete(false);
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
 
     </div>

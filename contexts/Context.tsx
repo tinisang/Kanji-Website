@@ -3,6 +3,8 @@
 
 import { KanjiGroup } from "@/types/group";
 import { Kanji } from "@/types/kanji";
+import { ReferenceSet } from "@/types/reference";
+import { KanjiReferenceItem } from "@/types/reference-item";
 
 import {
   createContext,
@@ -14,7 +16,11 @@ import {
 type KanjiData = {
   groups: Record<string, KanjiGroup>;
   kanjis: Record<string, Kanji>;
+
+  reference_sets: Record<string, ReferenceSet>;
+
   kanji_group_items: Record<string, string[]>;
+  kanji_reference_items: Record<string, KanjiReferenceItem[]>;
 };
 
 type KanjiContextType = {
@@ -93,22 +99,23 @@ export function removeKanjiUI(
     };
 
     delete nextKanjis[kanjiId];
+    const nextReferenceItems = {
+      ...prev.kanji_reference_items,
+    };
 
+    delete nextReferenceItems[kanjiId];
     return {
       ...prev,
-
       kanjis: nextKanjis,
-
       kanji_group_items: Object.fromEntries(
-        Object.entries(
-          prev.kanji_group_items
-        ).map(([groupId, kanjiIds]) => [
-          groupId,
-          kanjiIds.filter(
-            id => id !== kanjiId
-          ),
-        ])
+        Object.entries(prev.kanji_group_items).map(
+          ([groupId, kanjiIds]) => [
+            groupId,
+            kanjiIds.filter(id => id !== kanjiId),
+          ]
+        )
       ),
+      kanji_reference_items: nextReferenceItems,
     };
   });
 }
@@ -167,11 +174,11 @@ export function removeGroupUI(
       nextGroupItems[
         unclassifiedGroup.id
       ] = [
-        ...(nextGroupItems[
-          unclassifiedGroup.id
-        ] ?? []),
-        ...movedKanjiIds,
-      ];
+          ...(nextGroupItems[
+            unclassifiedGroup.id
+          ] ?? []),
+          ...movedKanjiIds,
+        ];
     }
 
     return {
@@ -180,4 +187,172 @@ export function removeGroupUI(
       kanji_group_items: nextGroupItems,
     };
   });
+}
+
+export function addReferenceSetUI(
+  setData: React.Dispatch<React.SetStateAction<KanjiData>>,
+  referenceSet: ReferenceSet
+) {
+  setData(prev => ({
+    ...prev,
+
+    reference_sets: {
+      ...prev.reference_sets,
+      [referenceSet.id]: referenceSet,
+    },
+  }));
+}
+
+export function updateReferenceSetUI(
+  setData: React.Dispatch<React.SetStateAction<KanjiData>>,
+  referenceSet: ReferenceSet
+) {
+  setData(prev => ({
+    ...prev,
+
+    reference_sets: {
+      ...prev.reference_sets,
+      [referenceSet.id]: referenceSet,
+    },
+  }));
+}
+
+export function removeReferenceSetUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  referenceSetId: string
+) {
+  setData(prev => {
+    const nextReferenceSets = {
+      ...prev.reference_sets,
+    };
+
+    delete nextReferenceSets[referenceSetId];
+
+    return {
+      ...prev,
+
+      reference_sets: nextReferenceSets,
+
+      kanji_reference_items:
+        Object.fromEntries(
+          Object.entries(
+            prev.kanji_reference_items
+          ).map(([kanjiId, items]) => [
+            kanjiId,
+            items.filter(
+              item =>
+                item.reference_set_id !==
+                referenceSetId
+            ),
+          ])
+        ),
+    };
+  });
+}
+
+export function addKanjiReferenceUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  item: KanjiReferenceItem
+) {
+  setData(prev => ({
+    ...prev,
+
+    kanji_reference_items: {
+      ...prev.kanji_reference_items,
+
+      [item.kanji_id]: [
+        ...(prev.kanji_reference_items[
+          item.kanji_id
+        ] ?? []),
+        item,
+      ],
+    },
+  }));
+}
+
+export function removeKanjiReferenceUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  kanjiId: string,
+  referenceSetId: string
+) {
+  setData(prev => ({
+    ...prev,
+
+    kanji_reference_items: {
+      ...prev.kanji_reference_items,
+
+      [kanjiId]: (
+        prev.kanji_reference_items[
+          kanjiId
+        ] ?? []
+      ).filter(
+        item =>
+          item.reference_set_id !==
+          referenceSetId
+      ),
+    },
+  }));
+}
+
+export function setKanjiReferencesUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  kanjiId: string,
+  items: KanjiReferenceItem[]
+) {
+  setData(prev => ({
+    ...prev,
+
+    kanji_reference_items: {
+      ...prev.kanji_reference_items,
+
+      [kanjiId]: items,
+    },
+  }));
+}
+
+export function updateKanjiReferenceItemUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  item: KanjiReferenceItem
+) {
+  setData(prev => ({
+    ...prev,
+
+    kanji_reference_items: {
+      ...prev.kanji_reference_items,
+
+      [item.kanji_id]: (
+        prev.kanji_reference_items[
+          item.kanji_id
+        ] ?? []
+      ).map(i =>
+        i.id === item.id ? item : i
+      ),
+    },
+  }));
+}
+
+export function updateKanjiUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  kanji: Kanji
+) {
+  setData(prev => ({
+    ...prev,
+
+    kanjis: {
+      ...prev.kanjis,
+      [kanji.id]: kanji,
+    },
+  }));
 }

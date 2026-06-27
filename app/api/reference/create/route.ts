@@ -18,7 +18,6 @@ export async function POST(req: NextRequest) {
 
     const createdReferenceSet =
       await createReferenceSet(
-        session.user.id,
         referenceSet
       );
 

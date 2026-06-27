@@ -10,6 +10,7 @@ import {
   updateGroupName,
   updateGroupPositions,
 } from "@/lib/repositories/group.repository";
+import { moveGroupItems } from "@/lib/repositories/kanji-group.repository";
 
 async function getCurrentUserId() {
   const session = await auth();
@@ -20,6 +21,10 @@ async function getCurrentUserId() {
 
   return session.user.id;
 }
+
+
+
+
 
 export async function getAllGroups() {
   const userId =

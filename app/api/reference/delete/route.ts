@@ -21,7 +21,7 @@ export async function DELETE(
       await req.json();
 
     await deleteReferenceSet(
-      session.user.id,
+
       referenceSetId
     );
 

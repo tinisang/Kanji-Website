@@ -55,7 +55,6 @@ await updateGroupItemsAPI(
   };
 
 
-  console.log(items)
   return (
     <DragDropProvider
       onDragEnd={saveChanges}
