@@ -48,7 +48,7 @@ export default function KanjiItem({
 }: KanjiItemProps) {
 
 
-  const { data, setData } = useKanji();
+  const { data, setData, dragEnabled } = useKanji();
 
 
   const { ref, handleRef } = useSortable({
@@ -57,6 +57,8 @@ export default function KanjiItem({
     type: "item",
     accept: "item",
     group: groupId,
+    disabled: dragEnabled
+   
   });
 
   const referenceItems =
@@ -73,7 +75,7 @@ export default function KanjiItem({
 
           <article
 
-            className="
+            className={`
     group relative
     cursor-pointer
     rounded-md p-2
@@ -82,7 +84,10 @@ export default function KanjiItem({
     data-[state=open]:bg-lime-50
       data-[state=open]:ring-1
       data-[state=open]:ring-lime-300
-  "
+${dragEnabled
+      ? "bg-lime-50 ring-2 ring-lime-300 shadow-sm"
+      : "cursor-pointer hover:bg-neutral-100"}
+  `}
           >
             <div
               ref={handleRef}
@@ -98,7 +103,7 @@ export default function KanjiItem({
     w-full
   "
             >
-              <GripHorizontal className="h-4 w-4 text-[#51670F]" />
+             {!dragEnabled&&<GripHorizontal className="h-4 w-4 text-[#51670F]" />} 
             </div>
 
             <KanjiDetailModal

@@ -18,95 +18,101 @@ import ReferenceSection from "@/app/features/reference/components/ReferenceSecti
 import { getAllReferenceSets } from "./features/reference/services/reference.service";
 import { getAllKanjiReferenceItems } from "./features/reference/services/reference-item.service";
 import { KanjiReferenceItem } from "@/types/reference-item";
+import DragToggle from "@/components/ui/DragToggle";
 
 
 export default async function Home() {
- const session = await auth();
+  const session = await auth();
 
   if (!session) {
     redirect("/login");
   }
- const groups = await getAllGroups();
-const kanjis = await getAllKanji();
-const kanjiGroupItems = await getAllGroupItems();
+  const groups = await getAllGroups();
+  const kanjis = await getAllKanji();
+  const kanjiGroupItems = await getAllGroupItems();
 
-const referenceSets = await getAllReferenceSets();
-const kanjiReferenceItems = await getAllKanjiReferenceItems();
+  const referenceSets = await getAllReferenceSets();
+  const kanjiReferenceItems = await getAllKanjiReferenceItems();
 
-const data = {
-  groups: Object.fromEntries(
-    groups.map((group) => [group.id, group])
-  ),
+  const data = {
+    groups: Object.fromEntries(
+      groups.map((group) => [group.id, group])
+    ),
 
-  kanjis: Object.fromEntries(
-    kanjis.map((kanji) => [kanji.id, kanji])
-  ),
+    kanjis: Object.fromEntries(
+      kanjis.map((kanji) => [kanji.id, kanji])
+    ),
 
-  reference_sets: Object.fromEntries(
-    referenceSets.map((referenceSet) => [
-      referenceSet.id,
-      referenceSet,
-    ])
-  ),
+    reference_sets: Object.fromEntries(
+      referenceSets.map((referenceSet) => [
+        referenceSet.id,
+        referenceSet,
+      ])
+    ),
 
-  kanji_group_items: (() => {
-    const result: Record<string, string[]> =
-      Object.fromEntries(
-        groups.map((group) => [group.id, []])
+    kanji_group_items: (() => {
+      const result: Record<string, string[]> =
+        Object.fromEntries(
+          groups.map((group) => [group.id, []])
+        );
+
+      kanjiGroupItems.forEach(
+        ({ group_id, kanji_id }) => {
+          result[group_id] ??= [];
+          result[group_id].push(kanji_id);
+        }
       );
 
-    kanjiGroupItems.forEach(
-      ({ group_id, kanji_id }) => {
-        result[group_id] ??= [];
-        result[group_id].push(kanji_id);
-      }
-    );
+      return result;
+    })(),
 
-    return result;
-  })(),
+    kanji_reference_items: (() => {
+      const result: Record<
+        string,
+        KanjiReferenceItem[]
+      > = Object.fromEntries(
+        kanjis.map((kanji) => [kanji.id, []])
+      );
 
-  kanji_reference_items: (() => {
-    const result: Record<
-      string,
-      KanjiReferenceItem[]
-    > = Object.fromEntries(
-      kanjis.map((kanji) => [kanji.id, []])
-    );
+      kanjiReferenceItems.forEach((item) => {
+        result[item.kanji_id] ??= [];
+        result[item.kanji_id].push(item);
+      });
 
-    kanjiReferenceItems.forEach((item) => {
-      result[item.kanji_id] ??= [];
-      result[item.kanji_id].push(item);
-    });
+      return result;
+    })(),
+  };
 
-    return result;
-  })(),
-};
+  function handleToggle() {
 
-  
+  }
+
+
 
   return (
     <div>
-       <KanjiProvider initialData={data}>
-      <Header />
-      <ToolBar />
-      <ReferenceSection/>
-      <div className="grid grid-cols-[1fr_3fr] gap-8">
-        <StatusTitle>未分類</StatusTitle>
-        <StatusTitle>分類済み</StatusTitle>
-      </div>
+      <KanjiProvider initialData={data}>
+        <Header />
+        <ToolBar />
+        <ReferenceSection />
+        <DragToggle></DragToggle>
+        <div className="grid grid-cols-[1fr_3fr] gap-8">
+          <StatusTitle>未分類</StatusTitle>
+          <StatusTitle>分類済み</StatusTitle>
+        </div>
 
 
 
-      <div className="mt-8 grid grid-cols-[1fr_3fr] gap-4">
-        
+        <div className="mt-8 grid grid-cols-[1fr_3fr] gap-4">
 
-       
+
+
           <HomeClient />
-      
 
 
-      
-      </div>
+
+
+        </div>
       </KanjiProvider>
 
     </div>

@@ -45,7 +45,7 @@ export default function KanjiGroup({ data, id, index, children }: KanjiGroupProp
 
 
   const [openDelete, setOpenDelete] = useState(false);
-  const { data: globalData, setData } = useKanji();
+  const { data: globalData, setData, dragEnabled } = useKanji();
 
   const itemIdList = data;
 
@@ -65,7 +65,8 @@ export default function KanjiGroup({ data, id, index, children }: KanjiGroupProp
     type: 'group',
     accept: ['item', 'group'],
     group: "classified",
-    collisionPriority: CollisionPriority.Low
+    collisionPriority: CollisionPriority.Low,
+    disabled: dragEnabled
 
   });
 

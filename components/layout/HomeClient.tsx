@@ -57,6 +57,7 @@ await updateGroupItemsAPI(
 
   return (
     <DragDropProvider
+   
       onDragEnd={saveChanges}
       onDragOver={(event) => {
         const { source } = event.operation;

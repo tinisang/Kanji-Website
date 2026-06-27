@@ -26,6 +26,9 @@ type KanjiData = {
 type KanjiContextType = {
   data: KanjiData;
   setData: React.Dispatch<React.SetStateAction<KanjiData>>;
+
+  dragEnabled: boolean;
+  setDragEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const KanjiContext = createContext<KanjiContextType | null>(null);
@@ -41,8 +44,18 @@ export function KanjiProvider({
 }: KanjiProviderProps) {
   const [data, setData] = useState(initialData);
 
+  const [dragEnabled, setDragEnabled] = useState(false);
+
   return (
-    <KanjiContext.Provider value={{ data, setData }}>
+    <KanjiContext.Provider
+      value={{
+        data,
+        setData,
+
+        dragEnabled,
+        setDragEnabled,
+      }}
+    >
       {children}
     </KanjiContext.Provider>
   );

@@ -32,7 +32,7 @@ export default function KanjiDetailModal({
   children
 }: KanjiDetailModalProps) {
 
-  const { data, setData } = useKanji();
+  const { data, setData, dragEnabled } = useKanji();
 
 const references = Object.values(data.reference_sets).sort(
   (a, b) => a.position - b.position
@@ -152,10 +152,16 @@ const referenceItems = data.kanji_reference_items[kanji.id] ?? [];
       update
     )
   }
-
+const [open, setOpen] = useState(false);
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog
+    open={open}
+  onOpenChange={(value) => {
+    if (dragEnabled) return;
+    setOpen(value);
+  }}
+    >
+      <DialogTrigger  asChild>{children}</DialogTrigger>
       <DialogContent showCloseButton={false} className="!max-w-5xl p-0 font-inherit">
 
         <div className="overflow-hidden rounded-lg border-l-4 border-l-lime-500">
