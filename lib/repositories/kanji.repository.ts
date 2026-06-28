@@ -81,6 +81,7 @@ export async function updateKanjiById(
       vocabularies = ${JSON.stringify(
         kanji.vocabularies
       )}::jsonb,
+      learned = ${kanji.learned},
       updated_at = NOW()
     WHERE
       id = ${kanji.id}

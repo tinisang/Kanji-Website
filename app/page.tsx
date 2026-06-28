@@ -19,6 +19,7 @@ import { getAllReferenceSets } from "./features/reference/services/reference.ser
 import { getAllKanjiReferenceItems } from "./features/reference/services/reference-item.service";
 import { KanjiReferenceItem } from "@/types/reference-item";
 import DragToggle from "@/components/ui/DragToggle";
+import FloatingToolbar from "@/components/layout/FloatingToolBar";
 
 
 export default async function Home() {
@@ -83,6 +84,8 @@ export default async function Home() {
     })(),
   };
 
+
+
   function handleToggle() {
 
   }
@@ -95,7 +98,8 @@ export default async function Home() {
         <Header />
         <ToolBar />
         <ReferenceSection />
-        <DragToggle></DragToggle>
+        <FloatingToolbar
+/>
         <div className="grid grid-cols-[1fr_3fr] gap-8">
           <StatusTitle>未分類</StatusTitle>
           <StatusTitle>分類済み</StatusTitle>

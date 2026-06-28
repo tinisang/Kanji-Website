@@ -1,4 +1,4 @@
-import { CreateKanjiInput } from "@/types/kanji";
+import { CreateKanjiInput, Kanji } from "@/types/kanji";
 
 export async function createKanjiAndAssignGroupAPI(
   kanji: CreateKanjiInput,
@@ -48,6 +48,29 @@ export async function deleteKanjiAPI(
   if (!response.ok) {
     throw new Error(
       "Failed to delete kanji"
+    );
+  }
+
+  return response.json();
+}
+
+
+export async function handleSaveKanji(kanji: Kanji) {
+  const response = await fetch(
+    "/api/kanji/update",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type":
+          "application/json",
+      },
+      body: JSON.stringify(kanji),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Update failed"
     );
   }
 

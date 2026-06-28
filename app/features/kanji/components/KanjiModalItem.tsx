@@ -10,7 +10,7 @@ import {
 import { EditableText } from "./EditableText";
 
 import { useState } from "react";
-import { handleSaveKanji } from "./handleSaveKanji";
+
 import { Input } from "../../../../components/ui/input";
 import { Button } from "../../../../components/ui/button";
 import TiptapEditor from "./TipTapEditor";
@@ -21,6 +21,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import ReferenceBadge from "../../reference/components/ReferenceBadge";
+import { handleSaveKanji } from "../api/kanji.client";
 interface KanjiDetailModalProps {
   kanji: Kanji;
   
@@ -157,7 +158,7 @@ const [open, setOpen] = useState(false);
     <Dialog
     open={open}
   onOpenChange={(value) => {
-    if (dragEnabled) return;
+    if (!dragEnabled) return;
     setOpen(value);
   }}
     >

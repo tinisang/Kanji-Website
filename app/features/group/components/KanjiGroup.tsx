@@ -66,7 +66,7 @@ export default function KanjiGroup({ data, id, index, children }: KanjiGroupProp
     accept: ['item', 'group'],
     group: "classified",
     collisionPriority: CollisionPriority.Low,
-    disabled: dragEnabled
+    disabled: !dragEnabled
 
   });
 

@@ -23,14 +23,20 @@ type KanjiData = {
   kanji_reference_items: Record<string, KanjiReferenceItem[]>;
 };
 
+type LearnedFilter = "all" | "learned" | "unlearned";
+
 type KanjiContextType = {
   data: KanjiData;
   setData: React.Dispatch<React.SetStateAction<KanjiData>>;
 
   dragEnabled: boolean;
   setDragEnabled: React.Dispatch<React.SetStateAction<boolean>>;
-};
 
+  learnedFilter: LearnedFilter;
+  setLearnedFilter: React.Dispatch<
+    React.SetStateAction<LearnedFilter>
+  >;
+};
 const KanjiContext = createContext<KanjiContextType | null>(null);
 
 interface KanjiProviderProps {
@@ -43,8 +49,10 @@ export function KanjiProvider({
   initialData,
 }: KanjiProviderProps) {
   const [data, setData] = useState(initialData);
+  const [dragEnabled, setDragEnabled] = useState(true);
 
-  const [dragEnabled, setDragEnabled] = useState(false);
+  const [learnedFilter, setLearnedFilter] =
+    useState<LearnedFilter>("all");
 
   return (
     <KanjiContext.Provider
@@ -54,6 +62,9 @@ export function KanjiProvider({
 
         dragEnabled,
         setDragEnabled,
+
+        learnedFilter,
+        setLearnedFilter,
       }}
     >
       {children}

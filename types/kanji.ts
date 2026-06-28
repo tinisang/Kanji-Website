@@ -4,9 +4,7 @@ export interface Vocabulary {
   reading: string;
   meaning: string;
 }
-
 export interface Kanji {
-  example: string| null;
   id: string;
 
   character: string;
@@ -15,10 +13,14 @@ export interface Kanji {
   onyomi: string | null;
   kunyomi: string | null;
 
+  example: string | null;
+
   vocabularies: Vocabulary[] | null;
 
   short_description: string | null;
   content: string | null;
+
+  learned: boolean;
 
   created_at: string;
   updated_at: string;

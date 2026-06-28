@@ -148,6 +148,7 @@ export default function AddKanjiModal({
         vocabularies: [],
         short_description: null,
         content: null,
+        learned: false
     };
     const handleSubmit = async (
         e: React.FormEvent<HTMLFormElement>
