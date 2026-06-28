@@ -13,6 +13,7 @@ export default function FloatingToolbar() {
         flex items-center gap-2
         rounded-2xl border border-neutral-200
         bg-white px-2 py-2
+        z-100
         shadow-lg
       "
     >
