@@ -1,6 +1,6 @@
 export async function createGroupAPI() {
   const response = await fetch(
-    "/api/kanji-group/create",
+    "/kanji/api/kanji-group/create",
     {
       method: "POST",
     }
@@ -21,7 +21,7 @@ export async function updateGroupsAPI(
   updates: GroupUpdate[]
 ) {
   const response = await fetch(
-    "/api/kanji-group/update",
+    "/kanji/api/kanji-group/update",
     {
       method: "POST",
       headers: {
@@ -49,7 +49,7 @@ export async function deleteGroupAPI(
   groupId: string
 ) {
   await fetch(
-  "/api/kanji-group/delete",
+  "/kanji/api/kanji-group/delete",
   {
     method: "DELETE",
     headers: {

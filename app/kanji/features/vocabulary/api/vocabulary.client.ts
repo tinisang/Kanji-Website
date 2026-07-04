@@ -1,7 +1,7 @@
 import { Vocabulary } from "@/app/kanji/types/vocabulary";
 
 export async function getAllVocabulary() {
-  const res = await fetch("/api/vocabulary");
+  const res = await fetch("/kanji/api/vocabulary");
 
   if (!res.ok) {
     throw new Error("Failed to fetch vocabularies");
@@ -16,7 +16,7 @@ export async function getVocabularyByKanji(
   kanjiId: string
 ) {
   const res = await fetch(
-    `/api/kanji/${kanjiId}/vocabulary`
+    `/kanji/api/kanji/${kanjiId}/vocabulary`
   );
 
   if (!res.ok) {
@@ -32,7 +32,7 @@ export async function createVocabulary(
     "id" | "user_id" | "created_at" | "updated_at"
   >
 ) {
-  const res = await fetch("/api/vocabulary", {
+  const res = await fetch("/kanji/api/vocabulary", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -50,7 +50,7 @@ export async function createVocabulary(
 export async function updateVocabulary(
   vocabulary: Vocabulary
 ) {
-  const res = await fetch(`/api/vocabulary/${vocabulary.id}`, {
+  const res = await fetch(`/kanji/api/vocabulary/${vocabulary.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -66,7 +66,7 @@ export async function updateVocabulary(
 }
 
 export async function deleteVocabulary(id: string) {
-  const res = await fetch(`/api/vocabulary/${id}`, {
+  const res = await fetch(`/kanji/api/vocabulary/${id}`, {
     method: "DELETE",
   });
 

@@ -1,7 +1,7 @@
 import { KanjiReferenceItem } from "@/app/kanji/types/reference-item";
 
 export async function getAllKanjiReferenceItemsAPI() {
-  const response = await fetch("/api/reference-item");
+  const response = await fetch("/kanji/api/reference-item");
 
   if (!response.ok) {
     throw new Error(
@@ -19,7 +19,7 @@ export async function addKanjiReferenceItemAPI(
   >
 ) {
   const response = await fetch(
-    "/api/reference-item",
+    "/kanji/api/reference-item",
     {
       method: "POST",
       headers: {
@@ -44,7 +44,7 @@ export async function removeKanjiReferenceAPI(
   referenceSetId: string
 ) {
   const response = await fetch(
-    "/api/reference-item",
+    "/kanji/api/reference-item",
     {
       method: "DELETE",
       headers: {
@@ -71,7 +71,7 @@ export async function editKanjiReferenceItemAPI(
   item: KanjiReferenceItem
 ) {
   const response = await fetch(
-    "/api/reference-item",
+    "/kanji/api/reference-item",
     {
       method: "PUT",
       headers: {

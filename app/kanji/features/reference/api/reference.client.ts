@@ -9,7 +9,7 @@ export async function createReferenceSetAPI(
   >
 ) {
   const response = await fetch(
-    "/api/reference/create",    
+    "/kanji/api/reference/create",    
     {
       method: "POST",
       headers: {
@@ -30,7 +30,7 @@ export async function createReferenceSetAPI(
 
 export async function getAllReferenceSetsAPI() {
   const response = await fetch(
-    "/api/reference"
+    "/kanji/api/reference"
   );
 
   if (!response.ok) {
@@ -46,7 +46,7 @@ export async function updateReferenceSetAPI(
   referenceSet: ReferenceSet
 ) {
   const response = await fetch(
-    "/api/reference/update",
+    "/kanji/api/reference/update",
     {
       method: "PUT",
       headers: {
@@ -69,7 +69,7 @@ export async function deleteReferenceSetAPI(
   referenceSetId: string
 ) {
   const response = await fetch(
-    "/api/reference/delete",
+    "/kanji/api/reference/delete",
     {
       method: "DELETE",
       headers: {

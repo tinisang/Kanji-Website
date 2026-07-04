@@ -8,7 +8,7 @@ export async function updateGroupItemsAPI(
   updates: GroupItemUpdate[]
 ) {
   const response = await fetch(
-    "/api/kanji-group-item/update",
+    "/kanji/api/kanji-group-item/update",
     {
       method: "POST",
       headers: {

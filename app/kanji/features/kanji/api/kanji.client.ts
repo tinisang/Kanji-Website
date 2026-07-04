@@ -5,7 +5,7 @@ export async function createKanjiAndAssignGroupAPI(
   groupId: string
 ) {
   const response = await fetch(
-    "/api/kanji/create",
+    "/kanji/api/kanji/create",
     {
       method: "POST",
       headers: {
@@ -32,7 +32,7 @@ export async function deleteKanjiAPI(
   kanjiId: string
 ) {
   const response = await fetch(
-    "/api/kanji/delete",
+    "/kanji/api/kanji/delete",
     {
       method: "POST",
       headers: {
@@ -57,7 +57,7 @@ export async function deleteKanjiAPI(
 
 export async function handleSaveKanji(kanji: Kanji) {
   const response = await fetch(
-    "/api/kanji/update",
+    "/kanji/api/kanji/update",
     {
       method: "POST",
       headers: {

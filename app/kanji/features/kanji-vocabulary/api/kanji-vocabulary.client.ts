@@ -4,7 +4,7 @@ export async function getKanjiVocabularyByKanji(
   kanjiId: string
 ) {
   const res = await fetch(
-    `/api/kanji-vocabulary/kanji/${kanjiId}`
+    `/kanji/api/kanji-vocabulary/kanji/${kanjiId}`
   );
 
   if (!res.ok) {
@@ -18,7 +18,7 @@ export async function getKanjiVocabularyByVocabulary(
   vocabularyId: string
 ) {
   const res = await fetch(
-    `/api/kanji-vocabulary/vocabulary/${vocabularyId}`
+    `/kanji/api/kanji-vocabulary/vocabulary/${vocabularyId}`
   );
 
   if (!res.ok) {
@@ -31,7 +31,7 @@ export async function getKanjiVocabularyByVocabulary(
 export async function createKanjiVocabulary(
   relation: KanjiVocabulary
 ) {
-  const res = await fetch("/api/kanji-vocabulary", {
+  const res = await fetch("/kanji/api/kanji-vocabulary", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export async function deleteKanjiVocabulary(
   vocabularyId: string
 ) {
   const res = await fetch(
-    `/api/kanji-vocabulary?kanjiId=${kanjiId}&vocabularyId=${vocabularyId}`,
+    `/kanji/api/kanji-vocabulary?kanjiId=${kanjiId}&vocabularyId=${vocabularyId}`,
     {
       method: "DELETE",
     }
@@ -66,7 +66,7 @@ export async function updateKanjiVocabularyPositions(
   relations: KanjiVocabulary[]
 ) {
   const res = await fetch(
-    "/api/kanji-vocabulary/position",
+    "/kanji/api/kanji-vocabulary/position",
     {
       method: "PATCH",
       headers: {
