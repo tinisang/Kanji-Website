@@ -1,12 +1,12 @@
 "use client";
 
 
-import { KanjiGroup } from "@/types/group";
-import { Kanji } from "@/types/kanji";
-import { ReferenceSet } from "@/types/reference";
-import { KanjiReferenceItem } from "@/types/reference-item";
-import { Vocabulary } from "@/types/vocabulary";
-import { KanjiVocabulary } from "@/types/kanji-vocabulary";
+import { KanjiGroup } from "@/app/kanji/types/group";
+import { Kanji } from "@/app/kanji/types/kanji";
+import { ReferenceSet } from "@/app/kanji/types/reference";
+import { KanjiReferenceItem } from "@/app/kanji/types/reference-item";
+import { Vocabulary } from "@/app/kanji/types/vocabulary";
+
 import {
   createContext,
   useContext,

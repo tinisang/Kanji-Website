@@ -1,27 +1,27 @@
 
 import { auth } from "@/auth";
 import Header from "@/components/layout/Header";
-import HomeClient from "@/components/layout/HomeClient";
+import HomeClient from "@/app/kanji/components/layout/HomeClient";
 
 
-import StatusTitle from "@/components/layout/StatusTitle";
-import ToolBar from "@/components/layout/ToolBar";
+import StatusTitle from "@/app/kanji/components/layout/StatusTitle";
+
 import { KanjiProvider } from "@/contexts/Context";
-import { getAllGroups } from "@/app/features/group/services/group.service";
+import { getAllGroups } from "@/app/kanji/features/group/services/group.service";
 
 
 import { redirect } from "next/navigation";
 
-import { getAllKanji } from "../features/kanji/services/kanji.service";
-import { getAllGroupItems } from "../features/collection/services/kanji-group.service";
-import ReferenceSection from "@/app/features/reference/components/ReferenceSection";
-import { getAllReferenceSets } from "../features/reference/services/reference.service";
-import { getAllKanjiReferenceItems } from "../features/reference/services/reference-item.service";
-import { KanjiReferenceItem } from "@/types/reference-item";
+import { getAllKanji } from "@/app/kanji/features/kanji/services/kanji.service";
+import { getAllGroupItems } from "@/app/kanji/features/collection/services/kanji-group.service";
+import ReferenceSection from "@/app/kanji/features/reference/components/ReferenceSection";
+import { getAllReferenceSets } from "@/app/kanji/features/reference/services/reference.service";
+import { getAllKanjiReferenceItems } from "@/app/kanji/features/reference/services/reference-item.service";
+import { KanjiReferenceItem } from "@/app/kanji/types/reference-item";
 import DragToggle from "@/components/ui/DragToggle";
-import FloatingToolbar from "@/components/layout/FloatingToolBar";
-import { getAllVocabulary } from "../features/vocabulary/services/vocabulary.service";
-import { getAllKanjiVocabulary } from "../features/kanji-vocabulary/services/kanji-vocabulary.service";
+import FloatingToolbar from "@/app/kanji/components/layout/FloatingToolBar";
+import { getAllVocabulary } from "@/app/kanji/features/vocabulary/services/vocabulary.service";
+import { getAllKanjiVocabulary } from "@/app/kanji/features/kanji-vocabulary/services/kanji-vocabulary.service";
 
 export default async function Home() {
   const session = await auth();
