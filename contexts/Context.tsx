@@ -5,7 +5,8 @@ import { KanjiGroup } from "@/types/group";
 import { Kanji } from "@/types/kanji";
 import { ReferenceSet } from "@/types/reference";
 import { KanjiReferenceItem } from "@/types/reference-item";
-
+import { Vocabulary } from "@/types/vocabulary";
+import { KanjiVocabulary } from "@/types/kanji-vocabulary";
 import {
   createContext,
   useContext,
@@ -17,12 +18,18 @@ type KanjiData = {
   groups: Record<string, KanjiGroup>;
   kanjis: Record<string, Kanji>;
 
+  vocabularies: Record<string, Vocabulary>;
+
   reference_sets: Record<string, ReferenceSet>;
 
   kanji_group_items: Record<string, string[]>;
   kanji_reference_items: Record<string, KanjiReferenceItem[]>;
-};
 
+  kanji_vocabulary_items: Record<
+    string,
+    string[]
+  >;
+};
 type LearnedFilter = "all" | "learned" | "unlearned";
 
 type KanjiContextType = {
@@ -118,6 +125,9 @@ export function removeKanjiUI(
   kanjiId: string
 ) {
   setData(prev => {
+
+
+
     const nextKanjis = {
       ...prev.kanjis,
     };
@@ -128,8 +138,16 @@ export function removeKanjiUI(
     };
 
     delete nextReferenceItems[kanjiId];
+
+    const nextVocabularyItems = {
+  ...prev.kanji_vocabulary_items,
+};
+
+delete nextVocabularyItems[kanjiId];
+
     return {
       ...prev,
+      kanji_vocabulary_items:nextVocabularyItems,
       kanjis: nextKanjis,
       kanji_group_items: Object.fromEntries(
         Object.entries(prev.kanji_group_items).map(
@@ -141,7 +159,13 @@ export function removeKanjiUI(
       ),
       kanji_reference_items: nextReferenceItems,
     };
+
+
+    
+
   });
+
+  
 }
 
 export function addGroupUI(
@@ -377,6 +401,110 @@ export function updateKanjiUI(
     kanjis: {
       ...prev.kanjis,
       [kanji.id]: kanji,
+    },
+  }));
+}
+
+export function addVocabularyUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  vocabulary: Vocabulary,
+  kanjiId: string
+) {
+  setData(prev => ({
+    ...prev,
+
+    vocabularies: {
+      ...prev.vocabularies,
+      [vocabulary.id]: vocabulary,
+    },
+
+    kanji_vocabulary_items: {
+      ...prev.kanji_vocabulary_items,
+
+      [kanjiId]: [
+        ...(prev.kanji_vocabulary_items[
+          kanjiId
+        ] ?? []),
+        vocabulary.id,
+      ],
+    },
+  }));
+}
+
+export function updateVocabularyUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  vocabulary: Vocabulary
+) {
+  setData(prev => ({
+    ...prev,
+
+    vocabularies: {
+      ...prev.vocabularies,
+      [vocabulary.id]: vocabulary,
+    },
+  }));
+}
+
+export function removeVocabularyUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  vocabularyId: string
+) {
+  setData(prev => {
+    const next = {
+      ...prev.vocabularies,
+    };
+
+    delete next[vocabularyId];
+
+    return {
+      ...prev,
+
+      vocabularies: next,
+
+      kanji_vocabulary_items:
+        Object.fromEntries(
+          Object.entries(
+            prev.kanji_vocabulary_items
+          ).map(([kanjiId, ids]) => [
+            kanjiId,
+            ids.filter(
+              id => id !== vocabularyId
+            ),
+          ])
+        ),
+    };
+  });
+}
+
+export function setKanjiVocabulariesUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  kanjiId: string,
+  vocabularies: Vocabulary[]
+) {
+  setData(prev => ({
+    ...prev,
+
+    vocabularies: {
+      ...prev.vocabularies,
+      ...Object.fromEntries(
+        vocabularies.map(v => [v.id, v])
+      ),
+    },
+
+    kanji_vocabulary_items: {
+      ...prev.kanji_vocabulary_items,
+
+      [kanjiId]: vocabularies.map(
+        v => v.id
+      ),
     },
   }));
 }

@@ -6,6 +6,7 @@ import {
 } from "@/lib/repositories/kanji.repository";
 
 import { getGroupById } from "@/lib/repositories/group.repository";
+import * as kanjiRepository  from "@/lib/repositories/kanji.repository";
 
 import {
   createGroupItem,
@@ -24,6 +25,16 @@ export async function getAllKanji() {
 export async function updateKanji(kanji: Kanji) {
   const userId = await getCurrentUserId();
   return updateKanjiById(userId, kanji);
+}
+
+export async function getKanjiVocabularies(
+  userId: string,
+  kanjiId: string
+) {
+  return kanjiRepository.getKanjiVocabularies(
+    userId,
+    kanjiId
+  );
 }
 
 export async function createKanjiAndAssignGroup(

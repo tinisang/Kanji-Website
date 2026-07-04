@@ -20,7 +20,8 @@ import { getAllKanjiReferenceItems } from "./features/reference/services/referen
 import { KanjiReferenceItem } from "@/types/reference-item";
 import DragToggle from "@/components/ui/DragToggle";
 import FloatingToolbar from "@/components/layout/FloatingToolBar";
-
+import { getAllVocabulary } from "./features/vocabulary/services/vocabulary.service";
+import { getAllKanjiVocabulary } from "./features/kanji-vocabulary/services/kanji-vocabulary.service";
 
 export default async function Home() {
   const session = await auth();
@@ -34,7 +35,10 @@ export default async function Home() {
 
   const referenceSets = await getAllReferenceSets();
   const kanjiReferenceItems = await getAllKanjiReferenceItems();
-
+const vocabularies = await getAllVocabulary();
+const kanjiVocabularies =
+  await getAllKanjiVocabulary();
+  
   const data = {
     groups: Object.fromEntries(
       groups.map((group) => [group.id, group])
@@ -82,7 +86,37 @@ export default async function Home() {
 
       return result;
     })(),
+
+    vocabularies: Object.fromEntries(
+  vocabularies.map((vocabulary) => [
+    vocabulary.id,
+    vocabulary,
+  ])
+),
+
+kanji_vocabulary_items: (() => {
+  const result: Record<string, string[]> =
+    Object.fromEntries(
+      kanjis.map((kanji) => [
+        kanji.id,
+        [],
+      ])
+    );
+
+  kanjiVocabularies.forEach(
+    ({ kanji_id, vocabulary_id }) => {
+      result[kanji_id] ??= [];
+      result[kanji_id].push(
+        vocabulary_id
+      );
+    }
+  );
+
+  return result;
+})(),
   };
+
+  console.log(data)
 
 
 

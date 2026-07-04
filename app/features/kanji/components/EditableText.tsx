@@ -23,40 +23,54 @@ export function EditableText({
     onSave?.(value);
   };
 
+  const baseClass = `
+inline-block
+w-auto
+min-w-0
+
+border-0
+bg-transparent
+outline-none
+
+p-0
+m-0
+
+font-inherit
+text-inherit
+leading-inherit
+
+shadow-none
+ring-0
+focus:ring-0
+focus-visible:ring-0
+
+${className}
+`;
+
   if (editing) {
     return (
       <input
-        autoFocus
-        size={Math.max(value.length, 1)}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onBlur={handleSave}
-         onFocus={onFocus}
-         placeholder={placeholder}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            handleSave();
-          }
-        }}
-        className={`
-  inline-block
-  w-auto
-  min-w-0
-  bg-white
-  
-  p-0
-  font-inherit
-  text-inherit
-  ${className}
-`}
-      />
+  autoFocus
+  size={Math.max(value.length, 1)}
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+  onBlur={handleSave}
+  onFocus={onFocus}
+  placeholder={placeholder}
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      handleSave();
+    }
+  }}
+  className={baseClass}
+/>
     );
   }
 
   return (
     <span
   onClick={() => setEditing(true)}
-  className={`${className} ${
+  className={`${baseClass} cursor-text ${
     !value
       ? "italic text-neutral-400 opacity-60"
       : ""

@@ -39,7 +39,7 @@ export default function ReferenceBadge({
   referenceItems = [],
 }: ReferenceBadgeProps) {
 
-  console.log(referenceItems)
+
 
   const { setData } = useKanji();
 const selectedReferenceIds = referenceItems.map(

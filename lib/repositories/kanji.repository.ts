@@ -1,5 +1,5 @@
 import { sql } from "@/lib/db";
-import { Kanji } from "@/types/kanji";
+import { Kanji, Vocabulary } from "@/types/kanji";
 
 export async function getAllKanjiByUserId(
   userId: string
@@ -13,7 +13,23 @@ export async function getAllKanjiByUserId(
 
   return rows as Kanji[];
 }
+export async function getKanjiVocabularies(
+  userId: string,
+  kanjiId: string
+) {
+  const rows = await sql`
+    SELECT v.*
+    FROM vocabulary v
+    INNER JOIN kanji_vocabulary kv
+      ON kv.vocabulary_id = v.id
+    WHERE
+      kv.kanji_id = ${kanjiId}
+      
+    ORDER BY v.word;
+  `;
 
+  return rows as Vocabulary[];
+}
 export async function getKanjiById(
   userId: string,
   kanjiId: string

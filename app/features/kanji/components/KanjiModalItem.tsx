@@ -22,16 +22,13 @@ import {
 } from "lucide-react";
 import ReferenceBadge from "../../reference/components/ReferenceBadge";
 import { handleSaveKanji } from "../api/kanji.client";
+import KanjiVocabularySection from "../../vocabulary/components/KanjiVocabularySection";
 interface KanjiDetailModalProps {
   kanji: Kanji;
   
   children: React.ReactNode;
 }
-export default function KanjiDetailModal({
-  kanji,
-
-  children
-}: KanjiDetailModalProps) {
+export default function KanjiDetailModal({kanji,children}: KanjiDetailModalProps) {
 
   const { data, setData, dragEnabled } = useKanji();
 
@@ -45,105 +42,7 @@ const referenceItems = data.kanji_reference_items[kanji.id] ?? [];
   const [content, setContent] = useState(
     kanji.content ?? ""
   );
-  const [vocabularies, setVocabularies] = useState(
-    kanji.vocabularies ?? []
-  );
-
-
-  const moveVocabularyUp = (
-    index: number
-  ) => {
-    if (index === 0) return;
-
-    const updated = [...vocabularies];
-
-    [updated[index - 1], updated[index]] = [
-      updated[index],
-      updated[index - 1],
-    ];
-
-    setVocabularies(updated);
-
-    handleSave({
-      ...kanji,
-      vocabularies: updated,
-    });
-  };
-
-  const moveVocabularyDown = (
-    index: number
-  ) => {
-    if (
-      index ===
-      vocabularies.length - 1
-    )
-      return;
-
-    const updated = [...vocabularies];
-
-    [updated[index], updated[index + 1]] = [
-      updated[index + 1],
-      updated[index],
-    ];
-
-    setVocabularies(updated);
-
-    handleSave({
-      ...kanji,
-      vocabularies: updated,
-    });
-  };
-  const addVocabulary = () => {
-    setVocabularies((prev) => [
-      ...prev,
-      {
-        word: "",
-        reading: "",
-        meaning: "",
-      },
-    ]);
-  };
-  const removeVocabulary = (index: number) => {
-    const updated = vocabularies.filter(
-      (_, i) => i !== index
-    );
-
-    setVocabularies(updated);
-
-    const updatedKanji = {
-      ...kanji,
-      vocabularies: updated,
-    };
-
-  
-
-    handleSave(updatedKanji);
-  };
-  const updateVocabulary = (
-    index: number,
-    field: "word" | "reading" | "meaning",
-    value: string
-  ) => {
-    const updated = vocabularies.map((item, i) =>
-      i === index
-        ? {
-          ...item,
-          [field]: value,
-        }
-        : item
-    );
-
-    setVocabularies(updated);
-
-    const updatedKanji = {
-      ...kanji,
-      vocabularies: updated,
-    };
-
-    
-
-    handleSave(updatedKanji);
-  };
+ 
 
   async function handleSave(kanji: Kanji) {
    
@@ -232,159 +131,12 @@ const [open, setOpen] = useState(false);
           </div>
 
           {/* Vocabulary */}
-          <div className="space-y-4 border-t p-6">
-            {vocabularies.map((vocabulary, index) => {
-
-              return (
-                <div
-                  key={index}
-                  className="flex items-center gap-4"
-                >
-                  <Input
-                    value={vocabulary.word}
-                    placeholder="漢字"
-                    onChange={(e) =>
-                      updateVocabulary(
-                        index,
-                        "word",
-                        e.target.value
-                      )
-                    }
-                    className="
-    h-auto
-    w-[180px]
-    border-0
-    bg-transparent
-    p-0
-
-    !text-4xl
-    font-bold
-    leading-none
-
-    shadow-none
-    focus-visible:ring-0
-
-    placeholder:text-neutral-300
-    placeholder:italic
-  "
-                  />
-
-                  <Input
-                    value={vocabulary.reading}
-                    placeholder="かんじ"
-                    onChange={(e) =>
-                      updateVocabulary(
-                        index,
-                        "reading",
-                        e.target.value
-                      )
-                    }
-                    className="
-    h-auto
-    w-[140px]
-    border-0
-    bg-transparent
-    p-0
-
-    !text-2xl
-    leading-none
-
-    shadow-none
-    focus-visible:ring-0
-
-    placeholder:text-neutral-300
-    placeholder:italic
-  "
-                  />
-
-                  <Input
-                    value={vocabulary.meaning}
-                    placeholder="Hán tự"
-                    onChange={(e) =>
-                      updateVocabulary(
-                        index,
-                        "meaning",
-                        e.target.value
-                      )
-                    }
-                    className="
-    h-auto
-    flex-1
-    border-0
-    bg-transparent
-    p-0
-
-    !text-xl
-    leading-none
-
-    shadow-none
-    focus-visible:ring-0
-
-    placeholder:text-neutral-300
-    placeholder:italic
-  "
-                  />
-
-                  <div className="ml-auto flex gap-1">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        moveVocabularyUp(index)
-                      }
-                      disabled={index === 0}
-                      className="
-      rounded p-1
-      hover:bg-neutral-100
-      disabled:opacity-30
-    "
-                    >
-                      <ChevronUp className="h-4 w-4" />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        moveVocabularyDown(index)
-                      }
-                      disabled={
-                        index ===
-                        vocabularies.length - 1
-                      }
-                      className="
-      rounded p-1
-      hover:bg-neutral-100
-      disabled:opacity-30
-    "
-                    >
-                      <ChevronDown className="h-4 w-4" />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        removeVocabulary(index)
-                      }
-                      className="
-      rounded p-1
-      text-red-500
-      hover:bg-red-50
-    "
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              )
-            })}
-
-            <button
-              type="button"
-              onClick={addVocabulary}
-              className="rounded border px-3 py-1 text-sm hover:bg-neutral-100"
-            >
-              + Thêm từ vựng
-            </button>
-          </div>
+          {/* Vocabulary */}
+<div className="border-t p-6">
+  <KanjiVocabularySection
+    kanjiId={kanji.id}
+  />
+</div>
           <div className="bg-lime-50 p-6">
             <h3 className="mb-3">
               Ghi chú
