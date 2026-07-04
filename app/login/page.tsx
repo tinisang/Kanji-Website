@@ -38,6 +38,7 @@ export default function LoginPage() {
 }
 
   return (
+    <body>
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-5xl grid lg:grid-cols-2 overflow-hidden rounded-3xl bg-white shadow-2xl">
         <div className="hidden lg:flex flex-col justify-center bg-[#D8E88D] p-12">
@@ -127,5 +128,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </body>
   );
 }
