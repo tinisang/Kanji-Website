@@ -117,6 +117,7 @@ async function handleAdd() {
       reading: "",
       meaning: "",
       note: "",
+      need_revision: false,
     });
 
   await createKanjiVocabulary({

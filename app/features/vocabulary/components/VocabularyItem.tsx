@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { EditableText } from "../../kanji/components/EditableText";
 import { useKanji } from "@/contexts/Context";
 import { updateVocabulary } from "../api/vocabulary.client";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface Props {
   vocabulary: Vocabulary;
@@ -54,8 +55,16 @@ export default function VocabularyItem({
 
   
 }
+
+function handleRevisionChange(checked: boolean) {
+  onChange("need_revision", checked);
+}
   return (
-    <div className="flex items-start gap-4 border-b-1 py-3">
+    <div  className={`flex items-start gap-4 rounded-xl border py-3 px-2 transition-all ${
+    vocabulary.need_revision
+      ? "border-amber-300 bg-amber-50 shadow-sm"
+      : "border-transparent hover:bg-muted/40"
+  }`}>
       <EditableText
   defaultValue={vocabulary.word}
   placeholder="漢字"
@@ -97,7 +106,13 @@ export default function VocabularyItem({
     leading-none
   "
 />
-
+ <label className="flex items-center gap-2 text-sm text-muted-foreground">
+    <Checkbox
+      checked={vocabulary.need_revision}
+      onCheckedChange={handleRevisionChange}
+    />
+    Need Revision
+  </label>
       <div className="ml-auto flex gap-1">
         <button
           type="button"

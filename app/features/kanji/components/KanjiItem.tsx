@@ -82,6 +82,14 @@ export default function KanjiItem({
   if (!shouldDisplay) {
   return null;
 }
+
+const hasNeedRevision =
+  (data.kanji_vocabulary_items[kanji.id] ?? [])
+    .some(
+      (vocabularyId) =>
+        data.vocabularies[vocabularyId]
+          ?.need_revision
+    );
   return (
     <div ref={ref}>
       <ContextMenu
@@ -89,12 +97,20 @@ export default function KanjiItem({
       >
         <ContextMenuTrigger asChild>
           <div
-           className="
+           className={`
       rounded-md
+      transition-all
+
+      ${
+        hasNeedRevision
+          ? "bg-amber-50 ring-1 ring-amber-300 border border-amber-200"
+          : ""
+      }
+
       data-[state=open]:bg-lime-50
       data-[state=open]:ring-2
       data-[state=open]:ring-lime-300
-    "
+    `}
           >
 
           <KanjiCard

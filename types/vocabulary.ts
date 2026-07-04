@@ -6,7 +6,7 @@ export interface Vocabulary {
   meaning: string | null;
 
   note: string | null;
-
+need_revision: boolean;
   created_at: string;
   updated_at: string;
 }

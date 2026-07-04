@@ -1,7 +1,6 @@
 import { sql } from "@/lib/db";
 import { Vocabulary } from "@/types/vocabulary";
 
-
 export async function getAllVocabularyByUserId(
   userId: string
 ) {
@@ -43,15 +42,16 @@ export async function createVocabulary(
       word,
       reading,
       meaning,
-      note
+      note,
+      need_revision
     )
     VALUES (
       ${userId},
       ${vocabulary.word},
       ${vocabulary.reading},
       ${vocabulary.meaning},
-      ${vocabulary.note}
-     
+      ${vocabulary.note},
+      ${vocabulary.need_revision}
     )
     RETURNING *;
   `;
@@ -70,7 +70,7 @@ export async function updateVocabularyById(
       reading = ${vocabulary.reading},
       meaning = ${vocabulary.meaning},
       note = ${vocabulary.note},
-
+      need_revision = ${vocabulary.need_revision},
       updated_at = NOW()
     WHERE
       id = ${vocabulary.id}
