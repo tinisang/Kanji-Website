@@ -59,7 +59,7 @@ export function KanjiProvider({
   const [dragEnabled, setDragEnabled] = useState(true);
 
   const [learnedFilter, setLearnedFilter] =
-    useState<LearnedFilter>("all");
+    useState<LearnedFilter>("unlearned");
 
   return (
     <KanjiContext.Provider
