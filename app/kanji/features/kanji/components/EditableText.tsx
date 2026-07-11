@@ -9,6 +9,7 @@ interface Props {
   onSave?: (value: string) => void;
   onFocus?: React.FocusEventHandler<HTMLInputElement>;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
+    renderDisplay?: (value: string) => React.ReactNode;
 }
 
 export function EditableText({
@@ -18,6 +19,7 @@ export function EditableText({
   onSave,
   onFocus,
   onBlur,
+  renderDisplay
 }: Props) {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(defaultValue);
@@ -56,7 +58,7 @@ useEffect(() => {
         `}
         onClick={() => setEditing(true)}
       >
-        {value || placeholder}
+        {renderDisplay ? renderDisplay(value) : value || placeholder}
       </span>
 
       {editing && (

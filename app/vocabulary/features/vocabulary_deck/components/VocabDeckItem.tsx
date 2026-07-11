@@ -26,9 +26,20 @@ import VocabularyReferenceSection from "./VocabularyReferenceSection";
 import { usages, references } from "./mock";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
+import VocabUsages from "./VocabUsages";
+import { Vocabulary } from "@/app/vocabulary/lib/types/vocabulary";
+import { VocabularyExpression } from "@/app/vocabulary/lib/types/vocabularyExpression";
+import { Usage } from "@/app/vocabulary/lib/types/Usage";
 
-export default function VocabularyDeckItem() {
+export default function VocabularyDeckItem({
+  vocabulary,
+  expressions,
+}: {
+  vocabulary: Vocabulary;
+  expressions: Record<string, Usage>;
+}) {
   const [openDelete, setOpenDelete] = useState(false);
+  console.log("expressions", expressions);
   return (
     <Accordion
       type="single"
@@ -48,52 +59,52 @@ export default function VocabularyDeckItem() {
           "
         >
           <VocabularyDeckHeader
-            word="人生"
-            hanViet="NHÂN SINH"
-            meaning="Cuộc đời"
+            word={vocabulary.word}
+            hanViet={vocabulary.reading}
+            meaning={vocabulary.meaning}
             onDelete={() => {
               setOpenDelete(true);
             }}
           />
 
-<AlertDialog open={openDelete} onOpenChange={setOpenDelete}>
-        <AlertDialogContent onClick={(e) => e.stopPropagation()}>
-          <AlertDialogHeader>
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
-              <Trash2 className="h-7 w-7 text-red-600" />
-            </div>
+          <AlertDialog open={openDelete} onOpenChange={setOpenDelete}>
+            <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+              <AlertDialogHeader>
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
+                  <Trash2 className="h-7 w-7 text-red-600" />
+                </div>
 
-            <AlertDialogTitle className="mt-2 text-center text-xl">
-              Delete Vocabulary
-            </AlertDialogTitle>
+                <AlertDialogTitle className="mt-2 text-center text-xl">
+                  Delete Vocabulary
+                </AlertDialogTitle>
 
-            <AlertDialogDescription className="text-center">
-              Are you sure you want to delete{" "}
-              <span className="font-semibold text-foreground">
-                「人生」
-              </span>
-              ?
-              <br />
-              This action is permanent and cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+                <AlertDialogDescription className="text-center">
+                  Are you sure you want to delete{" "}
+                  <span className="font-semibold text-foreground">
+                    「人生」
+                  </span>
+                  ?
+                  <br />
+                  This action is permanent and cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
 
-          <AlertDialogFooter className="sm:justify-center">
-            <AlertDialogCancel>
-              Cancel
-            </AlertDialogCancel>
+              <AlertDialogFooter className="sm:justify-center">
+                <AlertDialogCancel>
+                  Cancel
+                </AlertDialogCancel>
 
-            <AlertDialogAction
-              className="bg-red-600 hover:bg-red-700"
-              onClick={() => {
-                setOpenDelete(false);
-              }}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+                <AlertDialogAction
+                  className="bg-red-600 hover:bg-red-700"
+                  onClick={() => {
+                    setOpenDelete(false);
+                  }}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
 
         </AccordionTrigger>
 
@@ -102,15 +113,10 @@ export default function VocabularyDeckItem() {
             description="Chỉ toàn bộ quá trình sống của một con người từ khi sinh ra đến khi mất đi. Thường dùng để nói về cuộc đời, trải nghiệm sống hoặc quan điểm sống."
           />
 
-          <div className="grid gap-5 lg:grid-cols-2">
-            {usages.map((usage) => (
-              <VocabularyUsageItem
-                key={usage.id}
-                mainWord="人生"
-                {...usage}
-              />
-            ))}
-          </div>
+         <VocabUsages
+  vocabulary={vocabulary}
+   usages={expressions}
+/>
 
           <div className="grid gap-8 lg:grid-cols-2">
             <VocabularyReferenceSection
