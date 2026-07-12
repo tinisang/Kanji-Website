@@ -6,16 +6,25 @@ import { getAllVocabulary } from "./features/vocabulary_deck/services/vocabulary
 import { getAllVocabularyExpression } from "./features/vocabulary_deck/services/vocabularyExpressionService";
 import { getAllExpressionExample } from "./features/vocabulary_deck/services/expressionExampleService";
 import { VocabularyData } from "./lib/types/vocabularyData";
+import { DragDropProvider } from "@dnd-kit/react";
+import VocabClient from "./components/layout/VocabClient";
+import { getAllVocabularyFolder } from "./features/vocab_folders/services/vocabularyFolderService";
+import { getAllVocabularyFolderItem } from "./features/vocab_folders/services/vocabularyFolderItemService";
 
 
 
 export default async function VocabPage() {
-const [vocabularies, expressions, examples] =
+const [vocabularies, expressions, examples, folders, folderItems] =
   await Promise.all([
     getAllVocabulary(),
     getAllVocabularyExpression(),
     getAllExpressionExample(),
+    getAllVocabularyFolder(),
+    getAllVocabularyFolderItem()
+    
   ]);
+
+
 
 const initialData: VocabularyData = {
   items: Object.fromEntries(
@@ -26,8 +35,7 @@ const initialData: VocabularyData = {
         expressions: Object.fromEntries(
           expressions
             .filter(
-              (e) =>
-                e.vocabulary_id === vocabulary.id
+              (e) => e.vocabulary_id === vocabulary.id
             )
             .map((expression) => [
               expression.id,
@@ -51,20 +59,35 @@ const initialData: VocabularyData = {
       },
     ])
   ),
+
+  folders: Object.fromEntries(
+    folders.map((folder) => [
+      folder.id,
+      folder,
+    ])
+  ),
+
+  folder_items: Object.fromEntries(
+    folders.map((folder) => [
+      folder.id,
+      Object.fromEntries(
+        folderItems
+          .filter(
+            (item) => item.folder_id === folder.id
+          )
+          .map((item) => [
+            item.vocabulary_id,
+            item,
+          ])
+      ),
+    ])
+  ),
 };
-console.log("initialData", initialData);
+
+
   return (
-
     <VocabularyProvider  initialData={initialData} >
-      
-    <div>
-      <div className="grid grid-cols-[1fr_2fr] gap-4 mt-8">
-        <RevisionDecks></RevisionDecks>
-        <VocabDecks></VocabDecks>
-
-      </div>
-       
-    </div>
+    <VocabClient initialData={initialData} ></VocabClient>
     </VocabularyProvider>
   );
 }

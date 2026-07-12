@@ -33,7 +33,7 @@ export async function createVocabulary(
   userId: string,
   vocabulary: Omit<
     Vocabulary,
-    "id" | "user_id" | "created_at" | "updated_at"
+    "id" | "user_id" | "created_at" | "updated_at" 
   >
 ) {
   const rows = await sql`
@@ -42,8 +42,8 @@ export async function createVocabulary(
       word,
       reading,
       meaning,
-      description,
       note,
+   
       need_revision
     )
     VALUES (
@@ -51,8 +51,8 @@ export async function createVocabulary(
       ${vocabulary.word},
       ${vocabulary.reading},
       ${vocabulary.meaning},
-      ${vocabulary.description},
       ${vocabulary.note},
+  
       ${vocabulary.need_revision}
     )
     RETURNING *;
@@ -71,7 +71,7 @@ export async function updateVocabularyById(
       word = ${vocabulary.word},
       reading = ${vocabulary.reading},
       meaning = ${vocabulary.meaning},
-      description = ${vocabulary.description},
+   
       note = ${vocabulary.note},
       need_revision = ${vocabulary.need_revision},
       updated_at = NOW()

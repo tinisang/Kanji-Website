@@ -26,7 +26,7 @@ export async function createVocabulary(
 
   vocabulary: Omit<
     Vocabulary,
-    "id" | "user_id" | "created_at" | "updated_at"
+    "id" | "user_id" | "created_at" | "updated_at" 
   >
 ) {
   const userId = await getCurrentUserId();

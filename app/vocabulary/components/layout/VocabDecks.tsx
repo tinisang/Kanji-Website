@@ -1,29 +1,68 @@
 'use client';
 
 import { useVocabulary } from "../../context.ts/VocabularyContext";
-import AddVocabularyDeck from "../../features/vocabulary_deck/components/AddNewVocabDeckCard";
-import VocabDeckItem from "../../features/vocabulary_deck/components/VocabDeckItem";
-import { Usage } from "../../lib/types/Usage";
-import { VocabularyExpression } from "../../lib/types/vocabularyExpression";
 
-export default function VocabDecks() {
-  const { vocabularyData } = useVocabulary();
+import VocabDeckItem from "../../features/vocabulary_deck/components/VocabDeckItem";
+import VocabularyFolders from "../../features/vocab_folders/components/VocabFolders";
+import { Usage } from "../../lib/types/Usage";
+import { VocabularyItem } from "../../lib/types/vocabularyData";
+import AddVocabularyDeck from "../../features/vocabulary_deck/components/AddVocabularyDeck";
+
+interface Props {
+  items: VocabularyItem[];
+}
+
+export default function VocabDecks({
+  items,
+}: Props) {
+
+  
+
+  
+  const {
+    vocabularyData,
+    activeFolderId,
+  } = useVocabulary();
+
+  const visibleItems =
+    activeFolderId === "all"
+      ? Object.values(vocabularyData.items)
+      : Object.values(
+          vocabularyData.folder_items[
+            activeFolderId
+          ] ?? {}
+        )
+          .map(
+            (vocabularyId) =>{
+             
+              return vocabularyData.items[
+                vocabularyId.vocabulary_id
+              ]
+            }
+          )
+          .filter(Boolean);
 
   return (
-    <section className="space-y-2">
-      {Object.values(vocabularyData.items).map((item) => {
-        
-        
-        return (
+    <div>
+      <VocabularyFolders />
+
+      <section className="space-y-2">
+        {visibleItems.map((item, index) => (
           <VocabDeckItem
             key={item.vocabulary.id}
             vocabulary={item.vocabulary}
-            expressions={item.expressions as unknown as Record<string, Usage>}
+            index={index}
+            expressions={
+              item.expressions as Record<
+                string,
+                Usage
+              >
+            }
           />
-        );
-      })}
+        ))}
 
-      <AddVocabularyDeck />
-    </section>
+        <AddVocabularyDeck />
+      </section>
+    </div>
   );
 }

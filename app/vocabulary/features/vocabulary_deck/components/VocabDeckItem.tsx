@@ -30,17 +30,35 @@ import VocabUsages from "./VocabUsages";
 import { Vocabulary } from "@/app/vocabulary/lib/types/vocabulary";
 import { VocabularyExpression } from "@/app/vocabulary/lib/types/vocabularyExpression";
 import { Usage } from "@/app/vocabulary/lib/types/Usage";
+import { useSortable } from "@dnd-kit/react/sortable";
+import { GripVertical } from "lucide-react";
 
 export default function VocabularyDeckItem({
   vocabulary,
   expressions,
+  index
 }: {
   vocabulary: Vocabulary;
   expressions: Record<string, Usage>;
+  index: number
 }) {
   const [openDelete, setOpenDelete] = useState(false);
-  console.log("expressions", expressions);
+
+   const { ref, handleRef } = useSortable({
+    id: vocabulary.id,
+    index:index,
+    type: "vocab",
+    accept: "vocab",
+    group: "deck",
+  
+
+  });
+
+  
   return (
+    <div ref={ref}>
+
+  
     <Accordion
       type="single"
       collapsible
@@ -48,65 +66,32 @@ export default function VocabularyDeckItem({
     >
       <AccordionItem value="deck" className="border-none">
         <AccordionTrigger
-          className="
-            px-6 py-4
-            transition-all duration-200
-            hover:no-underline
-            [&>svg]:hidden
+  className="
+    px-2 py-4
+    transition-all duration-200
+    hover:no-underline
+    [&>svg]:hidden
+    data-[state=closed]:bg-white
+    data-[state=open]:bg-[#1DFFB0]
+  "
+>
+  <div
+    ref={handleRef}
+    onClick={(e) => e.stopPropagation()}
+    className="mr-3 cursor-grab rounded p-1 text-gray-400 hover:bg-black/5 hover:text-gray-700 active:cursor-grabbing"
+  >
+    <GripVertical className="h-5 w-5" />
+  </div>
 
-            data-[state=closed]:bg-white
-            data-[state=open]:bg-[#1DFFB0]
-          "
-        >
-          <VocabularyDeckHeader
-            word={vocabulary.word}
-            hanViet={vocabulary.reading}
-            meaning={vocabulary.meaning}
-            onDelete={() => {
-              setOpenDelete(true);
-            }}
-          />
-
-          <AlertDialog open={openDelete} onOpenChange={setOpenDelete}>
-            <AlertDialogContent onClick={(e) => e.stopPropagation()}>
-              <AlertDialogHeader>
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
-                  <Trash2 className="h-7 w-7 text-red-600" />
-                </div>
-
-                <AlertDialogTitle className="mt-2 text-center text-xl">
-                  Delete Vocabulary
-                </AlertDialogTitle>
-
-                <AlertDialogDescription className="text-center">
-                  Are you sure you want to delete{" "}
-                  <span className="font-semibold text-foreground">
-                    「人生」
-                  </span>
-                  ?
-                  <br />
-                  This action is permanent and cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-
-              <AlertDialogFooter className="sm:justify-center">
-                <AlertDialogCancel>
-                  Cancel
-                </AlertDialogCancel>
-
-                <AlertDialogAction
-                  className="bg-red-600 hover:bg-red-700"
-                  onClick={() => {
-                    setOpenDelete(false);
-                  }}
-                >
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-
-        </AccordionTrigger>
+  <div className="flex-1">
+    <VocabularyDeckHeader
+      word={vocabulary.word}
+      hanViet={vocabulary.reading}
+      meaning={vocabulary.meaning}
+      onDelete={() => setOpenDelete(true)}
+    />
+  </div>
+</AccordionTrigger>
 
         <AccordionContent className="space-y-8 p-6">
           <VocabularyDescription
@@ -134,5 +119,6 @@ export default function VocabularyDeckItem({
         </AccordionContent>
       </AccordionItem>
     </Accordion>
+      </div>
   );
 }

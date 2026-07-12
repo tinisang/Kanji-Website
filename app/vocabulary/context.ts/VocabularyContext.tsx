@@ -12,12 +12,25 @@ import {
 import { VocabularyData } from "../lib/types/vocabularyData";
 import { VocabularyExpression } from "../lib/types/vocabularyExpression";
 import { ExpressionExample } from "../lib/types/expressionExample";
-
+import { VocabularyFolder } from "../lib/types/vocabularyFolder";
+import { Vocabulary } from "../lib/types/vocabulary";
+import { VocabularyFolderItem } from "../lib/types/vocabularyFolderItem";
 interface VocabularyContextType {
   vocabularyData: VocabularyData;
   setVocabularyData: React.Dispatch<
     React.SetStateAction<VocabularyData>
   >;
+
+  reorderFolders: boolean;
+  setReorderFolders: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
+
+  activeFolderId: string;
+setActiveFolderId: React.Dispatch<
+  React.SetStateAction<string>
+>;
+  
 }
 
 const VocabularyContext = createContext<
@@ -35,12 +48,20 @@ export function VocabularyProvider({
 }: Props) {
   const [vocabularyData, setVocabularyData] =
     useState<VocabularyData>(initialData);
-
+const [reorderFolders, setReorderFolders] =
+  useState(false);
+  const [activeFolderId, setActiveFolderId] =
+  useState("all");
   return (
     <VocabularyContext.Provider
       value={{
         vocabularyData,
         setVocabularyData,
+        reorderFolders,
+        setReorderFolders,
+        activeFolderId,
+        setActiveFolderId
+
       }}
     >
       {children}
@@ -325,4 +346,120 @@ export function deleteExampleUI(
 
     return prev;
   });
+}
+
+
+export function addFolderUI(
+  setVocabularyData: Dispatch<
+    SetStateAction<VocabularyData>
+  >,
+  folder: VocabularyFolder
+) {
+  setVocabularyData((prev) => ({
+    ...prev,
+    folders: {
+      ...prev.folders,
+      [folder.id]: folder,
+    },
+    folder_items: {
+      ...prev.folder_items,
+      [folder.id]: {},
+    },
+  }));
+}
+
+export function updateFolderUI(
+  setVocabularyData: Dispatch<
+    SetStateAction<VocabularyData>
+  >,
+  folder: VocabularyFolder
+) {
+  setVocabularyData((prev) => {
+    const oldFolder = prev.folders[folder.id];
+
+    if (!oldFolder) {
+      return prev;
+    }
+
+    return {
+      ...prev,
+      folders: {
+        ...prev.folders,
+        [folder.id]: {
+          ...oldFolder,
+          ...folder,
+        },
+      },
+    };
+  });
+}
+
+export function deleteFolderUI(
+  setVocabularyData: Dispatch<
+    SetStateAction<VocabularyData>
+  >,
+  folderId: string
+) {
+  setVocabularyData((prev) => {
+    if (!(folderId in prev.folders)) {
+      return prev;
+    }
+
+    const folders = {
+      ...prev.folders,
+    };
+
+    delete folders[folderId];
+
+    const folder_items = {
+      ...prev.folder_items,
+    };
+
+    delete folder_items[folderId];
+
+    return {
+      ...prev,
+      folders,
+      folder_items,
+    };
+  });
+}
+export function addVocabularyUI(
+  setVocabularyData: Dispatch<
+    SetStateAction<VocabularyData>
+  >,
+  vocabulary: Vocabulary,
+  activeFolderId: string
+) {
+  setVocabularyData((prev) => ({
+    ...prev,
+    items: {
+      ...prev.items,
+      [vocabulary.id]: {
+        vocabulary,
+        expressions: {},
+      },
+    },
+    folder_items:
+      activeFolderId === "all"
+        ? prev.folder_items
+        : {
+            ...prev.folder_items,
+            [activeFolderId]: {
+              ...(prev.folder_items[activeFolderId] ??
+                {}),
+              [vocabulary.id]: {
+                vocabulary_id: vocabulary.id,
+                folder_id: activeFolderId,
+                position: Object.keys(
+                  prev.folder_items[
+                    activeFolderId
+                  ] ?? {}
+                ).length,
+                created_at:
+                  new Date().toISOString(),
+              },
+            },
+          },
+  }));
 }

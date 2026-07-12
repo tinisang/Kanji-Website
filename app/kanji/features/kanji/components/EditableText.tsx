@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 interface Props {
   defaultValue: string;
   className?: string;
+  autoFocus?: boolean;
   placeholder?: string;
   onSave?: (value: string) => void;
   onFocus?: React.FocusEventHandler<HTMLInputElement>;
@@ -18,6 +19,7 @@ export function EditableText({
   placeholder,
   onSave,
   onFocus,
+  autoFocus,
   onBlur,
   renderDisplay
 }: Props) {
@@ -63,6 +65,7 @@ useEffect(() => {
 
       {editing && (
         <input
+        autoFocus={autoFocus}
           ref={inputRef}
           value={value}
           onChange={(e) => setValue(e.target.value)}

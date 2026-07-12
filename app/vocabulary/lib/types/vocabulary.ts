@@ -4,8 +4,8 @@ export interface Vocabulary {
   word: string;
   reading: string;
 
+  user_id: string;
   meaning: string;
-  description: string;
   note: string;
 
   need_revision: boolean;

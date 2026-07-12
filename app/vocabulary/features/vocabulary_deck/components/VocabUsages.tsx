@@ -40,7 +40,7 @@ export default function VocabUsages({
     <div className="space-y-4">
       <div className="grid gap-5 lg:grid-cols-2">
         {Object.values(usages).map((usage, index) => {
-          console.log("usage", usage);
+      
           return (
             <VocabularyUsageItem
               key={usage.expression.id}
