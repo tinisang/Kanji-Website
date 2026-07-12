@@ -32,6 +32,7 @@ import { VocabularyExpression } from "@/app/vocabulary/lib/types/vocabularyExpre
 import { Usage } from "@/app/vocabulary/lib/types/Usage";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { GripVertical } from "lucide-react";
+import { useVocabulary } from "@/app/vocabulary/context.ts/VocabularyContext";
 
 export default function VocabularyDeckItem({
   vocabulary,
@@ -43,13 +44,14 @@ export default function VocabularyDeckItem({
   index: number
 }) {
   const [openDelete, setOpenDelete] = useState(false);
+  const {activeFolderId} = useVocabulary();
 
    const { ref, handleRef } = useSortable({
     id: vocabulary.id,
     index:index,
     type: "vocab",
     accept: "vocab",
-    group: "deck",
+    group: activeFolderId ,
   
 
   });

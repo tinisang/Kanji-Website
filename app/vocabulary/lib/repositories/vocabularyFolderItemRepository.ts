@@ -45,17 +45,25 @@ export async function updateVocabularyFolderItemPosition(
     position: number;
   }[]
 ) {
-  await Promise.all(
-    items.map((item) =>
-      sql`
-        UPDATE vocabulary_folder_item
-        SET position = ${item.position}
-        WHERE
-          vocabulary_id = ${item.vocabulary_id}
-          AND folder_id = ${item.folder_id};
-      `
-    )
-  );
+  for (const item of items) {
+    await sql`
+      DELETE FROM vocabulary_folder_item
+      WHERE vocabulary_id = ${item.vocabulary_id};
+    `;
+
+    await sql`
+      INSERT INTO vocabulary_folder_item (
+        vocabulary_id,
+        folder_id,
+        position
+      )
+      VALUES (
+        ${item.vocabulary_id},
+        ${item.folder_id},
+        ${item.position}
+      );
+    `;
+  }
 }
 
 export async function deleteVocabularyFolderItem(

@@ -5,7 +5,7 @@ import VocabDecks from "./VocabDecks";
 import { VocabularyData } from "../../lib/types/vocabularyData";
 import { move } from "@dnd-kit/helpers";
 import { useEffect, useState } from "react";
-import { useVocabulary } from "../../context.ts/VocabularyContext";
+import { updateFolderItemsUI, useVocabulary } from "../../context.ts/VocabularyContext";
 import { updateVocabularyFolderItemPosition } from "../../features/vocab_folders/clients/vocabularyFolderItemClient";
 
 
@@ -17,61 +17,101 @@ export default function VocabClient({
   initialData,
 }: Props) {
 
-  const {vocabularyData}= useVocabulary()
+  const {vocabularyData, setVocabularyData}= useVocabulary()
     
 
   const { activeFolderId } = useVocabulary();
 
-const [items, setItems] = useState<string[]>([]);
+const [items, setItems] = useState<
+  Record<string, string[]>
+>({});
 
 useEffect(() => {
-  if (activeFolderId === "all") {
-    setItems(
-      Object.values(initialData.items).map(
-        (item) => item.vocabulary.id
-      )
-    );
-    return;
-  }
+  
+
+ const folderItemsByFolder = Object.fromEntries(
+  Object.entries(vocabularyData.folder_items).map(
+    ([folderId, items]) => [
+      folderId,
+      Object.values(items)
+        .sort((a, b) => a.position - b.position)
+        .map((item) => item.vocabulary_id),
+    ]
+  )
+);
+ 
 
   setItems(
-    Object.values(
-      initialData.folder_items[activeFolderId] ?? {}
-    )
-      .sort((a, b) => a.position - b.position)
-      .map((item) => item.vocabulary_id)
+    folderItemsByFolder
   );
-}, [activeFolderId, initialData]);
-    
-async function saveChanges() {
-  console.log(items);
 
-  if (activeFolderId!='all'){
+
+}, [activeFolderId, vocabularyData]);
+
+useEffect(()=>{
+
+},[items])
     
-    await updateVocabularyFolderItemPosition(
-      items.map((item, index) => ({
-        vocabulary_id: item,
-        folder_id: activeFolderId,
-        position: index,
-      }))
-    );
+async function saveChanges(event:any) {
+  
+
+  
+
+  if (
+  event.operation.source?.type === "folder" ||
+  !event.operation.target
+) {
+  return;
+}
+
+
+  updateFolderItemsUI(setVocabularyData, items);
+  if (activeFolderId!='all'){
+
+    const newFolderItemData= Object.entries(items).flatMap(
+    ([folderId, vocabularyIds]) =>
+      vocabularyIds.map(
+        (vocabularyId, index) => ({
+          vocabulary_id: vocabularyId,
+          folder_id: folderId,
+          position: index,
+        })
+      )
+  );
+
+  console.log(newFolderItemData)
+    
+    await updateVocabularyFolderItemPosition(newFolderItemData);
   }
 }
     return (
         <div>
               <DragDropProvider
-              onDragEnd={saveChanges}
-              onDragOver={(event) => {
+            onDragOver={(event) => {
+              
+            if (
+              event.operation.source?.type === "folder" ||
+              !event.operation.target
+            ) {
+              
+              return;
+            }
 
-
-                      const { source } = event.operation;
-                      setItems(prev => move(prev, event));
-                    }}
-              >
+           
+              setItems((prev) => move(prev, event));
+            }}
+            onDragEnd={saveChanges}
+          >
               <div className="grid grid-cols-[1fr_2fr] gap-4 mt-8">
                 <RevisionDecks></RevisionDecks>
                 <VocabDecks
-  items={items.map((id) => initialData.items[id])}
+  items={
+    activeFolderId === "all"
+      ? Object.values(initialData.items)
+      : (items[activeFolderId] ?? []).map(
+          (id) => initialData.items[id]
+        )
+  }
 />
         
               </div>

@@ -16,6 +16,7 @@ import {
   useVocabulary,
 } from "@/app/vocabulary/context.ts/VocabularyContext";
 import { useSortable } from "@dnd-kit/react/sortable";
+import { useDroppable } from "@dnd-kit/react";
 
 interface Props {
   folder: VocabularyFolder;
@@ -47,12 +48,12 @@ export default function VocabularyFolderItem({
         await deleteVocabularyFolder(folder.id)
 
     }
-  const { ref } = useSortable({
+    
+  const { ref } = useDroppable({
     id: folder.id,
-    index,
     type: "folder",
-    accept: "folder",
-    group: "folders",
+    accept: "vocab",
+    
   });
 
   useEffect(() => {

@@ -463,3 +463,45 @@ export function addVocabularyUI(
           },
   }));
 }
+
+export function updateFolderItemsUI(
+  setVocabularyData: Dispatch<
+    SetStateAction<VocabularyData>
+  >,
+  items: Record<string, string[]>
+) {
+  setVocabularyData((prev) => {
+    const folder_items: VocabularyData["folder_items"] =
+      {};
+
+    for (const [
+      folderId,
+      vocabularyIds,
+    ] of Object.entries(items)) {
+      folder_items[folderId] = {};
+
+      vocabularyIds.forEach(
+        (vocabularyId, index) => {
+          folder_items[folderId][
+            vocabularyId
+          ] = {
+            vocabulary_id: vocabularyId,
+            folder_id: folderId,
+            position: index,
+            created_at:
+              prev.folder_items[
+                folderId
+              ]?.[vocabularyId]
+                ?.created_at ??
+              new Date().toISOString(),
+          };
+        }
+      );
+    }
+
+    return {
+      ...prev,
+      folder_items,
+    };
+  });
+}

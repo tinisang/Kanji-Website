@@ -26,7 +26,9 @@ export default function VocabFolders() {
       color: "#F7FF1D",
     });
 
-    addFolderUI(setVocabularyData, newFolder)
+    addFolderUI(setVocabularyData, newFolder);
+
+    
 
   
   }
