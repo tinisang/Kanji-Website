@@ -1,5 +1,3 @@
-// components/TiptapEditor.tsx
-
 "use client";
 
 import { EditorContent, useEditor } from "@tiptap/react";
@@ -7,13 +5,21 @@ import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Placeholder from "@tiptap/extension-placeholder";
 import Highlight from "@tiptap/extension-highlight";
-
 import Color from "@tiptap/extension-color";
+import { TextStyle } from "@tiptap/extension-text-style";
+import Image from "@tiptap/extension-image";
+import Link from "@tiptap/extension-link";
 
-import { Bold, Italic, UnderlineIcon, List, ListOrdered, Heading2 } from "lucide-react";
+import {
+  Bold,
+  Italic,
+  UnderlineIcon,
+  List,
+  ListOrdered,
+  Heading2,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { TextStyle } from "@tiptap/extension-text-style";
 
 type Props = {
   value: string;
@@ -27,18 +33,36 @@ export default function TiptapEditor({
   const editor = useEditor({
     extensions: [
       StarterKit,
-  Underline,
-  TextStyle,
-  Color,
-  Highlight.configure({
-    multicolor: true,
-  }),
-  Placeholder.configure({
-    placeholder: "Nhập ghi chú...",
-  }),
+
+      Underline,
+
+      TextStyle,
+
+      Color,
+
+      Highlight.configure({
+        multicolor: true,
+      }),
+
+      Placeholder.configure({
+        placeholder: "Nhập ghi chú...",
+      }),
+
+      Image.configure({
+        inline: false,
+        allowBase64: true,
+      }),
+
+      Link.configure({
+        openOnClick: true,
+        autolink: true,
+        defaultProtocol: "https",
+      }),
     ],
 
     content: value,
+
+    immediatelyRender: false,
 
     onUpdate({ editor }) {
       onChange(editor.getHTML());
@@ -49,6 +73,30 @@ export default function TiptapEditor({
         class:
           "prose max-w-none min-h-[300px] p-4 focus:outline-none",
       },
+
+      handlePaste(view, event) {
+        const html =
+          event.clipboardData?.getData("text/html");
+
+        if (!html) {
+          return false;
+        }
+
+        const parser = new DOMParser();
+
+        const doc = parser.parseFromString(
+          html,
+          "text/html"
+        );
+
+        editor
+          ?.chain()
+          .focus()
+          .insertContent(doc.body.innerHTML)
+          .run();
+
+        return true;
+      },
     },
   });
 
@@ -56,70 +104,70 @@ export default function TiptapEditor({
 
   return (
     <div className="overflow-hidden rounded-md border bg-white">
-      <div className="flex gap-2 border-b p-2">
-        <Button
-  size="icon"
-  type="button"
-  variant={
-    editor.isActive("highlight")
-      ? "default"
-      : "outline"
-  }
-  onClick={() =>
-    editor
-      .chain()
-      .focus()
-      .toggleHighlight()
-      .run()
-  }
->
-  H
-</Button>
-<Button
-  type="button"
-  variant="outline"
-  onClick={() =>
-    editor
-      .chain()
-      .focus()
-      .toggleHighlight({
-        color: "#fef08a",
-      })
-      .run()
-  }
->
-  🖍️
-</Button>
-<Button
-  type="button"
-  variant="outline"
-  onClick={() =>
-    editor
-      .chain()
-      .focus()
-      .setColor("#ef4444")
-      .run()
-  }
->
-  🔴
-</Button>
-<Button
-  type="button"
-  variant="outline"
-  onClick={() =>
-    editor
-      .chain()
-      .focus()
-      .unsetColor()
-      .run()
-  }
->
-  Reset
-</Button>
+      <div className="flex flex-wrap gap-2 border-b p-2">
         <Button
           size="icon"
           type="button"
-          variant={editor.isActive("bold") ? "default" : "outline"}
+          variant={
+            editor.isActive("highlight")
+              ? "default"
+              : "outline"
+          }
+          onClick={() =>
+            editor.chain().focus().toggleHighlight().run()
+          }
+        >
+          H
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .toggleHighlight({
+                color: "#fef08a",
+              })
+              .run()
+          }
+        >
+          🖍️
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .setColor("#ef4444")
+              .run()
+          }
+        >
+          🔴
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            editor.chain().focus().unsetColor().run()
+          }
+        >
+          Reset
+        </Button>
+
+        <Button
+          size="icon"
+          type="button"
+          variant={
+            editor.isActive("bold")
+              ? "default"
+              : "outline"
+          }
           onClick={() =>
             editor.chain().focus().toggleBold().run()
           }
@@ -130,7 +178,11 @@ export default function TiptapEditor({
         <Button
           size="icon"
           type="button"
-          variant={editor.isActive("italic") ? "default" : "outline"}
+          variant={
+            editor.isActive("italic")
+              ? "default"
+              : "outline"
+          }
           onClick={() =>
             editor.chain().focus().toggleItalic().run()
           }
@@ -141,9 +193,17 @@ export default function TiptapEditor({
         <Button
           size="icon"
           type="button"
-          variant={editor.isActive("underline") ? "default" : "outline"}
+          variant={
+            editor.isActive("underline")
+              ? "default"
+              : "outline"
+          }
           onClick={() =>
-            editor.chain().focus().toggleUnderline().run()
+            editor
+              .chain()
+              .focus()
+              .toggleUnderline()
+              .run()
           }
         >
           <UnderlineIcon size={16} />
@@ -153,7 +213,9 @@ export default function TiptapEditor({
           size="icon"
           type="button"
           variant={
-            editor.isActive("heading", { level: 2 })
+            editor.isActive("heading", {
+              level: 2,
+            })
               ? "default"
               : "outline"
           }
@@ -161,7 +223,9 @@ export default function TiptapEditor({
             editor
               .chain()
               .focus()
-              .toggleHeading({ level: 2 })
+              .toggleHeading({
+                level: 2,
+              })
               .run()
           }
         >
@@ -171,9 +235,17 @@ export default function TiptapEditor({
         <Button
           size="icon"
           type="button"
-          variant={editor.isActive("bulletList") ? "default" : "outline"}
+          variant={
+            editor.isActive("bulletList")
+              ? "default"
+              : "outline"
+          }
           onClick={() =>
-            editor.chain().focus().toggleBulletList().run()
+            editor
+              .chain()
+              .focus()
+              .toggleBulletList()
+              .run()
           }
         >
           <List size={16} />
@@ -182,16 +254,27 @@ export default function TiptapEditor({
         <Button
           size="icon"
           type="button"
-          variant={editor.isActive("orderedList") ? "default" : "outline"}
+          variant={
+            editor.isActive("orderedList")
+              ? "default"
+              : "outline"
+          }
           onClick={() =>
-            editor.chain().focus().toggleOrderedList().run()
+            editor
+              .chain()
+              .focus()
+              .toggleOrderedList()
+              .run()
           }
         >
           <ListOrdered size={16} />
         </Button>
       </div>
 
-      <EditorContent editor={editor} className="prose prose-neutral max-w-none max-h-[30vh] overflow-y-auto p-4" />
+      <EditorContent
+        editor={editor}
+        className="prose prose-neutral max-w-none max-h-[30vh] overflow-y-auto p-4"
+      />
     </div>
   );
 }
