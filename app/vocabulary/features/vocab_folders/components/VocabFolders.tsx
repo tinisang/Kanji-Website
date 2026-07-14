@@ -35,13 +35,8 @@ export default function VocabFolders() {
 
   return (
   <section className="mb-6 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-    <div className="flex items-start justify-between gap-6">
-      <div className="flex flex-1 flex-wrap items-center gap-2">
-        <VocabularyAllFolder
-          active={selectedFolderId === "all"}
-          onClick={() => onSelectFolder("all")}
-        />
-
+    <div className="flex flex-col items-start  gap-6">
+      <div className="flex flex-col flex-1 flex-wrap gap-2">
         {Object.values(vocabularyData.folders).map(
           (folder, index) => (
             <VocabularyFolderItem
@@ -57,7 +52,7 @@ export default function VocabFolders() {
         )}
       </div>
 
-      <div className="flex shrink-0 items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 p-2">
+      <div className="">
         <NewFolderButton
           onClick={onCreateFolder}
         />

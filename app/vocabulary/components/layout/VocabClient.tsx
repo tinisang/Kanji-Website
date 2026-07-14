@@ -7,6 +7,7 @@ import { move } from "@dnd-kit/helpers";
 import { useEffect, useState } from "react";
 import { updateFolderItemsUI, useVocabulary } from "../../context.ts/VocabularyContext";
 import { updateVocabularyFolderItemPosition } from "../../features/vocab_folders/clients/vocabularyFolderItemClient";
+import VocabFolders from "../../features/vocab_folders/components/VocabFolders";
 
 
 interface Props {
@@ -17,7 +18,7 @@ export default function VocabClient({
   initialData,
 }: Props) {
 
-  const {vocabularyData, setVocabularyData}= useVocabulary()
+  const {vocabularyData, setVocabularyData, setActiveFolderId}= useVocabulary()
     
 
   const { activeFolderId } = useVocabulary();
@@ -28,7 +29,14 @@ const [items, setItems] = useState<
 
 useEffect(() => {
   
+if (activeFolderId !== "all") return;
 
+  const firstFolder = Object.values(vocabularyData.folders)
+    .sort((a, b) => a.position - b.position)[0];
+
+  if (firstFolder) {
+    setActiveFolderId(firstFolder.id);
+  }
  const folderItemsByFolder = Object.fromEntries(
   Object.entries(vocabularyData.folder_items).map(
     ([folderId, items]) => [
@@ -47,10 +55,6 @@ useEffect(() => {
 
 
 }, [activeFolderId, vocabularyData]);
-
-useEffect(()=>{
-
-},[items])
     
 async function saveChanges(event:any) {
   
@@ -78,8 +82,6 @@ async function saveChanges(event:any) {
         })
       )
   );
-
-  console.log(newFolderItemData)
     
     await updateVocabularyFolderItemPosition(newFolderItemData);
   }
@@ -102,9 +104,10 @@ async function saveChanges(event:any) {
             }}
             onDragEnd={saveChanges}
           >
-              <div className="grid grid-cols-[1fr_2fr] gap-4 mt-8">
-                <RevisionDecks></RevisionDecks>
-                <VocabDecks
+              <div className="flex gap-4 mt-8">
+                  <VocabFolders />
+                  <div className="flex-1">
+ <VocabDecks
   items={
     activeFolderId === "all"
       ? Object.values(initialData.items)
@@ -113,6 +116,8 @@ async function saveChanges(event:any) {
         )
   }
 />
+                  </div>
+               
         
               </div>
              </DragDropProvider>

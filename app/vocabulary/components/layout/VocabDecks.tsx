@@ -3,7 +3,7 @@
 import { useVocabulary } from "../../context.ts/VocabularyContext";
 
 import VocabDeckItem from "../../features/vocabulary_deck/components/VocabDeckItem";
-import VocabularyFolders from "../../features/vocab_folders/components/VocabFolders";
+import VocabFolders from "../../features/vocab_folders/components/VocabFolders";
 import { Usage } from "../../lib/types/Usage";
 import { VocabularyItem } from "../../lib/types/vocabularyData";
 import AddVocabularyDeck from "../../features/vocabulary_deck/components/AddVocabularyDeck";
@@ -44,7 +44,7 @@ export default function VocabDecks({
 
   return (
     <div>
-      <VocabularyFolders />
+      
 
       <section className="space-y-2">
         {visibleItems.map((item, index) => (
