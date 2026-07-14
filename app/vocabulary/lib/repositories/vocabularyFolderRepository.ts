@@ -1,17 +1,17 @@
 import { sql } from "@/lib/db";
-import { VocabularyFolder } from "@/app/vocabulary/lib/types/vocabularyFolder";
+import { FolderItem } from "@/app/vocabulary/lib/types/vocabularyFolder";
 
 export async function getAllVocabularyFolderByUserId(
   userId: string
 ) {
   const rows = await sql`
     SELECT *
-    FROM vocabulary_folder
+    FROM folders
     WHERE user_id = ${userId}
     ORDER BY position;
   `;
 
-  return rows as VocabularyFolder[];
+  return rows as FolderItem[];
 }
 
 export async function getVocabularyFolderById(
@@ -20,24 +20,24 @@ export async function getVocabularyFolderById(
 ) {
   const rows = await sql`
     SELECT *
-    FROM vocabulary_folder
+    FROM folders
     WHERE
       id = ${folderId}
       AND user_id = ${userId};
   `;
 
-  return rows[0] as VocabularyFolder | undefined;
+  return rows[0] as FolderItem | undefined;
 }
 
 export async function createVocabularyFolder(
   userId: string,
   folder: Omit<
-    VocabularyFolder,
+    FolderItem,
     "id" | "user_id" | "position" | "created_at" | "updated_at"
   >
 ) {
   const rows = await sql`
-    INSERT INTO vocabulary_folder (
+    INSERT INTO folders (
       user_id,
       name,
       color,
@@ -49,25 +49,26 @@ export async function createVocabularyFolder(
       ${folder.color},
       (
         SELECT COALESCE(MAX(position), -1) + 1
-        FROM vocabulary_folder
+        FROM folders
         WHERE user_id = ${userId}
       )
     )
     RETURNING *;
   `;
 
-  return rows[0] as VocabularyFolder;
+  return rows[0] as FolderItem;
 }
 
 export async function updateVocabularyFolderById(
   userId: string,
-  folder: VocabularyFolder
+  folder: FolderItem
 ) {
   const rows = await sql`
-    UPDATE vocabulary_folder
+    UPDATE folders
     SET
       name = ${folder.name},
       color = ${folder.color},
+      parent_id = ${folder.parent_id},
       updated_at = NOW()
     WHERE
       id = ${folder.id}
@@ -75,7 +76,7 @@ export async function updateVocabularyFolderById(
     RETURNING *;
   `;
 
-  return rows[0] as VocabularyFolder;
+  return rows[0] as FolderItem;
 }
 
  export async function updateVocabularyFolderPositions(
@@ -87,7 +88,7 @@ export async function updateVocabularyFolderById(
 ) {
   for (const item of positions) {
     await sql`
-      UPDATE vocabulary_folder
+      UPDATE folders
       SET
         position = ${item.position},
         updated_at = NOW()
@@ -103,7 +104,7 @@ export async function deleteVocabularyFolderById(
   folderId: string
 ) {
   await sql`
-    DELETE FROM vocabulary_folder
+    DELETE FROM folders
     WHERE
       id = ${folderId}
       AND user_id = ${userId};

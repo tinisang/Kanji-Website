@@ -34,7 +34,7 @@ export async function getExpressionExampleById(
 
   return rows[0] as ExpressionExample | undefined;
 }
-
+  
 export async function createExpressionExample(
   example: Omit<
     ExpressionExample,

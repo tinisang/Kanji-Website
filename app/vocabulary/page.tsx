@@ -76,7 +76,7 @@ const initialData: VocabularyData = {
     ])
   ),
 
-  folder_items: Object.fromEntries(
+  vocab_folder_items: Object.fromEntries(
     folders.map((folder) => [
       folder.id,
       Object.fromEntries(

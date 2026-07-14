@@ -1,4 +1,4 @@
-import { VocabularyFolder } from "@/app/vocabulary/lib/types/vocabularyFolder";
+import { FolderItem } from "@/app/vocabulary/lib/types/vocabularyFolder";
 
 export async function getAllVocabularyFolder() {
   const response = await fetch("/vocabulary/api/folder");
@@ -7,12 +7,12 @@ export async function getAllVocabularyFolder() {
     throw new Error("Failed to fetch vocabulary folders");
   }
 
-  return (await response.json()) as VocabularyFolder[];
+  return (await response.json()) as FolderItem[];
 }
 
 export async function createVocabularyFolder(
   folder: Omit<
-    VocabularyFolder,
+    FolderItem,
     "id" | "user_id" | "position" | "created_at" | "updated_at"
   >
 ) {
@@ -28,11 +28,11 @@ export async function createVocabularyFolder(
     throw new Error("Failed to create vocabulary folder");
   }
 
-  return (await response.json()) as VocabularyFolder;
+  return (await response.json()) as FolderItem;
 }
 
 export async function updateVocabularyFolder(
-  folder: VocabularyFolder
+  folder: FolderItem
 ) {
   const response = await fetch(
     `/vocabulary/api/folder/${folder.id}`,
@@ -46,7 +46,7 @@ export async function updateVocabularyFolder(
     throw new Error("Failed to update vocabulary folder");
   }
 
-  return (await response.json()) as VocabularyFolder;
+  return (await response.json()) as FolderItem;
 }
 
 export async function updateVocabularyFolderPositions(

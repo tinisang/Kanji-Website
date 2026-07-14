@@ -28,7 +28,7 @@ export default function VocabDecks({
     activeFolderId === "all"
       ? Object.values(vocabularyData.items)
       : Object.values(
-          vocabularyData.folder_items[
+          vocabularyData.vocab_folder_items[
             activeFolderId
           ] ?? {}
         )

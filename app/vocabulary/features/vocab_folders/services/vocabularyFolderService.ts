@@ -1,5 +1,5 @@
 import * as vocabularyFolderRepository from "@/app/vocabulary/lib/repositories/vocabularyFolderRepository";
-import { VocabularyFolder } from "@/app/vocabulary/lib/types/vocabularyFolder";
+import { FolderItem } from "@/app/vocabulary/lib/types/vocabularyFolder";
 import { getCurrentUserId } from "@/lib/auth/auth-user";
 
 export async function getAllVocabularyFolder(
@@ -25,7 +25,7 @@ export async function getVocabularyFolderById(
 export async function createVocabularyFolder(
 
   folder: Omit<
-    VocabularyFolder,
+    FolderItem,
     "id" | "user_id" | "position" | "created_at" | "updated_at"
   >
 ) {
@@ -38,7 +38,7 @@ export async function createVocabularyFolder(
 
 export async function updateVocabularyFolderById(
 
-  folder: VocabularyFolder
+  folder: FolderItem
 ) {
     const userId = await getCurrentUserId();
   return vocabularyFolderRepository.updateVocabularyFolderById(

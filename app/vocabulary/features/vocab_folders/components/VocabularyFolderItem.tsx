@@ -4,56 +4,64 @@ import { useEffect, useRef, useState } from "react";
 import {
   Folder,
   FolderOpen,
+  GripVertical,
   Trash2,
 } from "lucide-react";
 
 import { EditableText } from "@/app/kanji/features/kanji/components/EditableText";
-import { VocabularyFolder } from "@/app/vocabulary/lib/types/vocabularyFolder";
-import { deleteVocabularyFolder, updateVocabularyFolder } from "../clients/vocabularyFolderClient";
+import { FolderItem } from "@/app/vocabulary/lib/types/vocabularyFolder";
 import {
-    deleteFolderUI,
+  deleteVocabularyFolder,
+  updateVocabularyFolder,
+} from "../clients/vocabularyFolderClient";
+import {
+  deleteFolderUI,
   updateFolderUI,
   useVocabulary,
 } from "@/app/vocabulary/context.ts/VocabularyContext";
-import { useSortable } from "@dnd-kit/react/sortable";
-import { useDroppable } from "@dnd-kit/react";
+import {
+  useDraggable,
+  useDroppable,
+} from "@dnd-kit/react";
 
 interface Props {
-  folder: VocabularyFolder;
+  folder: FolderItem;
   active: boolean;
   index: number;
   onClick: () => void;
-  
 }
 
 export default function VocabularyFolderItem({
   folder,
   active,
-  index,
   onClick,
-
 }: Props) {
-  const [editing, setEditing] =
-    useState(false);
+  const [editing, setEditing] = useState(false);
 
   const containerRef =
     useRef<HTMLDivElement>(null);
 
-  const { setVocabularyData, setActiveFolderId } =
-    useVocabulary();
+  const {
+    setVocabularyData,
+    setActiveFolderId,
+  } = useVocabulary();
 
-    async function onDelete(){
-        deleteFolderUI(setVocabularyData, folder.id)
-
-        await deleteVocabularyFolder(folder.id)
-
-    }
-    
-  const { ref } = useDroppable({
+  const {
+    ref: dragRef,
+    handleRef,
+    isDragging,
+  } = useDraggable({
     id: folder.id,
     type: "folder",
-    accept: "vocab",
-    
+  });
+
+  const {
+    ref: dropRef,
+    isDropTarget,
+  } = useDroppable({
+    id: folder.id,
+    type: "folder",
+    accept: ["folder", "vocab"],
   });
 
   useEffect(() => {
@@ -77,18 +85,29 @@ export default function VocabularyFolderItem({
       handleClickOutside
     );
 
-    return () => {
+    return () =>
       document.removeEventListener(
         "mousedown",
         handleClickOutside
       );
-    };
   }, [editing]);
 
-  function handleClick(){
-    onClick();
-setActiveFolderId(folder.id)
+  async function onDelete() {
+    deleteFolderUI(
+      setVocabularyData,
+      folder.id
+    );
+
+    await deleteVocabularyFolder(
+      folder.id
+    );
   }
+
+  function handleClick() {
+    onClick();
+    setActiveFolderId(folder.id);
+  }
+
   async function onRename(name: string) {
     if (
       !name.trim() ||
@@ -114,48 +133,67 @@ setActiveFolderId(folder.id)
   return (
     <div
       ref={(node) => {
-        ref(node);
+        dragRef(node);
+        dropRef(node);
         containerRef.current = node;
       }}
-      className="group relative"
+      className={`
+  group relative rounded-xl transition-all duration-200 c
+  ${isDragging ? "opacity-50" : ""}
+  ${
+    isDropTarget
+      ? "border border-[#F7FF1D] bg-[#FFFDE8] shadow-md"
+      : ""
+  }
+`}
     >
       <div
-  role="button"
-  tabIndex={0}
-  onClick={() => !editing && handleClick()}
-  onDoubleClick={() => setEditing(true)}
-  className={`
-    flex shrink-0 cursor-pointer items-center gap-2 rounded-xl
-    border px-4 py-2 pr-10 text-sm font-medium
-    transition-all duration-200
-    ${
-      editing
-        ? "scale-[1.02] border-gray-300 bg-white text-black shadow-lg ring-2 ring-[#F7FF1D]/40"
-        : active
-        ? "border-[#F7FF1D] bg-[#F7FF1D] text-black shadow-lg shadow-[#F7FF1D]/30"
-        : "border-[#E7EA8A] bg-[#FAFBC8] text-[#6C7100] hover:border-[#F7FF1D] hover:bg-[#F4F97A] hover:text-black"
-    }
-  `}
->
-  {active ? (
-    <FolderOpen className="h-4 w-4 shrink-0" />
-  ) : (
-    <Folder className="h-4 w-4 shrink-0" />
-  )}
+        role="button"
+        tabIndex={0}
+        onClick={() =>
+          !editing && handleClick()
+        }
+        onDoubleClick={() =>
+          setEditing(true)
+        }
+        className={`
+          flex shrink-0 items-center gap-2 rounded-xl
+          border px-4 py-2 pr-10 text-sm font-medium
+          transition-all duration-200
+          ${
+            editing
+              ? "scale-[1.02] border-gray-300 bg-white text-black shadow-lg ring-2 ring-[#F7FF1D]/40"
+              : active
+              ? "border-[#F7FF1D] bg-[#F7FF1D] text-black shadow-lg shadow-[#F7FF1D]/30"
+              : "border-transparent bg-transparent text-[#6C7100] hover:border-[#E7EA8A] hover:bg-[#FAFBC8] hover:text-black"
+          }
+        `}
+      >
+       
 
-  {editing ? (
-    <div onClick={(e) => e.stopPropagation()}>
-      <EditableText
-        autoFocus
-        defaultValue={folder.name}
-        className="min-w-20"
-        onSave={onRename}
-      />
-    </div>
-  ) : (
-    <span>{folder.name}</span>
-  )}
-</div>
+        {active ? (
+          <FolderOpen ref={handleRef} className="h-4 w-4 shrink-0" />
+        ) : (
+          <Folder ref={handleRef} className="h-4 w-4 shrink-0" />
+        )}
+
+        {editing ? (
+          <div
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+          >
+            <EditableText
+              autoFocus
+              defaultValue={folder.name}
+              className="min-w-20"
+              onSave={onRename}
+            />
+          </div>
+        ) : (
+          <span>{folder.name}</span>
+        )}
+      </div>
 
       {!editing && (
         <button

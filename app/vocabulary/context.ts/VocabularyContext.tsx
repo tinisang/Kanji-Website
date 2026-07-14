@@ -12,7 +12,7 @@ import {
 import { VocabularyData } from "../lib/types/vocabularyData";
 import { VocabularyExpression } from "../lib/types/vocabularyExpression";
 import { ExpressionExample } from "../lib/types/expressionExample";
-import { VocabularyFolder } from "../lib/types/vocabularyFolder";
+import { FolderItem } from "../lib/types/vocabularyFolder";
 import { Vocabulary } from "../lib/types/vocabulary";
 import { VocabularyFolderItem } from "../lib/types/vocabularyFolderItem";
 interface VocabularyContextType {
@@ -353,7 +353,7 @@ export function addFolderUI(
   setVocabularyData: Dispatch<
     SetStateAction<VocabularyData>
   >,
-  folder: VocabularyFolder
+  folder: FolderItem
 ) {
   setVocabularyData((prev) => ({
     ...prev,
@@ -361,8 +361,8 @@ export function addFolderUI(
       ...prev.folders,
       [folder.id]: folder,
     },
-    folder_items: {
-      ...prev.folder_items,
+    vocab_folder_items: {
+      ...prev.vocab_folder_items,
       [folder.id]: {},
     },
   }));
@@ -372,7 +372,7 @@ export function updateFolderUI(
   setVocabularyData: Dispatch<
     SetStateAction<VocabularyData>
   >,
-  folder: VocabularyFolder
+  folder: FolderItem
 ) {
   setVocabularyData((prev) => {
     const oldFolder = prev.folders[folder.id];
@@ -411,16 +411,16 @@ export function deleteFolderUI(
 
     delete folders[folderId];
 
-    const folder_items = {
-      ...prev.folder_items,
+    const vocab_folder_items = {
+      ...prev.vocab_folder_items,
     };
 
-    delete folder_items[folderId];
+    delete vocab_folder_items[folderId];
 
     return {
       ...prev,
       folders,
-      folder_items,
+      vocab_folder_items,
     };
   });
 }
@@ -440,19 +440,19 @@ export function addVocabularyUI(
         expressions: {},
       },
     },
-    folder_items:
+    vocab_folder_items:
       activeFolderId === "all"
-        ? prev.folder_items
+        ? prev.vocab_folder_items
         : {
-            ...prev.folder_items,
+            ...prev.vocab_folder_items,
             [activeFolderId]: {
-              ...(prev.folder_items[activeFolderId] ??
+              ...(prev.vocab_folder_items[activeFolderId] ??
                 {}),
               [vocabulary.id]: {
                 vocabulary_id: vocabulary.id,
                 folder_id: activeFolderId,
                 position: Object.keys(
-                  prev.folder_items[
+                  prev.vocab_folder_items[
                     activeFolderId
                   ] ?? {}
                 ).length,
@@ -471,25 +471,25 @@ export function updateFolderItemsUI(
   items: Record<string, string[]>
 ) {
   setVocabularyData((prev) => {
-    const folder_items: VocabularyData["folder_items"] =
+    const vocab_folder_items: VocabularyData["vocab_folder_items"] =
       {};
 
     for (const [
       folderId,
       vocabularyIds,
     ] of Object.entries(items)) {
-      folder_items[folderId] = {};
+      vocab_folder_items[folderId] = {};
 
       vocabularyIds.forEach(
         (vocabularyId, index) => {
-          folder_items[folderId][
+          vocab_folder_items[folderId][
             vocabularyId
           ] = {
             vocabulary_id: vocabularyId,
             folder_id: folderId,
             position: index,
             created_at:
-              prev.folder_items[
+              prev.vocab_folder_items[
                 folderId
               ]?.[vocabularyId]
                 ?.created_at ??
@@ -501,7 +501,7 @@ export function updateFolderItemsUI(
 
     return {
       ...prev,
-      folder_items,
+      vocab_folder_items,
     };
   });
 }
