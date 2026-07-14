@@ -1,7 +1,15 @@
+import { auth } from "@/auth";
 import Header from "@/components/layout/Header";
+import { redirect } from "next/navigation";
 
 
-export default function BunpoPage() {
+export default async function BunpoPage() {
+  const session = await auth();
+  
+    if (!session) {
+      redirect("/login");
+    }
+  
   return (
     <div>
         

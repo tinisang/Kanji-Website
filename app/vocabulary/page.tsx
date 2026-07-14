@@ -10,10 +10,19 @@ import { DragDropProvider } from "@dnd-kit/react";
 import VocabClient from "./components/layout/VocabClient";
 import { getAllVocabularyFolder } from "./features/vocab_folders/services/vocabularyFolderService";
 import { getAllVocabularyFolderItem } from "./features/vocab_folders/services/vocabularyFolderItemService";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 
 
 export default async function VocabPage() {
+
+const session = await auth();
+
+  if (!session) {
+    redirect("/login");
+  }
+
 const [vocabularies, expressions, examples, folders, folderItems] =
   await Promise.all([
     getAllVocabulary(),
