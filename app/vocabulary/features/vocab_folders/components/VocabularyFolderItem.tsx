@@ -42,9 +42,16 @@ export default function VocabularyFolderItem({
     useRef<HTMLDivElement>(null);
 
   const {
+    vocabularyData,
     setVocabularyData,
     setActiveFolderId,
   } = useVocabulary();
+
+  const itemCount = Object.keys(
+    vocabularyData.vocab_folder_items[
+      folder.id
+    ] ?? {}
+  ).length;
 
   const {
     ref: dragRef,
@@ -138,14 +145,14 @@ export default function VocabularyFolderItem({
         containerRef.current = node;
       }}
       className={`
-  group relative rounded-xl transition-all duration-200 c
-  ${isDragging ? "opacity-50" : ""}
-  ${
-    isDropTarget
-      ? "border border-[#F7FF1D] bg-[#FFFDE8] shadow-md"
-      : ""
-  }
-`}
+        group relative
+        ${isDragging ? "opacity-50" : ""}
+        ${
+          isDropTarget
+            ? "bg-[#FFF8B8]"
+            : ""
+        }
+      `}
     >
       <div
         role="button"
@@ -157,28 +164,31 @@ export default function VocabularyFolderItem({
           setEditing(true)
         }
         className={`
-          flex shrink-0 items-center gap-2 rounded-xl
-          border px-4 py-2 pr-10 text-sm font-medium
-          transition-all duration-200
+          flex h-8 items-center gap-1.5
+          rounded-md px-2 text-sm
+          transition-colors
           ${
-            editing
-              ? "scale-[1.02] border-gray-300 bg-white text-black shadow-lg ring-2 ring-[#F7FF1D]/40"
-              : active
-              ? "border-[#F7FF1D] bg-[#F7FF1D] text-black shadow-lg shadow-[#F7FF1D]/30"
-              : "border-transparent bg-transparent text-[#6C7100] hover:border-[#E7EA8A] hover:bg-[#FAFBC8] hover:text-black"
+            active
+              ? "bg-[#EAF2FF] text-black"
+              : "text-[#444] hover:bg-[#F5F5F5]"
           }
         `}
       >
-       
-
         {active ? (
-          <FolderOpen ref={handleRef} className="h-4 w-4 shrink-0" />
+          <FolderOpen
+            ref={handleRef}
+            className="h-4 w-4 shrink-0 text-[#C69C00]"
+          />
         ) : (
-          <Folder ref={handleRef} className="h-4 w-4 shrink-0" />
+          <Folder
+            ref={handleRef}
+            className="h-4 w-4 shrink-0 text-[#C69C00]"
+          />
         )}
 
         {editing ? (
           <div
+            className="flex-1"
             onClick={(e) =>
               e.stopPropagation()
             }
@@ -186,33 +196,54 @@ export default function VocabularyFolderItem({
             <EditableText
               autoFocus
               defaultValue={folder.name}
-              className="min-w-20"
+              className="w-full"
               onSave={onRename}
             />
           </div>
         ) : (
-          <span>{folder.name}</span>
-        )}
-      </div>
+          <div className="flex min-w-0 flex-1 items-center">
+            <span className="truncate">
+              {folder.name}
+            </span>
 
-      {!editing && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
+            {itemCount > 0 && (
+  <span className="ml-2 text-[11px] text-gray-400">
+    {itemCount}
+  </span>
+)}
+          </div>
+        )}
+
+        <GripVertical
+          ref={handleRef}
           className="
-            absolute right-2 top-1/2 -translate-y-1/2
-            rounded-md p-1
-            text-red-500 opacity-0
-            transition-all duration-200
-            hover:bg-red-100
+            h-3.5 w-3.5
+            text-gray-400
+            opacity-0
+            transition-opacity
             group-hover:opacity-100
           "
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
-      )}
+        />
+
+        {!editing && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="
+              rounded p-1
+              text-red-500
+              opacity-0
+              transition
+              hover:bg-red-100
+              group-hover:opacity-100
+            "
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

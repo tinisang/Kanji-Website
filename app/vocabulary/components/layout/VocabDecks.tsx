@@ -8,13 +8,8 @@ import { Usage } from "../../lib/types/Usage";
 import { VocabularyItem } from "../../lib/types/vocabularyData";
 import AddVocabularyDeck from "../../features/vocabulary_deck/components/AddVocabularyDeck";
 
-interface Props {
-  items: VocabularyItem[];
-}
 
-export default function VocabDecks({
-  items,
-}: Props) {
+export default function VocabDecks() {
 
   
 
@@ -26,7 +21,7 @@ export default function VocabDecks({
 
   const visibleItems =
     activeFolderId === "all"
-      ? Object.values(vocabularyData.items)
+      ? []
       : Object.values(
           vocabularyData.vocab_folder_items[
             activeFolderId

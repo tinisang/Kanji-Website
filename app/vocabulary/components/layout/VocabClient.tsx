@@ -29,15 +29,10 @@ const [items, setItems] = useState<
 >({});
 
 useEffect(() => {
+ 
+// if (activeFolderId !== "all") return;
+
   
-if (activeFolderId !== "all") return;
-
-  const firstFolder = Object.values(vocabularyData.folders)
-    .sort((a, b) => a.position - b.position)[0];
-
-  if (firstFolder) {
-    setActiveFolderId(firstFolder.id);
-  }
  const folderItemsByFolder = Object.fromEntries(
   Object.entries(vocabularyData.vocab_folder_items).map(
     ([folderId, items]) => [
@@ -145,13 +140,7 @@ while (current.parent_id) {
                   <VocabFolders />
                   <div className="flex-1">
                       <VocabDecks
-                        items={
-                          activeFolderId === "all"
-                            ? Object.values(initialData.items)
-                            : (items[activeFolderId] ?? []).map(
-                                (id) => initialData.items[id]
-                              )
-                        }
+                       
                       />
                   </div>
                

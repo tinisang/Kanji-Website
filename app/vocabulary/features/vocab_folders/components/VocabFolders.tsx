@@ -8,6 +8,7 @@ import VocabularyAllFolder from "./VocabularyAllFolder";
 import VocabularyFolderItem from "./VocabularyFolderItem";
 import NewFolderButton from "./NewFolderButton";
 import FolderReorderSwitch from "./FolderReorderSwitch";
+import { FolderItem } from "@/app/vocabulary/lib/types/vocabularyFolder";
 
 export default function VocabFolders() {
   const { vocabularyData, setVocabularyData } = useVocabulary();
@@ -26,7 +27,20 @@ export default function VocabFolders() {
 const [collapsed, setCollapsed] = useState<
   Record<string, boolean>
 >({});
+function handleFolderClick(folder: FolderItem) {
+  onSelectFolder(folder.id);
 
+  const hasChildren = Object.values(
+    vocabularyData.folders
+  ).some((f) => f.parent_id === folder.id);
+
+  if (!hasChildren) return;
+
+  setCollapsed((prev) => ({
+    ...prev,
+    [folder.id]: !prev[folder.id],
+  }));
+}
 function renderFolders(
   parentId: string | null,
   level = 0
@@ -43,19 +57,13 @@ function renderFolders(
         collapsed[folder.id] ?? false;
 
       return (
-        <div
-          key={folder.id}
-          className="relative"
-          style={{ paddingLeft: level * 18 }}
-        >
-          {level > 0 && (
-            <>
-              <div className="absolute left-[9px] top-0 bottom-0 w-px bg-[#EAECC2]" />
-              <div className="absolute left-[9px] top-5 h-px w-3 bg-[#EAECC2]" />
-            </>
-          )}
-
-          <div className="group relative flex items-center">
+        <div key={folder.id}>
+          <div
+            className="flex items-center relative"
+            style={{
+              marginLeft: level * 10,
+            }}
+          >
             <button
               onClick={() =>
                 hasChildren &&
@@ -66,31 +74,30 @@ function renderFolders(
                 }))
               }
               className={`
-                mr-1 flex h-5 w-5 shrink-0 items-center justify-center
-                rounded-md text-[11px] font-bold transition
+                mr-1 flex h-4 w-4 shrink-0 items-center justify-center
+                text-xs text-[#888]
+                absolute    left-0
+  top-1/2
+  translate-x-[calc(-50%-10px)]
+  -translate-y-1/2
                 ${
                   hasChildren
-                    ? "text-[#8A9000] hover:bg-[#F5F7C7]"
-                    : "pointer-events-none text-transparent"
+                    ? "hover:text-black"
+                    : "pointer-events-none opacity-0"
                 }
               `}
             >
               {hasChildren &&
-                (isCollapsed ? "+" : "−")}
+                (isCollapsed ? "▶" : "▼")}
             </button>
 
-            <div className="min-w-0 flex-1">
+            <div className="flex-1 min-w-0">
               <VocabularyFolderItem
-                folder={folder}
-                active={
-                  selectedFolderId ===
-                  folder.id
-                }
-                index={index}
-                onClick={() =>
-                  onSelectFolder(folder.id)
-                }
-              />
+  folder={folder}
+  active={selectedFolderId === folder.id}
+  index={index}
+  onClick={() => handleFolderClick(folder)}
+/>
             </div>
           </div>
 
