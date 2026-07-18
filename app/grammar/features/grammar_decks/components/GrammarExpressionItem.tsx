@@ -32,12 +32,12 @@ export default function GrammarExpressionItem({
   );
 
   return (
-    <div className="grid grid-cols-[2fr_1fr_1fr] gap-8 border border-green-200 bg-[#D9FFD6] p-5">
-      <div>
+    <div className="grid grid-cols-[1fr_1fr_1.5fr] gap-8 border border-green-200 bg-[#D9FFD6] border-l-6 border-l-[#49FF38]" >
+      <div className="p-5 bg-[#EBFFE9]">
         <EditableText
           defaultValue={expression.label ?? ""}
           placeholder="Label"
-          className="inline-flex rounded text-sm font-semibold"
+          className="inline-flex rounded text-sm font-semibold "
         />
         <div className="mt-2">
 
@@ -49,7 +49,7 @@ export default function GrammarExpressionItem({
             </div>
       </div>
 
-      <div>
+      <div className="p-5">
         {editingPattern ? (
           <>
             <TiptapEditor
@@ -99,7 +99,7 @@ export default function GrammarExpressionItem({
       <div>
 
        
-        <div className="mt-5 space-y-4">
+        <div className=" space-y p-5">
           <GrammarExpressionExamples
           expression = {expression}
   examples={examples}

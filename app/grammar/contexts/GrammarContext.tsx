@@ -15,6 +15,7 @@ import { GrammarData } from "../lib/types/GrammarData";
 import { GrammarExpression } from "../lib/types/GrammarExpression";
 import { ExpressionExample } from "@/app/vocabulary/lib/types/expressionExample";
 import { FolderItem } from "@/app/vocabulary/lib/types/vocabularyFolder";
+import { GrammarExpressionExample } from "../lib/types/GrammarExpressionExample ";
 
 interface GrammarContextType {
   grammarData: GrammarData;
@@ -280,7 +281,7 @@ export function updateExampleUI(
   setGrammarData: Dispatch<
     SetStateAction<GrammarData>
   >,
-  example: ExpressionExample
+  example: GrammarExpressionExample
 ) {
   setGrammarData((prev) => {
     for (const grammarId in prev.items) {

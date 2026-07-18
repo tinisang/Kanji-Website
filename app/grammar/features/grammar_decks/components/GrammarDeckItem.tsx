@@ -16,6 +16,8 @@ import { Grammar } from "@/app/grammar/lib/types/Grammar";
 import { GrammarExpression } from "@/app/grammar/lib/types/GrammarExpression";
 import { GrammarExpressionExample } from "@/app/grammar/lib/types/GrammarExpressionExample ";
 import GrammmarExpressions from "./GrammarExpressions";
+import { useSortable } from "@dnd-kit/react/sortable";
+import { useGrammar } from "@/app/grammar/contexts/GrammarContext";
 
 
 interface Props {
@@ -34,16 +36,21 @@ interface Props {
 }
 
 export default function GrammarDeckItem({
+  index,
   grammar,
   expressions,
 }: Props) {
+  const {activeFolderId} = useGrammar();
   const {
     ref,
     handleRef,
     isDragging,
-  } = useDraggable({
+  } = useSortable({
     id: grammar.id,
+    index:index,
     type: "item",
+    accept: "item",
+    group: activeFolderId ,
   });
 
   return (
