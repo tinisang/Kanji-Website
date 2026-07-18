@@ -11,9 +11,14 @@ import { EditableText } from "@/app/kanji/features/kanji/components/EditableText
 import TiptapEditor from "@/app/kanji/features/kanji/components/TipTapEditor";
 import { GrammarExpressionExample } from "@/app/grammar/lib/types/GrammarExpressionExample ";
 import GrammarExpressionExamples from "./GrammarExpressionExamples";
+import { deleteExpressionUI, updateExpressionFieldUI, updateExpressionUI, useGrammar } from "@/app/grammar/contexts/GrammarContext";
+import { deleteGrammarExpression, updateGrammarExpression } from "../clients/grammarExpressionClient";
+import { Trash2 } from "lucide-react";
+import { Grammar } from "@/app/grammar/lib/types/Grammar";
 
 interface Props {
   expression: GrammarExpression;
+  grammar:Grammar;
   examples: Record<
     string,
     GrammarExpressionExample
@@ -22,6 +27,7 @@ interface Props {
 
 export default function GrammarExpressionItem({
   expression,
+  grammar,
   examples,
 }: Props) {
   const [editingPattern, setEditingPattern] =
@@ -31,13 +37,62 @@ export default function GrammarExpressionItem({
     expression.pattern ?? ""
   );
 
+
+  const {setGrammarData} = useGrammar();
+    async function saveExpression(
+    value: string,
+    field: "label" | "note" | "pattern"
+  ) {
+    const updated = {
+      ...expression,
+      [field]: value,
+    };
+  
+    updateExpressionUI(setGrammarData, updated)
+  
+    await updateGrammarExpression(updated);
+  }
+
+
+
   return (
-    <div className="grid grid-cols-[1fr_1fr_1.5fr] gap-8 border border-green-200 bg-[#D9FFD6] border-l-6 border-l-[#49FF38]" >
-      <div className="p-5 bg-[#EBFFE9]">
+<div className="group/expression relative grid grid-cols-[1fr_1fr_1.5fr] gap-8 border border-green-200 bg-[#D9FFD6] border-l-6 border-l-[#49FF38]">
+  <div
+  role="button"
+  tabIndex={0}
+  onClick={async (e) => {
+    e.stopPropagation();
+
+    deleteExpressionUI(
+      setGrammarData, 
+      grammar.id,
+      expression.id
+    );
+    await deleteGrammarExpression(expression.id);
+  }}
+  className="
+    absolute
+    top-3
+    right-3
+    rounded-md
+    p-1.5
+    text-red-500
+    opacity-0
+    transition
+    hover:bg-red-100
+    group-hover/expression:opacity-100
+    z-20
+  "
+>
+  <Trash2 className="h-4 w-4" />
+</div>
+  <div className="p-5 bg-[#EBFFE9]">
+  
         <EditableText
           defaultValue={expression.label ?? ""}
           placeholder="Label"
-          className="inline-flex rounded text-sm font-semibold "
+          className="inline-flex rounded text-xl font-semibold "
+          onSave={(value)=> {saveExpression(value,"label")}}
         />
         <div className="mt-2">
 
@@ -45,6 +100,7 @@ export default function GrammarExpressionItem({
             defaultValue={expression.note ?? ""}
             placeholder="Note"
             className="text-gray-600"
+            onSave={(value)=> {saveExpression(value,"note")}}
             />
             </div>
       </div>
@@ -75,6 +131,7 @@ export default function GrammarExpressionItem({
                   // await update...
 
                   setEditingPattern(false);
+                  saveExpression(pattern, "pattern")
                 }}
               >
                 Save
@@ -83,9 +140,7 @@ export default function GrammarExpressionItem({
           </>
         ) : (
           <div
-            onClick={() =>
-              setEditingPattern(true)
-            }
+            onClick={() => setEditingPattern(true)}
             className="prose max-w-none min-h-[40px] cursor-text rounded p-2 hover:bg-green-100"
             dangerouslySetInnerHTML={{
               __html:
@@ -102,7 +157,7 @@ export default function GrammarExpressionItem({
         <div className=" space-y p-5">
           <GrammarExpressionExamples
           expression = {expression}
-  examples={examples}
+          examples={examples}
 />
         </div>
       </div>

@@ -9,7 +9,7 @@ import {
 
 import { cn } from "@/lib/utils";
 
-import { GripVertical } from "lucide-react";
+import { GripVertical, Pencil } from "lucide-react";
 import { useDraggable } from "@dnd-kit/react";
 
 import { Grammar } from "@/app/grammar/lib/types/Grammar";
@@ -17,7 +17,10 @@ import { GrammarExpression } from "@/app/grammar/lib/types/GrammarExpression";
 import { GrammarExpressionExample } from "@/app/grammar/lib/types/GrammarExpressionExample ";
 import GrammmarExpressions from "./GrammarExpressions";
 import { useSortable } from "@dnd-kit/react/sortable";
-import { useGrammar } from "@/app/grammar/contexts/GrammarContext";
+import { updateGrammarUI, useGrammar } from "@/app/grammar/contexts/GrammarContext";
+import { useState } from "react";
+import { EditableText } from "@/app/kanji/features/kanji/components/EditableText";
+import { updateGrammar } from "../clients/grammarClient";
 
 
 interface Props {
@@ -40,7 +43,8 @@ export default function GrammarDeckItem({
   grammar,
   expressions,
 }: Props) {
-  const {activeFolderId} = useGrammar();
+  const {activeFolderId, setGrammarData} = useGrammar();
+  const [editingTitle, setEditingTitle] =useState(false);
   const {
     ref,
     handleRef,
@@ -67,7 +71,7 @@ export default function GrammarDeckItem({
         value={grammar.id}
         className="border-none"
       >
-        <AccordionTrigger className="px-6 py-5 hover:no-underline">
+        <AccordionTrigger className="group px-6 py-5 hover:no-underline">
   <div className="flex w-full items-center gap-3">
     <div
       ref={handleRef}
@@ -77,9 +81,82 @@ export default function GrammarDeckItem({
       <GripVertical className="h-5 w-5" />
     </div>
 
-    <h2 className="text-2xl font-bold">
-      {grammar.title}
-    </h2>
+    <div className={`
+    flex items-center gap-2 rounded-md px-2 py-1 transition-colors
+    ${
+      editingTitle
+        ? "bg-muted"
+        : ""
+    }
+  `}>
+      {editingTitle ? (
+        <div
+          onClick={(e) =>
+            e.stopPropagation()
+          }
+        >
+          <EditableText
+            autoFocus = {true}
+            defaultValue={grammar.title}
+            className="text-2xl font-bold"
+            onBlur={()=>{setEditingTitle(false)}}
+            onSave={async (title) => {
+              setEditingTitle(false);
+
+              if (
+                !title.trim() ||
+                title === grammar.title
+              )
+                return;
+
+                updateGrammarUI(
+                  setGrammarData,
+                  {
+                    ...grammar,
+                    title: title
+                  }
+                )
+             
+              // await update API
+
+              await updateGrammar(
+                {
+                  ...grammar,
+                  title:title
+                }
+              )
+            }}
+          />
+        </div>
+      ) : (
+        <>
+          <h2 className="text-2xl font-bold">
+            {grammar.title}
+          </h2>
+
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setEditingTitle(true);
+            }}
+            className="
+              rounded p-1
+              text-gray-400
+              opacity-0
+              transition
+              hover:bg-gray-100
+              hover:text-black
+              group-hover:opacity-100
+            "
+          >
+            <Pencil className="h-4 w-4" />
+          </div>
+        </>
+      )}
+    </div>
 
     <span className="ml-auto flex h-7 min-w-7 items-center justify-center rounded-full bg-yellow-400 px-2 text-sm font-bold">
       {Object.keys(expressions).length}

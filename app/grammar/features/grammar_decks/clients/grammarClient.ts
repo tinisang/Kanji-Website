@@ -50,7 +50,7 @@ export async function updateGrammar(
   grammar: Grammar
 ) {
   const res = await fetch(
-    `/api/grammar/${grammar.id}`,
+    `/grammar/api/${grammar.id}`,
     {
       method: "PUT",
       headers: {
@@ -71,7 +71,7 @@ export async function deleteGrammar(
   grammarId: string
 ) {
   const res = await fetch(
-    `/api/grammar/${grammarId}`,
+    `/grammar/api/${grammarId}`,
     {
       method: "DELETE",
     }

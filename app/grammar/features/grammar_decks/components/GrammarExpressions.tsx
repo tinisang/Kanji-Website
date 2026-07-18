@@ -37,6 +37,7 @@ export default function GrammarExpressions({
         .map(({ expression, examples }) => (
           <GrammarExpressionItem
             key={expression.id}
+            grammar={grammar}
             expression={expression}
             examples={examples}
           />

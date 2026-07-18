@@ -56,7 +56,7 @@ export default function GrammarExpressionExampleItem({
         <EditableText
           defaultValue={example.example ?? ""}
           placeholder="Example"
-          className="font-medium text-gray-900"
+          className="font-semibold text-gray-900"
           onSave={(value) => saveExample(value, "example")}
         />
 

@@ -169,7 +169,36 @@ export function updateExpressionUI(
     };
   });
 }
+export function deleteExpressionUI(
+  setGrammarData: Dispatch<
+    SetStateAction<GrammarData>
+  >,
+  grammarId: string,
+  expressionId: string
+) {
+  setGrammarData((prev) => {
+    const item = prev.items[grammarId];
 
+    if (!item) return prev;
+
+    const expressions = {
+      ...item.expressions,
+    };
+
+    delete expressions[expressionId];
+
+    return {
+      ...prev,
+      items: {
+        ...prev.items,
+        [grammarId]: {
+          ...item,
+          expressions,
+        },
+      },
+    };
+  });
+}
 export function updateExpressionFieldUI(
   setGrammarData: Dispatch<
     SetStateAction<GrammarData>
