@@ -4,7 +4,9 @@ export async function getAllVocabularyFolder() {
   const response = await fetch("/vocabulary/api/folder");
 
   if (!response.ok) {
-    throw new Error("Failed to fetch vocabulary folders");
+    throw new Error(
+      "Failed to fetch vocabulary folders"
+    );
   }
 
   return (await response.json()) as FolderItem[];
@@ -13,7 +15,12 @@ export async function getAllVocabularyFolder() {
 export async function createVocabularyFolder(
   folder: Omit<
     FolderItem,
-    "id" | "user_id" | "position" | "created_at" | "updated_at"
+    | "id"
+    | "user_id"
+    | "position"
+    | "created_at"
+    | "updated_at"
+    | "type"
   >
 ) {
   const response = await fetch(
@@ -25,7 +32,37 @@ export async function createVocabularyFolder(
   );
 
   if (!response.ok) {
-    throw new Error("Failed to create vocabulary folder");
+    throw new Error(
+      "Failed to create vocabulary folder"
+    );
+  }
+
+  return (await response.json()) as FolderItem;
+}
+
+export async function createGrammarFolder(
+  folder: Omit<
+    FolderItem,
+    | "id"
+    | "user_id"
+    | "position"
+    | "created_at"
+    | "updated_at"
+    | "type"
+  >
+) {
+  const response = await fetch(
+    "/grammar/api/folder",
+    {
+      method: "POST",
+      body: JSON.stringify(folder),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to create grammar folder"
+    );
   }
 
   return (await response.json()) as FolderItem;
@@ -38,12 +75,17 @@ export async function updateVocabularyFolder(
     `/vocabulary/api/folder/${folder.id}`,
     {
       method: "PATCH",
-      body: JSON.stringify(folder),
+      body: JSON.stringify({
+        ...folder,
+        type: "vocabulary",
+      }),
     }
   );
 
   if (!response.ok) {
-    throw new Error("Failed to update vocabulary folder");
+    throw new Error(
+      "Failed to update vocabulary folder"
+    );
   }
 
   return (await response.json()) as FolderItem;
@@ -81,6 +123,8 @@ export async function deleteVocabularyFolder(
   );
 
   if (!response.ok) {
-    throw new Error("Failed to delete vocabulary folder");
+    throw new Error(
+      "Failed to delete vocabulary folder"
+    );
   }
 }

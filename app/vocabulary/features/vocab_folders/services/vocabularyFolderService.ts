@@ -6,8 +6,19 @@ export async function getAllVocabularyFolder(
  
 ) {
     const userId = await getCurrentUserId();
-  return vocabularyFolderRepository.getAllVocabularyFolderByUserId(
-    userId
+  return vocabularyFolderRepository.getAllFolderByType(
+    userId,
+    "vocabulary"
+  );
+}
+
+export async function getAllGrammarFolder(
+ 
+) {
+    const userId = await getCurrentUserId();
+  return vocabularyFolderRepository.getAllFolderByType(
+    userId,
+    "grammar"
   );
 }
 
@@ -26,12 +37,28 @@ export async function createVocabularyFolder(
 
   folder: Omit<
     FolderItem,
-    "id" | "user_id" | "position" | "created_at" | "updated_at"
+    "id" | "user_id" | "position" | "created_at" | "updated_at" | "type"
   >
 ) {
     const userId = await getCurrentUserId();
-  return vocabularyFolderRepository.createVocabularyFolder(
+  return vocabularyFolderRepository.createFolder(
     userId,
+    "vocabulary",
+    folder
+  );
+}
+
+export async function createGrammarFolder(
+
+  folder: Omit<
+    FolderItem,
+    "id" | "user_id" | "position" | "created_at" | "updated_at" | "type"
+  >
+) {
+    const userId = await getCurrentUserId();
+  return vocabularyFolderRepository.createFolder(
+    userId,
+    "grammar",
     folder
   );
 }
@@ -41,7 +68,7 @@ export async function updateVocabularyFolderById(
   folder: FolderItem
 ) {
     const userId = await getCurrentUserId();
-  return vocabularyFolderRepository.updateVocabularyFolderById(
+  return vocabularyFolderRepository.updateFolderById(
     userId,
     folder
   );
@@ -66,7 +93,7 @@ export async function deleteVocabularyFolderById(
   folderId: string
 ) {
     const userId = await getCurrentUserId();
-  return vocabularyFolderRepository.deleteVocabularyFolderById(
+  return vocabularyFolderRepository.deleteFolderById(
     userId,
     folderId
   );

@@ -1,19 +1,22 @@
 import { sql } from "@/lib/db";
 import { FolderItem } from "@/app/vocabulary/lib/types/vocabularyFolder";
+import { FolderType } from "@/lib/FolderType";
 
-export async function getAllVocabularyFolderByUserId(
-  userId: string
+export async function getAllFolderByType(
+  userId: string,
+  type: FolderType
 ) {
   const rows = await sql`
     SELECT *
     FROM folders
-    WHERE user_id = ${userId}
+    WHERE
+      user_id = ${userId}
+      AND type = ${type}
     ORDER BY position;
   `;
 
   return rows as FolderItem[];
 }
-
 export async function getVocabularyFolderById(
   userId: string,
   folderId: string
@@ -29,11 +32,12 @@ export async function getVocabularyFolderById(
   return rows[0] as FolderItem | undefined;
 }
 
-export async function createVocabularyFolder(
+export async function createFolder(
   userId: string,
+  type: string,
   folder: Omit<
     FolderItem,
-    "id" | "user_id" | "position" | "created_at" | "updated_at"
+    "id" | "user_id" | "position" | "created_at" | "updated_at" | "type"
   >
 ) {
   const rows = await sql`
@@ -41,7 +45,8 @@ export async function createVocabularyFolder(
       user_id,
       name,
       color,
-      position
+      position,
+      type
     )
     VALUES (
       ${userId},
@@ -51,7 +56,9 @@ export async function createVocabularyFolder(
         SELECT COALESCE(MAX(position), -1) + 1
         FROM folders
         WHERE user_id = ${userId}
-      )
+          AND type = ${type}
+      ),
+      ${type}
     )
     RETURNING *;
   `;
@@ -59,7 +66,7 @@ export async function createVocabularyFolder(
   return rows[0] as FolderItem;
 }
 
-export async function updateVocabularyFolderById(
+export async function updateFolderById(
   userId: string,
   folder: FolderItem
 ) {
@@ -99,7 +106,7 @@ export async function updateVocabularyFolderById(
   }
 }
 
-export async function deleteVocabularyFolderById(
+export async function deleteFolderById(
   userId: string,
   folderId: string
 ) {

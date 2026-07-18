@@ -6,24 +6,22 @@ import {
   addFolderUI,
   deleteFolderUI,
   updateFolderUI,
-  useVocabulary,
-} from "@/app/vocabulary/context.ts/VocabularyContext";
+  useGrammar,
+} from "@/app/grammar/contexts/GrammarContext";
 
-import {
-  createVocabularyFolder,
-  deleteVocabularyFolder,
-  updateVocabularyFolder,
-} from "../clients/vocabularyFolderClient";
+
 
 import FolderTree from "./FolderTree";
 import FolderItem from "./FolderItem";
+import { createGrammarFolder } from "../clients/vocabularyFolderClient";
+import { deleteGrammarFolder, updateGrammarFolder } from "@/app/grammar/features/grammar_decks/clients/grammarFolderClient";
 
-export default function VocabFolders() {
+export default function GrammarFolders() {
   const {
-    vocabularyData,
-    setVocabularyData,
+    grammarData,
+    setGrammarData,
     setActiveFolderId,
-  } = useVocabulary();
+  } = useGrammar();
 
   const [
     selectedFolderId,
@@ -32,16 +30,16 @@ export default function VocabFolders() {
 
   return (
     <FolderTree
-      folders={vocabularyData.folders}
+      folders={grammarData.folders}
       selectedFolderId={
         selectedFolderId
       }
       setSelectedFolderId={
         setSelectedFolderId
       }
-      setData={setVocabularyData}
+      setData={setGrammarData}
       createFolder={
-        createVocabularyFolder
+        createGrammarFolder
       }
       addFolderUI={addFolderUI}
       FolderItemComponent={({
@@ -53,8 +51,8 @@ export default function VocabFolders() {
           active={active}
           itemCount={
             Object.keys(
-              vocabularyData
-                .vocab_folder_items[
+              grammarData
+                .grammar_folder_items[
                 folder.id
               ] ?? {}
             ).length
@@ -76,21 +74,21 @@ export default function VocabFolders() {
             };
 
             updateFolderUI(
-              setVocabularyData,
+              setGrammarData,
               updated
             );
 
-            await updateVocabularyFolder(
+            await updateGrammarFolder(
               updated
             );
           }}
           onDelete={async () => {
             deleteFolderUI(
-              setVocabularyData,
+              setGrammarData,
               folder.id
             );
 
-            await deleteVocabularyFolder(
+            await deleteGrammarFolder(
               folder.id
             );
           }}

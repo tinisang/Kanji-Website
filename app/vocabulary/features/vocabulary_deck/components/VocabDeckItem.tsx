@@ -49,8 +49,8 @@ export default function VocabularyDeckItem({
    const { ref, handleRef } = useSortable({
     id: vocabulary.id,
     index:index,
-    type: "vocab",
-    accept: "vocab",
+    type: "item",
+    accept: "item",
     group: activeFolderId ,
   
 

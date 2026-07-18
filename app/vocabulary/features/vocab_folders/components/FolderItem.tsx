@@ -9,49 +9,41 @@ import {
 } from "lucide-react";
 
 import { EditableText } from "@/app/kanji/features/kanji/components/EditableText";
-import { FolderItem } from "@/app/vocabulary/lib/types/vocabularyFolder";
-import {
-  deleteVocabularyFolder,
-  updateVocabularyFolder,
-} from "../clients/vocabularyFolderClient";
-import {
-  deleteFolderUI,
-  updateFolderUI,
-  useVocabulary,
-} from "@/app/vocabulary/context.ts/VocabularyContext";
 import {
   useDraggable,
   useDroppable,
 } from "@dnd-kit/react";
 
+import { FolderItem as FolderItemType } from "@/app/vocabulary/lib/types/vocabularyFolder";
+
 interface Props {
-  folder: FolderItem;
+  folder: FolderItemType;
   active: boolean;
-  index: number;
-  onClick: () => void;
+  itemCount: number;
+
+  onSelect: () => void;
+  onRename: (
+    name: string
+  ) => Promise<void>;
+  onDelete: () => Promise<void>;
 }
 
-export default function VocabularyFolderItem({
+export default function FolderItem({
   folder,
   active,
-  onClick,
+  itemCount,
+  onSelect,
+  onRename,
+  onDelete,
 }: Props) {
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] =
+    useState(false);
 
   const containerRef =
     useRef<HTMLDivElement>(null);
 
-  const {
-    vocabularyData,
-    setVocabularyData,
-    setActiveFolderId,
-  } = useVocabulary();
-
-  const itemCount = Object.keys(
-    vocabularyData.vocab_folder_items[
-      folder.id
-    ] ?? {}
-  ).length;
+  const renameTimer =
+    useRef<NodeJS.Timeout | null>(null);
 
   const {
     ref: dragRef,
@@ -68,7 +60,7 @@ export default function VocabularyFolderItem({
   } = useDroppable({
     id: folder.id,
     type: "folder",
-    accept: ["folder", "vocab"],
+    accept: ["folder", "item"],
   });
 
   useEffect(() => {
@@ -99,42 +91,58 @@ export default function VocabularyFolderItem({
       );
   }, [editing]);
 
-  async function onDelete() {
-    deleteFolderUI(
-      setVocabularyData,
-      folder.id
-    );
+  useEffect(() => {
+    return () => {
+      if (renameTimer.current) {
+        clearTimeout(
+          renameTimer.current
+        );
+      }
+    };
+  }, []);
 
-    await deleteVocabularyFolder(
-      folder.id
-    );
-  }
+  async function handleRename(
+    name: string
+  ) {
+    setEditing(false);
 
-  function handleClick() {
-    onClick();
-    setActiveFolderId(folder.id);
-  }
-
-  async function onRename(name: string) {
     if (
       !name.trim() ||
       name === folder.name
     )
       return;
 
-    const updatedFolder = {
-      ...folder,
-      name,
-    };
+    await onRename(name);
+  }
 
-    updateFolderUI(
-      setVocabularyData,
-      updatedFolder
-    );
+  function handleClick() {
+    if (editing) return;
 
-    await updateVocabularyFolder(
-      updatedFolder
-    );
+    if (!active) {
+      onSelect();
+      return;
+    }
+
+    if (renameTimer.current) {
+      clearTimeout(
+        renameTimer.current
+      );
+    }
+
+    renameTimer.current =
+      setTimeout(() => {
+        setEditing(true);
+      }, 350);
+  }
+
+  function handleDoubleClick() {
+    if (renameTimer.current) {
+      clearTimeout(
+        renameTimer.current
+      );
+    }
+
+    onSelect();
   }
 
   return (
@@ -146,7 +154,11 @@ export default function VocabularyFolderItem({
       }}
       className={`
         group relative
-        ${isDragging ? "opacity-50" : ""}
+        ${
+          isDragging
+            ? "opacity-50"
+            : ""
+        }
         ${
           isDropTarget
             ? "bg-[#FFF8B8]"
@@ -157,11 +169,9 @@ export default function VocabularyFolderItem({
       <div
         role="button"
         tabIndex={0}
-        onClick={() =>
-          !editing && handleClick()
-        }
-        onDoubleClick={() =>
-          setEditing(true)
+        onClick={handleClick}
+        onDoubleClick={
+          handleDoubleClick
         }
         className={`
           flex h-8 items-center gap-1.5
@@ -195,9 +205,13 @@ export default function VocabularyFolderItem({
           >
             <EditableText
               autoFocus
-              defaultValue={folder.name}
+              defaultValue={
+                folder.name
+              }
               className="w-full"
-              onSave={onRename}
+              onSave={
+                handleRename
+              }
             />
           </div>
         ) : (
@@ -207,22 +221,16 @@ export default function VocabularyFolderItem({
             </span>
 
             {itemCount > 0 && (
-  <span className="ml-2 text-[11px] text-gray-400">
-    {itemCount}
-  </span>
-)}
+              <span className="ml-2 text-[11px] text-gray-400">
+                {itemCount}
+              </span>
+            )}
           </div>
         )}
 
         <GripVertical
           ref={handleRef}
-          className="
-            h-3.5 w-3.5
-            text-gray-400
-            opacity-0
-            transition-opacity
-            group-hover:opacity-100
-          "
+          className="h-3.5 w-3.5 text-gray-400 opacity-0 transition-opacity group-hover:opacity-100"
         />
 
         {!editing && (
@@ -231,14 +239,7 @@ export default function VocabularyFolderItem({
               e.stopPropagation();
               onDelete();
             }}
-            className="
-              rounded p-1
-              text-red-500
-              opacity-0
-              transition
-              hover:bg-red-100
-              group-hover:opacity-100
-            "
+            className="rounded p-1 text-red-500 opacity-0 transition hover:bg-red-100 group-hover:opacity-100"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>

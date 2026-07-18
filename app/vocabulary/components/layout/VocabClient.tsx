@@ -76,7 +76,7 @@ while (current.parent_id) {
   current =
     vocabularyData.folders[current.parent_id];
 }
-              console.log(source)
+            
 
               const updatedFolder = {
               ...source,
