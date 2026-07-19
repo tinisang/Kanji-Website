@@ -21,6 +21,7 @@ export interface Kanji {
   content: string | null;
 
   learned: boolean;
+ 
 
   created_at: string;
   updated_at: string;

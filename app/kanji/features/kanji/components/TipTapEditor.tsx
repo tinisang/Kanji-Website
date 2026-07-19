@@ -10,6 +10,11 @@ import { TextStyle } from "@tiptap/extension-text-style";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 
+
+import TableRow from "@tiptap/extension-table-row";
+import TableHeader from "@tiptap/extension-table-header";
+import TableCell from "@tiptap/extension-table-cell";
+
 import {
   Bold,
   Italic,
@@ -17,9 +22,11 @@ import {
   List,
   ListOrdered,
   Heading2,
+  Table2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Table } from "@tiptap/extension-table";
 
 type Props = {
   value: string;
@@ -58,6 +65,14 @@ export default function TiptapEditor({
         autolink: true,
         defaultProtocol: "https",
       }),
+
+      Table.configure({
+        resizable: true,
+      }),
+
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
 
     content: value,
@@ -78,9 +93,7 @@ export default function TiptapEditor({
         const html =
           event.clipboardData?.getData("text/html");
 
-        if (!html) {
-          return false;
-        }
+        if (!html) return false;
 
         const parser = new DOMParser();
 
@@ -105,61 +118,6 @@ export default function TiptapEditor({
   return (
     <div className="overflow-hidden rounded-md border bg-white">
       <div className="flex flex-wrap gap-2 border-b p-2">
-        <Button
-          size="icon"
-          type="button"
-          variant={
-            editor.isActive("highlight")
-              ? "default"
-              : "outline"
-          }
-          onClick={() =>
-            editor.chain().focus().toggleHighlight().run()
-          }
-        >
-          H
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() =>
-            editor
-              .chain()
-              .focus()
-              .toggleHighlight({
-                color: "#fef08a",
-              })
-              .run()
-          }
-        >
-          🖍️
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() =>
-            editor
-              .chain()
-              .focus()
-              .setColor("#ef4444")
-              .run()
-          }
-        >
-          🔴
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() =>
-            editor.chain().focus().unsetColor().run()
-          }
-        >
-          Reset
-        </Button>
-
         <Button
           size="icon"
           type="button"
@@ -268,6 +226,158 @@ export default function TiptapEditor({
           }
         >
           <ListOrdered size={16} />
+        </Button>
+
+        <Button
+          size="icon"
+          type="button"
+          variant={
+            editor.isActive("highlight")
+              ? "default"
+              : "outline"
+          }
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .toggleHighlight()
+              .run()
+          }
+        >
+          H
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .toggleHighlight({
+                color: "#fef08a",
+              })
+              .run()
+          }
+        >
+          🖍️
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .setColor("#ef4444")
+              .run()
+          }
+        >
+          🔴
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .unsetColor()
+              .run()
+          }
+        >
+          Reset
+        </Button>
+
+        <Button
+          size="icon"
+          type="button"
+          variant="outline"
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .insertTable({
+                rows: 3,
+                cols: 3,
+                withHeaderRow: true,
+              })
+              .run()
+          }
+        >
+          <Table2 size={16} />
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .addRowAfter()
+              .run()
+          }
+        >
+          + Row
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .addColumnAfter()
+              .run()
+          }
+        >
+          + Col
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .deleteRow()
+              .run()
+          }
+        >
+          - Row
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .deleteColumn()
+              .run()
+          }
+        >
+          - Col
+        </Button>
+
+        <Button
+          type="button"
+          variant="destructive"
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .deleteTable()
+              .run()
+          }
+        >
+          Delete Table
         </Button>
       </div>
 

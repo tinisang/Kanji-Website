@@ -1,3 +1,4 @@
+import { Usage } from "@/app/vocabulary/lib/types/Usage";
 import { VocabularyExpression } from "@/app/vocabulary/lib/types/vocabularyExpression";
 
 export async function getAllVocabularyExpression(
@@ -87,4 +88,18 @@ export async function deleteVocabularyExpression(
   if (!response.ok) {
     throw new Error("Failed to delete expression");
   }
+}
+
+export async function getUsagesByVocabularyId(
+  vocabularyId: string
+): Promise<Record<string, Usage>> {
+  const res = await fetch(
+    `/vocabulary/api/expression/vocabulary/${vocabularyId}/usages`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch usages.");
+  }
+
+  return res.json();
 }

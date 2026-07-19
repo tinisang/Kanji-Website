@@ -1,5 +1,8 @@
 import { Vocabulary } from "@/app/vocabulary/lib/types/vocabulary";
 
+
+
+
 export async function getAllVocabulary() {
   const response = await fetch("/vocabulary/api");
 

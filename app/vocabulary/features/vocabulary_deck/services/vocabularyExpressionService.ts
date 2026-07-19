@@ -1,6 +1,41 @@
 import * as vocabularyExpressionRepository from "@/app/vocabulary/lib/repositories/vocabularyExpressionRepository";
+
+
+import * as expressionExampleRepository from "@/app/vocabulary/lib/repositories/expressionExampleRepository";
+
+import { Usage } from "@/app/vocabulary/lib/types/Usage";
 import { VocabularyExpression } from "@/app/vocabulary/lib/types/vocabularyExpression";
 
+
+export async function getUsagesByVocabularyId(
+  vocabularyId: string
+): Promise<Record<string, Usage>> {
+  const expressions =
+    await getAllVocabularyExpressionByVocabularyId(
+      vocabularyId
+    );
+
+  const usages: Record<string, Usage> = {};
+
+  for (const expression of expressions) {
+    const examples =
+      await expressionExampleRepository.getAllExpressionExampleByExpressionId(
+        expression.id
+      );
+
+    usages[expression.id] = {
+      expression,
+      examples: Object.fromEntries(
+        examples.map((example) => [
+          example.id,
+          example,
+        ])
+      ),
+    };
+  }
+
+  return usages;
+}
 
 export async function getAllVocabularyExpression() {
   return await vocabularyExpressionRepository.getAllVocabularyExpression();

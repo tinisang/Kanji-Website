@@ -6,7 +6,7 @@ export interface Vocabulary {
 
   user_id: string;
   meaning: string;
-  note: string;
+  note: string | null;
 
   need_revision: boolean;
 
