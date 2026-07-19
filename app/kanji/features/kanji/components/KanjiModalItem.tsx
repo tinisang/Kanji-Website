@@ -62,145 +62,149 @@ const [open, setOpen] = useState(false);
   }}
     >
       <DialogTrigger  asChild>{children}</DialogTrigger>
-      <DialogContent showCloseButton={false} className="!max-w-5xl p-0 font-inherit">
-
-        <div className="overflow-hidden rounded-lg border-l-4 border-l-lime-500">
-          {/* Header */}
-          <div className="flex justify-between bg-neutral-50 p-6">
-            {/* Kanji */}
-            <div className="  text-left">
-              <div className="text-7xl font-bold leading-none">{kanji.character}</div>
-              <EditableText
-                defaultValue={kanji.han_viet}
-                placeholder="Nhập từ ..."
-                className="mt-4 text-2xl font-semibold text-neutral-400"
-                onSave={(value) => {
-                  const updated = {
-                    ...kanji,
-                    han_viet: value,
-                  };
-                  handleSave(updated);
-                }
-                }
-              />
-            </div>
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="w-20 text-sm font-medium text-neutral-500">
-                  Onyomi
-                </span>
-
-                <EditableText
-                  defaultValue={kanji.onyomi ?? ""}
-                  className="text-lg"
-                  placeholder="オンヨミ"
-                  onSave={(value) => {
-                    handleSave({
-                      ...kanji,
-                      onyomi: value,
-                    });
-                  }}
-                />
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="w-20 text-sm font-medium text-neutral-500">
-                  Kunyomi
-                </span>
-
-                <EditableText
-                  defaultValue={kanji.kunyomi ?? ""}
-                  className="text-lg"
-                  placeholder="くんよみ"
-                  onSave={(value) => {
-                    handleSave({
-                      ...kanji,
-                      kunyomi: value,
-                    });
-                  }}
-                />
-              </div>
-            </div>
-
-
-                <ReferenceBadge
-  kanji={kanji}
-  references={references}
-  referenceItems={referenceItems}
-/>
+      <DialogContent
+  showCloseButton={false}
+  className="!max-w-5xl p-0 max-h-[90vh] overflow-hidden"
+>
+  <div className="flex h-[90vh] flex-col overflow-hidden rounded-lg border-l-4 border-l-lime-500">
+    {/* Header */}
+    <div className="shrink-0 bg-neutral-50 p-6">
+      <div className="flex justify-between">
+        <div className="text-left">
+          <div className="text-7xl font-bold leading-none">
+            {kanji.character}
           </div>
 
-          {/* Vocabulary */}
-          {/* Vocabulary */}
-<div className="border-t p-6">
-  <KanjiVocabularySection
-    kanjiId={kanji.id}
-  />
-</div>
-          <div className="bg-lime-50 p-6">
-            <h3 className="mb-3">
-              Ghi chú
-            </h3>
+          <EditableText
+            defaultValue={kanji.han_viet}
+            placeholder="Nhập từ ..."
+            className="mt-4 text-2xl font-semibold text-neutral-400"
+            onSave={(value) =>
+              handleSave({
+                ...kanji,
+                han_viet: value,
+              })
+            }
+          />
+        </div>
 
-            {editingContent ? (
-              <TiptapEditor
-                value={content}
-                onChange={setContent}
-              />
-            ) : (
-              <div
-                onClick={() =>
-                  setEditingContent(true)
-                }
-                className="
-        prose prose-sm max-w-none
-        min-h-[120px]
-        cursor-text
-        rounded
-        p-2
-        hover:bg-lime-100/50
-      "
-                dangerouslySetInnerHTML={{
-                  __html:
-                    content ||
-                    "<p class='text-neutral-400'>Click để thêm ghi chú...</p>",
-                }}
-              />
-            )}
+        <div className="mt-4 space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="w-20 text-sm font-medium text-neutral-500">
+              Onyomi
+            </span>
 
-            {editingContent && (
-              <div className="mt-4 flex justify-end gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() =>
-                    setEditingContent(false)
-                  }
-                >
-                  Huỷ
-                </Button>
+            <EditableText
+              defaultValue={kanji.onyomi ?? ""}
+              className="text-lg"
+              placeholder="オンヨミ"
+              onSave={(value) =>
+                handleSave({
+                  ...kanji,
+                  onyomi: value,
+                })
+              }
+            />
+          </div>
 
-                <Button
-                  onClick={async () => {
-                    const updated = {
-                      ...kanji,
-                      content,
-                    };
+          <div className="flex items-center gap-2">
+            <span className="w-20 text-sm font-medium text-neutral-500">
+              Kunyomi
+            </span>
 
-                    
-
-                    await handleSave(updated);
-
-                    setEditingContent(false);
-                  }}
-                >
-                  Lưu
-                </Button>
-              </div>
-            )}
+            <EditableText
+              defaultValue={kanji.kunyomi ?? ""}
+              className="text-lg"
+              placeholder="くんよみ"
+              onSave={(value) =>
+                handleSave({
+                  ...kanji,
+                  kunyomi: value,
+                })
+              }
+            />
           </div>
         </div>
 
-      </DialogContent>
+        <ReferenceBadge
+          kanji={kanji}
+          references={references}
+          referenceItems={referenceItems}
+        />
+      </div>
+    </div>
+
+    {/* Body */}
+    <div className="flex-1 overflow-y-auto">
+      <div className="border-t p-6">
+        <KanjiVocabularySection
+          kanjiId={kanji.id}
+        />
+      </div>
+
+      <div className="bg-lime-50 p-6">
+        <h3 className="mb-3">
+          Ghi chú
+        </h3>
+
+        {editingContent ? (
+          <TiptapEditor
+            value={content}
+            onChange={setContent}
+          />
+        ) : (
+          <div
+            onClick={() =>
+              setEditingContent(true)
+            }
+            className="
+              prose prose-sm max-w-none
+              min-h-[120px]
+              cursor-text
+              rounded
+              p-2
+              hover:bg-lime-100/50
+            "
+            dangerouslySetInnerHTML={{
+              __html:
+                content ||
+                "<p class='text-neutral-400'>Click để thêm ghi chú...</p>",
+            }}
+          />
+        )}
+      </div>
+    </div>
+
+    {/* Footer */}
+    {editingContent && (
+      <div className="shrink-0 border-t bg-white p-4">
+        <div className="flex justify-end gap-2">
+          <Button
+            variant="outline"
+            onClick={() =>
+              setEditingContent(false)
+            }
+          >
+            Huỷ
+          </Button>
+
+          <Button
+            onClick={async () => {
+              await handleSave({
+                ...kanji,
+                content,
+              });
+
+              setEditingContent(false);
+            }}
+          >
+            Lưu
+          </Button>
+        </div>
+      </div>
+    )}
+  </div>
+</DialogContent>
     </Dialog>
 
   );
