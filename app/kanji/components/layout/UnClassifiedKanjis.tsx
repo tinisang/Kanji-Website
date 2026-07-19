@@ -28,7 +28,7 @@ export default function UnClassifiedKanjis({
 
 
     return (
-      <div ref={ref} className="bg-white h-min  bg-white/80 p-4 shadow-sm grid gap-0 sm:grid-cols-3 xl:grid-cols-5 grid-rows-auto">
+      <div ref={ref} className=" sticky top-5 bg-white h-min  bg-white/80 p-4 shadow-sm grid gap-0 sm:grid-cols-3 xl:grid-cols-5 grid-rows-auto">
         {
           itemArray.map((item: any, index: number) => (
             <KanjiItem isClassified={false} key={item?.id} kanji={item} groupId={groupId} index={index} />
