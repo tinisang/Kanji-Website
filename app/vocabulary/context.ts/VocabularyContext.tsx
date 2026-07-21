@@ -201,6 +201,42 @@ export function updateExpressionFieldUI(
   });
 }
 
+export function deleteExpressionUI(
+  setVocabularyData: Dispatch<
+    SetStateAction<VocabularyData>
+  >,
+  expressionId: string
+) {
+  setVocabularyData((prev) => {
+    for (const vocabularyId in prev.items) {
+      const item = prev.items[vocabularyId];
+
+      if (!(expressionId in item.expressions)) {
+        continue;
+      }
+
+      const expressions = {
+        ...item.expressions,
+      };
+
+      delete expressions[expressionId];
+
+      return {
+        ...prev,
+        items: {
+          ...prev.items,
+          [vocabularyId]: {
+            ...item,
+            expressions,
+          },
+        },
+      };
+    }
+
+    return prev;
+  });
+}
+
 export function addExampleUI(
   setVocabularyData: Dispatch<
     SetStateAction<VocabularyData>
@@ -462,6 +498,34 @@ export function addVocabularyUI(
             },
           },
   }));
+}
+
+
+export function updateVocabularyUI(
+  setVocabularyData: Dispatch<
+    SetStateAction<VocabularyData>
+  >,
+  vocabulary: Vocabulary
+) {
+  setVocabularyData((prev) => {
+    const item = prev.items[vocabulary.id];
+
+    if (!item) return prev;
+
+    return {
+      ...prev,
+      items: {
+        ...prev.items,
+        [vocabulary.id]: {
+          ...item,
+          vocabulary: {
+            ...item.vocabulary,
+            ...vocabulary,
+          },
+        },
+      },
+    };
+  });
 }
 
 export function updateFolderItemsUI(

@@ -97,7 +97,8 @@ export default function VocabularyDeckItem({
 
         <AccordionContent className="space-y-8 p-6">
           <VocabularyDescription
-            description="Chỉ toàn bộ quá trình sống của một con người từ khi sinh ra đến khi mất đi. Thường dùng để nói về cuộc đời, trải nghiệm sống hoặc quan điểm sống."
+          vocabulary= {vocabulary}
+           
           />
 
          <VocabUsages
@@ -106,7 +107,7 @@ export default function VocabularyDeckItem({
 />
 
           <div className="grid gap-8 lg:grid-cols-2">
-            <VocabularyReferenceSection
+            {/* <VocabularyReferenceSection
               title="Từ đồng nghĩa"
               color="bg-emerald-400"
               items={references.synonyms}
@@ -116,7 +117,7 @@ export default function VocabularyDeckItem({
               title="Từ trái nghĩa"
               color="bg-pink-500"
               items={references.antonyms}
-            />
+            /> */}
           </div>
         </AccordionContent>
       </AccordionItem>
