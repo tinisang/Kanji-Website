@@ -528,6 +528,46 @@ export function updateVocabularyUI(
   });
 }
 
+export function deleteVocabularyUI(
+  setVocabularyData: Dispatch<
+    SetStateAction<VocabularyData>
+  >,
+  vocabularyId: string
+) {
+  setVocabularyData((prev) => {
+    if (!(vocabularyId in prev.items)) {
+      return prev;
+    }
+
+    const items = {
+      ...prev.items,
+    };
+
+    delete items[vocabularyId];
+
+    const vocab_folder_items: VocabularyData["vocab_folder_items"] =
+      {};
+
+    for (const [folderId, folderItems] of Object.entries(
+      prev.vocab_folder_items
+    )) {
+      const newFolderItems = {
+        ...folderItems,
+      };
+
+      delete newFolderItems[vocabularyId];
+
+      vocab_folder_items[folderId] = newFolderItems;
+    }
+
+    return {
+      ...prev,
+      items,
+      vocab_folder_items,
+    };
+  });
+}
+
 export function updateFolderItemsUI(
   setVocabularyData: Dispatch<
     SetStateAction<VocabularyData>

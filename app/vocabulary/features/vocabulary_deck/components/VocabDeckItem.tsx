@@ -32,7 +32,8 @@ import { VocabularyExpression } from "@/app/vocabulary/lib/types/vocabularyExpre
 import { Usage } from "@/app/vocabulary/lib/types/Usage";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { GripVertical } from "lucide-react";
-import { useVocabulary } from "@/app/vocabulary/context.ts/VocabularyContext";
+import { deleteVocabularyUI, useVocabulary } from "@/app/vocabulary/context.ts/VocabularyContext";
+import { deleteVocabulary } from "../clients/vocabularyClient";
 
 export default function VocabularyDeckItem({
   vocabulary,
@@ -44,7 +45,9 @@ export default function VocabularyDeckItem({
   index: number
 }) {
   const [openDelete, setOpenDelete] = useState(false);
-  const {activeFolderId} = useVocabulary();
+  const {activeFolderId, setVocabularyData} = useVocabulary();
+
+  
 
    const { ref, handleRef } = useSortable({
     id: vocabulary.id,
@@ -122,6 +125,48 @@ export default function VocabularyDeckItem({
         </AccordionContent>
       </AccordionItem>
     </Accordion>
+
+    <AlertDialog
+  open={openDelete}
+  onOpenChange={setOpenDelete}
+>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>
+        Xóa từ vựng?
+      </AlertDialogTitle>
+
+      <AlertDialogDescription>
+        Bạn có chắc muốn xóa từ vựng{" "}
+        <span className="font-semibold">
+          {vocabulary.word}
+        </span>
+        ? Hành động này không thể hoàn tác.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+
+    <AlertDialogFooter>
+      <AlertDialogCancel>
+        Hủy
+      </AlertDialogCancel>
+
+      <AlertDialogAction
+        className="bg-red-600 hover:bg-red-700"
+        onClick={async () => {
+          deleteVocabularyUI(
+            setVocabularyData,
+            vocabulary.id
+          )
+
+          await deleteVocabulary(vocabulary.id)
+        }}
+      >
+        <Trash2 className="mr-2 h-4 w-4" />
+        Xóa
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
       </div>
   );
 }
