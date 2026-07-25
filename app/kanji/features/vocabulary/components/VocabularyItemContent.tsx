@@ -57,47 +57,33 @@ export default function VocabularyItemContent({
   }
 
   return (
-    <>
-      <div className="border-t bg-white">
-        <div className="flex items-center justify-between border-b px-4 py-3">
-          {/* <h3 className="text-sm font-medium">
-            Ghi chú
-          </h3> */}
+  <>
+    <div className="border-t bg-white">
+     
 
-          {!editing && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleEdit}
-            >
-              <Pencil className="mr-2 h-4 w-4" />
-              Edit
-            </Button>
-          )}
-        </div>
-
-        <div className="p-4">
-          {editing ? (
-            <TiptapEditor
-              value={content}
-              onChange={setContent}
-            />
-          ) : (
-            <div
-              className="prose prose-sm max-w-none min-h-[120px] rounded p-2"
-              dangerouslySetInnerHTML={{
-                __html: isEmptyContent(content)
-                  ? "<p class='text-neutral-400'>Chưa có ghi chú.</p>"
-                  : content,
-              }}
-            />
-          )}
-        </div>
+      <div className="p-4">
+        {editing ? (
+          <TiptapEditor
+            value={content}
+            onChange={setContent}
+          />
+        ) : (
+          <div
+            className="prose prose-sm rounded p-2"
+            dangerouslySetInnerHTML={{
+              __html: isEmptyContent(content)
+                ? "<p class='text-neutral-400'>Chưa có ghi chú.</p>"
+                : content,
+            }}
+          />
+        )}
       </div>
+    </div>
 
-      {editing && (
-        <div className="border-t bg-white p-4">
-          <div className="flex justify-end gap-2">
+    <div className=" bg-white p-4">
+      <div className="flex justify-end gap-2">
+        {editing ? (
+          <>
             <Button
               variant="outline"
               onClick={handleCancel}
@@ -108,9 +94,18 @@ export default function VocabularyItemContent({
             <Button onClick={handleSave}>
               Lưu
             </Button>
-          </div>
-        </div>
-      )}
-    </>
-  );
+          </>
+        ) : (
+          <Button
+            variant="outline"
+            onClick={handleEdit}
+          >
+            <Pencil className="mr-2 h-4 w-4" />
+            Edit
+          </Button>
+        )}
+      </div>
+    </div>
+  </>
+);
 }

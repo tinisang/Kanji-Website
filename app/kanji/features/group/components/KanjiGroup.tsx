@@ -99,7 +99,7 @@ data-[state=open]:bg-lime-50
 
 
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
 
               {
                 itemArray?.map((item, index) => (

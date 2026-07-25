@@ -46,8 +46,8 @@ export default function VocabularyDescription({
   };
 
   return (
-    <div className="rounded-md border bg-white">
-      <div className="flex items-center justify-between border-b px-3 py-2">
+    <div className="rounded-md bg-white">
+      <div className="flex items-center justify-between ">
        
 
         {!editing ? (

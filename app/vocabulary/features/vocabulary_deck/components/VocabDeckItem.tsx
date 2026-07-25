@@ -77,7 +77,7 @@ export default function VocabularyDeckItem({
     hover:no-underline
     [&>svg]:hidden
     data-[state=closed]:bg-white
-    data-[state=open]:bg-[#1DFFB0]
+    data-[state=open]:bg-[#fcffbe]
   "
 >
   <div

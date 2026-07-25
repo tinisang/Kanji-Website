@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { Trash2 } from "lucide-react";
-
 
 interface Props {
   word: string;
@@ -17,58 +15,49 @@ export default function VocabularyDeckHeader({
   meaning,
   onDelete,
 }: Props) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <>
-      <div className="group flex w-full items-center justify-between gap-6 cursor-pointer">
-        <div className="flex items-center gap-6">
-          <div>
-            <h2 className="text-4xl font-bold ">{word}</h2>
-          </div>
+    <div className="group flex items-center justify-between gap-4 rounded-xl transition-colors">
+      <div className="flex min-w-0 flex-1 items-center gap-8">
+        <h1 className="!text-[35px] font-bold leading-none tracking-tight text-zinc-900">
+          {word}
+        </h1>
 
-          <div className="h-12 w-px bg-black/15" />
+        <span className="!text-[26px] font-medium tracking-wide text-zinc-800">
+          {hanViet}
+        </span>
 
-          <div>
-            <p className="text-lg font-medium uppercase  text-black/70">
-              {hanViet}
-            </p>
+        <span className="!text-lg text-zinc-600">{meaning}</span>
 
-            <p className="mt-1 text-base text-black/60">
-              {meaning}
-            </p>
-          </div>
-        </div>
-
-        <div
-          role="button"
-          tabIndex={0}
-          className="
-            flex h-10 w-10 items-center justify-center
-            rounded-full
-            text-black/40
-            opacity-0
-            transition-all duration-200
-            group-hover:opacity-100
-            hover:bg-red-500 hover:text-white hover:scale-110
-          "
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setOpen(true);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              e.stopPropagation();
-              setOpen(true);
-            }
-          }}
-        >
-          <Trash2 size={18} onClick={onDelete} className="cursor-pointer" />
-        </div>
+        <label className="ml-auto flex flex-1 items-center justify-end gap-2 text-sm text-zinc-500">
+          <input type="checkbox" />
+          Need Revision
+        </label>
       </div>
 
-    </>
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onDelete?.();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            e.stopPropagation();
+            onDelete?.();
+          }
+        }}
+        className="
+          flex h-9 w-9 cursor-pointer items-center justify-center
+          rounded-lg text-zinc-400 opacity-0 transition-all
+          group-hover:opacity-100
+          hover:bg-red-500 hover:text-white
+        "
+      >
+        <Trash2 size={18} />
+      </div>
+    </div>
   );
 }
