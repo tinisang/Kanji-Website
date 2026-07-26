@@ -62,6 +62,32 @@ export async function getReviewCards(
 
   return res.json();
 }
+
+export async function deleteReviewItemByTarget(
+  type: ReviewType,
+  targetId: string
+) {
+  const res = await fetch(
+    "/review/api/item",
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type":
+          "application/json",
+      },
+      body: JSON.stringify({
+        type,
+        targetId,
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      "Failed to delete review item"
+    );
+  }
+}
 /* -------------------------------------------------------------------------- */
 /*                              Add / Remove                                  */
 /* -------------------------------------------------------------------------- */

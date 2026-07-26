@@ -33,3 +33,26 @@ if (!item) {
 
 return NextResponse.json(item);
 }
+
+
+import {
+  deleteReviewItemByTarget,
+} from "../../services/review.service";
+
+export async function DELETE(
+  req: NextRequest
+) {
+  const {
+    type,
+    targetId,
+  } = await req.json();
+
+  await deleteReviewItemByTarget(
+    type,
+    targetId
+  );
+
+  return NextResponse.json({
+    success: true,
+  });
+}

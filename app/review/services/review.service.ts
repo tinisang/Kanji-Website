@@ -229,3 +229,16 @@ export async function getHistory(
 function calculateNextReview(progress: ReviewProgress, rating: string) {
     throw new Error("Function not implemented.");
 }
+import {
+  deleteReviewItemByTarget as deleteReviewItemByTargetRepository,
+
+} from "../lib/repositories/review.repository";
+export async function deleteReviewItemByTarget(
+  type: ReviewType,
+  targetId: string
+) {
+  return deleteReviewItemByTargetRepository(
+    type,
+    targetId
+  );
+}

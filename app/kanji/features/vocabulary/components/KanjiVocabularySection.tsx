@@ -13,6 +13,7 @@ import {
 } from "../api/vocabulary.client";
 import { useKanji } from "@/contexts/Context";
 import { createKanjiVocabulary, deleteKanjiVocabulary, updateKanjiVocabularyPositions } from "../../kanji-vocabulary/api/kanji-vocabulary.client";
+import { deleteReviewItemByTarget } from "@/app/review/clients/review.client";
 
 interface Props {
   kanjiId: string;
@@ -101,6 +102,8 @@ async function handleDelete(
   );
 
   await deleteVocabulary(vocabulary.id);
+
+  await deleteReviewItemByTarget("kanji", vocabulary.id )
 
   
 
