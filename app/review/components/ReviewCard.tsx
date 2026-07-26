@@ -97,11 +97,7 @@ export default function VocabularyReview({
               {current.content.word}
             </div>
 
-            {current.content.reading && (
-              <div className="mt-4 text-2xl text-muted-foreground">
-                {current.content.reading}
-              </div>
-            )}
+            
           </div>
 
           {!showAnswer ? (
@@ -120,6 +116,11 @@ export default function VocabularyReview({
             <>
               <div className="mt-12 border-t pt-10">
                 <div className="text-center">
+                  {current.content.reading && (
+              <div className="mt-4 text-2xl text-muted-foreground">
+                {current.content.reading}
+              </div>
+            )}
                   <div className="text-3xl font-semibold">
                     {current.content.meaning}
                   </div>
