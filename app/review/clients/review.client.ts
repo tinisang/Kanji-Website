@@ -88,6 +88,24 @@ export async function deleteReviewItemByTarget(
     );
   }
 }
+
+export async function getReviewProgressByItemId(
+  reviewItemId: string
+): Promise<ReviewProgress | undefined> {
+  const res = await fetch(
+    `/review/api/progress/${reviewItemId}`
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      "Failed to get review progress."
+    );
+  }
+
+  return (await res.json()) as
+    | ReviewProgress
+    | undefined;
+}
 /* -------------------------------------------------------------------------- */
 /*                              Add / Remove                                  */
 /* -------------------------------------------------------------------------- */

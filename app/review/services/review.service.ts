@@ -5,7 +5,7 @@
 /* -------------------------------------------------------------------------- */
 
 import { getKanjiById } from "@/app/kanji/lib/repositories/kanji.repository";
-import { createReviewHistory, createReviewItem, createReviewProgress, deleteReviewItem, getDueReviewProgress, getReviewHistory, getReviewItemById, getReviewItemByTarget as getReviewItemByTargetRepository, getReviewProgress, getReviewProgressByItemId, GetReviewProgressOptions, updateReviewProgress } from "../lib/repositories/review.repository";
+import { createReviewHistory, createReviewItem, createReviewProgress, deleteReviewItem, getDueReviewProgress, getReviewHistory, getReviewItemById, getReviewItemByTarget as getReviewItemByTargetRepository, getReviewProgress, getReviewProgressByItemId as getReviewProgressByItemIdRepository, GetReviewProgressOptions, updateReviewProgress } from "../lib/repositories/review.repository";
 import { ReviewCard } from "../lib/types/reviewCard";
 import { ReviewRating, ReviewType } from "../lib/types/reviewType";
 import { getCurrentUserId } from "@/lib/auth/auth-user";
@@ -15,6 +15,13 @@ import { ReviewProgress } from "../lib/types/reviewProgress";
 import { createEmptyCard } from "ts-fsrs";
 import { scheduleReview } from "./reviewScheduler";
 
+export async function getReviewProgressByItemId(
+  reviewItemId: string
+): Promise<ReviewProgress | undefined> {
+  return getReviewProgressByItemIdRepository(
+    reviewItemId
+  );
+}
 
 export async function getReviewCards(
   options: GetReviewProgressOptions

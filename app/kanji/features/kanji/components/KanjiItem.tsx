@@ -84,12 +84,10 @@ export default function KanjiItem({
 }
 
 const hasNeedRevision =
-  (data.kanji_vocabulary_items[kanji.id] ?? [])
-    .some(
-      (vocabularyId) =>
-        data.vocabularies[vocabularyId]
-          ?.need_revision
-    );
+  (data.kanji_vocabulary_items[kanji.id] ?? []).some(
+    (vocabularyId) =>
+      vocabularyId in data.kanji_review_items
+  );
   return (
     <div ref={ref}>
       <ContextMenu

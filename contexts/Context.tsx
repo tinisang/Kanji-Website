@@ -6,6 +6,8 @@ import { Kanji } from "@/app/kanji/types/kanji";
 import { ReferenceSet } from "@/app/kanji/types/reference";
 import { KanjiReferenceItem } from "@/app/kanji/types/reference-item";
 import { Vocabulary } from "@/app/kanji/types/vocabulary";
+import { ReviewItem } from "@/app/review/lib/types/reviewItem";
+import { ReviewProgress } from "@/app/review/lib/types/reviewProgress";
 
 import {
   createContext,
@@ -13,7 +15,6 @@ import {
   useState,
   ReactNode,
 } from "react";
-
 type KanjiData = {
   groups: Record<string, KanjiGroup>;
   kanjis: Record<string, Kanji>;
@@ -23,12 +24,23 @@ type KanjiData = {
   reference_sets: Record<string, ReferenceSet>;
 
   kanji_group_items: Record<string, string[]>;
-  kanji_reference_items: Record<string, KanjiReferenceItem[]>;
+  kanji_reference_items: Record<
+    string,
+    KanjiReferenceItem[]
+  >;
 
   kanji_vocabulary_items: Record<
     string,
     string[]
   >;
+
+  kanji_review_items: Record<
+  string,
+  {
+    item: ReviewItem;
+    progress?: ReviewProgress | null;
+  }
+>;
 };
 type LearnedFilter = "all" | "learned" | "unlearned";
 

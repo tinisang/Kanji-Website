@@ -22,6 +22,7 @@ import DragToggle from "@/components/ui/DragToggle";
 import FloatingToolbar from "@/app/kanji/components/layout/FloatingToolBar";
 import { getAllVocabulary } from "@/app/kanji/features/vocabulary/services/vocabulary.service";
 import { getAllKanjiVocabulary } from "@/app/kanji/features/kanji-vocabulary/services/kanji-vocabulary.service";
+import { getReviewCards } from "../review/services/review.service";
 
 export default async function Home() {
   const session = await auth();
@@ -36,6 +37,12 @@ export default async function Home() {
   const referenceSets = await getAllReferenceSets();
   const kanjiReferenceItems = await getAllKanjiReferenceItems();
 const vocabularies = await getAllVocabulary();
+
+const kanjiReviewItems =await getReviewCards({
+      mode: "practice",
+      type: "kanji",
+    });
+
 const kanjiVocabularies =
   await getAllKanjiVocabulary();
   
@@ -114,16 +121,20 @@ kanji_vocabulary_items: (() => {
 
   return result;
 })(),
+
+
+ kanji_review_items: Object.fromEntries(
+  kanjiReviewItems.map(
+    ({ item, progress }) => [
+      item.target_id,
+      {
+        item,
+        progress,
+      },
+    ]
+  )
+),
   };
-
-  console.log(data)
-
-
-
-  function handleToggle() {
-
-  }
-
 
 
   return (

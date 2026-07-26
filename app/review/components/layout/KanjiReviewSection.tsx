@@ -206,51 +206,63 @@ async function loadCards() {
       />
 
       <div className="mt-6 grid grid-cols-4 gap-4">
-        {[
-          {
-            title: "🆕 New",
-            items: grouped.new,
-          },
-          {
-            title: "📖 Learning",
-            items: grouped.learning,
-          },
-          {
-            title: "✅ Reviewing",
-            items: grouped.review,
-          },
-          {
-            title: "🔄 Relearning",
-            items: grouped.relearning,
-          },
-        ].map((group) => (
-          <div
-            key={group.title}
-            className="rounded-xl border bg-white p-3"
-          >
-            <h3 className="mb-3 font-semibold">
-              {group.title} (
-              {group.items.length})
-            </h3>
+  {[
+    {
+      key: "new",
+      title: "🆕 New",
+      items: grouped.new,
+      className:
+        "border-sky-200 bg-sky-50",
+    },
+    {
+      key: "learning",
+      title: "📖 Learning",
+      items: grouped.learning,
+      className:
+        "border-amber-200 bg-amber-50",
+    },
+    {
+      key: "review",
+      title: "✅ Reviewing",
+      items: grouped.review,
+      className:
+        "border-emerald-200 bg-emerald-50",
+    },
+    {
+      key: "relearning",
+      title: "🔄 Relearning",
+      items: grouped.relearning,
+      className:
+        "border-rose-200 bg-rose-50",
+    },
+  ].map((group) => (
+    <div
+      key={group.key}
+      className={`rounded-xl border p-3 ${group.className}`}
+    >
+      <h3 className="mb-3 font-semibold">
+        {group.title} (
+        {group.items.length})
+      </h3>
 
-            <div className="space-y-2">
-              {group.items.map(
-                ({
-                  item,
-                  progress,
-                  content,
-                }) => (
-                  <ReviewVocabularyCard
-                    key={item.id}
-                    vocabulary={content}
-                    progress={progress}
-                  />
-                )
-              )}
-            </div>
-          </div>
-        ))}
+      <div className="space-y-2">
+        {group.items.map(
+          ({
+            item,
+            progress,
+            content,
+          }) => (
+            <ReviewVocabularyCard
+              key={item.id}
+              vocabulary={content}
+              progress={progress}
+            />
+          )
+        )}
       </div>
+    </div>
+  ))}
+</div>
     </section>
   );
 }

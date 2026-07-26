@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Vocabulary } from "@/app/kanji/types/vocabulary";
 import { EditableText } from "../../kanji/components/EditableText";
@@ -13,11 +13,8 @@ import {
   BookOpenCheck,
 } from "lucide-react";
 import VocabularyItemContent from "./VocabularyItemContent";
-import {
-  addToReview,
-  getReviewItemByTarget,
-} from "@/app/review/clients/review.client";
-import { ReviewItem } from "@/app/review/lib/types/reviewItem";
+import { addToReview, deleteReviewItemByTarget, getReviewProgressByItemId } from "@/app/review/clients/review.client";
+
 
 interface Props {
   vocabulary: Vocabulary;
@@ -37,25 +34,12 @@ export default function VocabularyItem({
   onMoveDown,
   onDelete,
 }: Props) {
-  const { setData } = useKanji();
+  const { data, setData } = useKanji();
 
   const [open, setOpen] = useState(false);
-  const [reviewItem, setReviewItem] =
-    useState<ReviewItem | null>(null);
 
-  useEffect(() => {
-    async function loadReview() {
-      const item =
-        await getReviewItemByTarget(
-          "kanji",
-          vocabulary.id
-        );
-
-      setReviewItem(item ?? null);
-    }
-
-    loadReview();
-  }, [vocabulary.id]);
+  const review =
+    data.kanji_review_items[vocabulary.id];
 
   async function onChange<
     K extends keyof Vocabulary
@@ -79,17 +63,52 @@ export default function VocabularyItem({
     });
   }
 
-  async function onAddToReview() {
-    if (reviewItem && !reviewItem.archived)
-      return;
-
-    const item = await addToReview(
+  
+async function onAddToReview() {
+  if (review && !review.item.archived) {
+    await deleteReviewItemByTarget(
       "kanji",
       vocabulary.id
     );
 
-    setReviewItem(item);
+    setData((prev) => {
+      const next = {
+        ...prev.kanji_review_items,
+      };
+
+      delete next[vocabulary.id];
+
+      return {
+        ...prev,
+        kanji_review_items: next,
+      };
+    });
+
+    return;
   }
+
+  const item = await addToReview(
+    "kanji",
+    vocabulary.id
+  );
+
+  const newProgress = await getReviewProgressByItemId(
+    item.id
+  );
+
+  
+
+  setData((prev) => ({
+    ...prev,
+    kanji_review_items: {
+      ...prev.kanji_review_items,
+      [vocabulary.id]: {
+        item,
+        progress: newProgress,
+      },
+    },
+  }));
+}
 
   function hasNote(
     note?: string | null
@@ -101,15 +120,22 @@ export default function VocabularyItem({
         .length > 0
     );
   }
-
+const reviewClass =
+  !review || review.item.archived
+    ? "border-neutral-200 bg-white"
+    : review.progress?.state === "new"
+    ? "border-blue-200 bg-blue-50"
+    : review.progress?.state === "learning"
+    ? "border-amber-200 bg-amber-50"
+    : review.progress?.state === "review"
+    ? "border-emerald-200 bg-emerald-50"
+    : review.progress?.state === "relearning"
+    ? "border-rose-200 bg-rose-50"
+    : "border-neutral-200 bg-white";
   return (
     <div
-      className={`overflow-hidden rounded-xl border transition-all ${
-        reviewItem && !reviewItem.archived
-          ? "border-amber-300 bg-amber-50 shadow-sm"
-          : "border-neutral-200"
-      }`}
-    >
+  className={`overflow-hidden rounded-xl border transition-all shadow-sm ${reviewClass}`}
+>
       <div className="flex items-start gap-4 px-3 py-3">
         <button
           type="button"
@@ -199,8 +225,8 @@ export default function VocabularyItem({
             type="button"
             onClick={onAddToReview}
             className={`rounded p-1 ${
-              reviewItem &&
-              !reviewItem.archived
+              review &&
+              !review.item.archived
                 ? "bg-emerald-100 text-emerald-700"
                 : "text-neutral-500 hover:bg-neutral-100"
             }`}
