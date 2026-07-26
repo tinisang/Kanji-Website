@@ -1,18 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Vocabulary } from "@/app/kanji/types/vocabulary";
 import { EditableText } from "../../kanji/components/EditableText";
 import { useKanji } from "@/contexts/Context";
 import { updateVocabulary } from "../api/vocabulary.client";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   ChevronDown,
   ChevronUp,
   ChevronRight,
+  BookOpenCheck,
 } from "lucide-react";
 import VocabularyItemContent from "./VocabularyItemContent";
+import {
+  addToReview,
+  getReviewItemByTarget,
+} from "@/app/review/clients/review.client";
+import { ReviewItem } from "@/app/review/lib/types/reviewItem";
 
 interface Props {
   vocabulary: Vocabulary;
@@ -22,7 +27,6 @@ interface Props {
   onMoveUp: () => void;
   onMoveDown: () => void;
   onDelete: () => void;
-
 }
 
 export default function VocabularyItem({
@@ -32,22 +36,38 @@ export default function VocabularyItem({
   onMoveUp,
   onMoveDown,
   onDelete,
- 
 }: Props) {
   const { setData } = useKanji();
 
   const [open, setOpen] = useState(false);
+  const [reviewItem, setReviewItem] =
+    useState<ReviewItem | null>(null);
 
-  async function onChange<K extends keyof Vocabulary>(
-    key: K,
-    value: Vocabulary[K]
-  ) {
+  useEffect(() => {
+    async function loadReview() {
+      const item =
+        await getReviewItemByTarget(
+          "kanji",
+          vocabulary.id
+        );
+
+      setReviewItem(item ?? null);
+    }
+
+    loadReview();
+  }, [vocabulary.id]);
+
+  async function onChange<
+    K extends keyof Vocabulary
+  >(key: K, value: Vocabulary[K]) {
     setData((prev) => ({
       ...prev,
       vocabularies: {
         ...prev.vocabularies,
         [vocabulary.id]: {
-          ...prev.vocabularies[vocabulary.id],
+          ...prev.vocabularies[
+            vocabulary.id
+          ],
           [key]: value,
         },
       },
@@ -58,17 +78,34 @@ export default function VocabularyItem({
       [key]: value,
     });
   }
-function hasNote(note?: string | null) {
-  if (!note) return false;
 
-  const text = note.replace(/<[^>]+>/g, "").trim();
+  async function onAddToReview() {
+    if (reviewItem && !reviewItem.archived)
+      return;
 
-  return text.length > 0;
-}
+    const item = await addToReview(
+      "kanji",
+      vocabulary.id
+    );
+
+    setReviewItem(item);
+  }
+
+  function hasNote(
+    note?: string | null
+  ) {
+    if (!note) return false;
+
+    return (
+      note.replace(/<[^>]+>/g, "").trim()
+        .length > 0
+    );
+  }
+
   return (
     <div
       className={`overflow-hidden rounded-xl border transition-all ${
-        vocabulary.need_revision
+        reviewItem && !reviewItem.archived
           ? "border-amber-300 bg-amber-50 shadow-sm"
           : "border-neutral-200"
       }`}
@@ -76,7 +113,9 @@ function hasNote(note?: string | null) {
       <div className="flex items-start gap-4 px-3 py-3">
         <button
           type="button"
-          onClick={() => setOpen((v) => !v)}
+          onClick={() =>
+            setOpen((v) => !v)
+          }
           className="mt-2 rounded p-1 hover:bg-neutral-100"
         >
           {open ? (
@@ -87,19 +126,25 @@ function hasNote(note?: string | null) {
         </button>
 
         <div className="flex items-center gap-2">
-  <EditableText
-    defaultValue={vocabulary.word}
-    placeholder="漢字"
-    className="!w-[250px] break-words whitespace-normal text-4xl font-bold leading-none"
-    onSave={(value) => onChange("word", value)}
-  />
+          <EditableText
+            defaultValue={
+              vocabulary.word
+            }
+            placeholder="漢字"
+            className="!w-[250px] break-words whitespace-normal text-4xl font-bold leading-none"
+            onSave={(value) =>
+              onChange("word", value)
+            }
+          />
 
- {hasNote(vocabulary.note) && (
-  <span className="rounded-full bg-lime-100 px-2 py-0.5 text-xs font-medium text-lime-700">
-    Note
-  </span>
-)}
-</div>
+          {hasNote(
+            vocabulary.note
+          ) && (
+            <span className="rounded-full bg-lime-100 px-2 py-0.5 text-xs font-medium text-lime-700">
+              Note
+            </span>
+          )}
+        </div>
 
         <EditableText
           defaultValue={
@@ -108,7 +153,10 @@ function hasNote(note?: string | null) {
           placeholder="かんじ"
           className="min-w-[140px] max-w-[180px] text-2xl leading-none"
           onSave={(value) =>
-            onChange("reading", value)
+            onChange(
+              "reading",
+              value
+            )
           }
         />
 
@@ -119,22 +167,12 @@ function hasNote(note?: string | null) {
           placeholder="Meaning"
           className="min-w-[200px] flex-1 text-xl leading-none"
           onSave={(value) =>
-            onChange("meaning", value)
+            onChange(
+              "meaning",
+              value
+            )
           }
         />
-
-        <label className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Checkbox
-            checked={vocabulary.need_revision}
-            onCheckedChange={(checked) =>
-              onChange(
-                "need_revision",
-                !!checked
-              )
-            }
-          />
-          Need Revision
-        </label>
 
         <div className="ml-auto flex gap-1">
           <button
@@ -149,10 +187,26 @@ function hasNote(note?: string | null) {
           <button
             type="button"
             onClick={onMoveDown}
-            disabled={index === total - 1}
+            disabled={
+              index === total - 1
+            }
             className="rounded p-1 hover:bg-neutral-100 disabled:opacity-30"
           >
             <ChevronDown className="h-4 w-4" />
+          </button>
+
+          <button
+            type="button"
+            onClick={onAddToReview}
+            className={`rounded p-1 ${
+              reviewItem &&
+              !reviewItem.archived
+                ? "bg-emerald-100 text-emerald-700"
+                : "text-neutral-500 hover:bg-neutral-100"
+            }`}
+            title="Add to Review"
+          >
+            <BookOpenCheck className="h-4 w-4" />
           </button>
 
           <button
@@ -166,8 +220,10 @@ function hasNote(note?: string | null) {
       </div>
 
       {open && (
-  <VocabularyItemContent vocabulary={vocabulary} />
-)}
+        <VocabularyItemContent
+          vocabulary={vocabulary}
+        />
+      )}
     </div>
   );
 }
