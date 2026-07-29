@@ -84,10 +84,14 @@ export default function KanjiItem({
 }
 
 const hasNeedRevision =
-  (data.kanji_vocabulary_items[kanji.id] ?? []).some(
-    (vocabularyId) =>
-      vocabularyId in data.kanji_review_items
-  );
+  (data.kanji_vocabulary_items[kanji.id] ?? []).some((vocabularyId) => {
+    const state = data.kanji_review_items[vocabularyId]?.progress?.state;
+
+    return (
+      state !== undefined &&
+      ["new", "learning", "relearning"].includes(state)
+    );
+  });
   return (
     <div ref={ref}>
       <ContextMenu

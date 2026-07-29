@@ -268,7 +268,7 @@ export async function getReviewProgress({
   type,
   folderId,
   referenceSetId,
-  limit = 50,
+  limit = 11111150,
 }: GetReviewProgressOptions): Promise<
   ReviewProgress[]
 > {
