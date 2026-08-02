@@ -79,45 +79,44 @@ export default function VocabularyUsageItem({
     await deleteVocabularyExpression(usage.expression.id)
   }
 
-  return (
-    <div className="relative flex gap-4 rounded-lg bg-emerald-50 p-4">
-      <Button
-        size="icon"
-        variant="ghost"
-        className="absolute right-2 top-2 text-red-500 hover:text-red-600"
-        onClick={handleDelete}
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
+ return (
+  <div className="group relative border-b border-gray-200 py-1">
+  <Button
+    size="icon"
+    variant="ghost"
+    className="absolute right-0 top-0 h-8 w-8 opacity-0 transition-opacity group-hover:opacity-100"
+    onClick={handleDelete}
+  >
+    <Trash2 className="h-4 w-4 text-gray-400" />
+  </Button>
+  <div className="grid  !grid-cols-[1fr_1fr] gap-2">
+<div className="grid  !grid-cols-[1fr_1fr] gap-2">
+  <EditableText
+    defaultValue={usage.expression.word}
+    placeholder="Expression..."
+    className="text-2xl font-semibold tracking-tight"
+    renderDisplay={(value) =>
+      highlight(value, vocabulary.word)
+    }
+    onSave={onKeywordSave}
+  />
 
-      <div className="flex w-40 shrink-0 flex-col rounded-md bg-white p-3 shadow-sm">
-        <EditableText
-          defaultValue={usage.expression.word || ""}
-          placeholder="Keyword..."
-          className="text-2xl font-bold"
-          renderDisplay={(value) =>
-            highlight(value, vocabulary.word)
-          }
-          onSave={onKeywordSave}
-        />
+  <EditableText
+    defaultValue={usage.expression.meaning}
+    placeholder="Meaning..."
+    className="mt-1 text-sm text-gray-500"
+    onSave={onMeaningSave}
+  />
+</div>
+  <div className="">
+    <VocabularyExamples
+      keyword={vocabulary.word}
+      examples={usage.examples}
+      expression={usage.expression}
+    />
+  </div>
 
-        <div className="mt-2 rounded bg-emerald-400 px-2 py-1 text-center text-xs font-semibold text-white">
-          <EditableText
-            defaultValue={usage.expression.meaning}
-            placeholder="Meaning..."
-            className="w-full text-center text-white"
-            onSave={onMeaningSave}
-          />
-        </div>
-      </div>
-
-      <div className="flex-1 space-y-4">
-        <VocabularyExamples
-          keyword={vocabulary.word}
-          examples={usage.examples}
-          expression={usage.expression}
-        />
-      </div>
-    </div>
-  );
+  </div>
+</div>
+);
 }

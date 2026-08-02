@@ -37,8 +37,8 @@ export default function VocabUsages({
     }
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-5 lg:grid-cols-2">
+    <div className="">
+      <div className="grid gap-5 lg:grid-cols-1">
         {Object.values(usages).map((usage, index) => {
       
           return (
@@ -51,15 +51,14 @@ export default function VocabUsages({
         })}
       </div>
 
-      <Button
-        variant="outline"
-        className="w-full border-dashed cursor-pointer hover:bg-gray-50"
-        onClick={onAddExpression}
-
-      >
-        <Plus className="mr-2 h-4 w-4" />
-        Add Expression
-      </Button>
+     <Button
+  variant="outline"
+  onClick={onAddExpression}
+  className="mt-6 group h-10 w-full cursor-pointer border-dashed border-emerald-200 bg-emerald-50/40 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50"
+>
+  <Plus className="mr-2 h-4 w-4 transition-transform duration-150 group-hover:scale-110" />
+  Add Expression
+</Button>
     </div>
   );
 }

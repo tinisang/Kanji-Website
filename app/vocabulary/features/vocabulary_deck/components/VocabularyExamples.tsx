@@ -70,10 +70,10 @@ export default function VocabularyExamples({
       <Button
   variant="ghost"
   onClick={onAddExample}
-  className="cursor-pointer group h-10 w-full justify-start rounded-lg border border-dashed border-gray-300 text-gray-500 hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-600"
+  className="group h-9 w-full justify-start rounded-md px-2 text-muted-foreground hover:bg-muted/60 hover:text-foreground"
 >
-  <Plus className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
-  <span>Add example</span>
+  <Plus className="mr-2 h-4 w-4 transition-transform duration-150 group-hover:scale-105" />
+  <span className="text-sm">Add example</span>
 </Button>
     </div>
   );
