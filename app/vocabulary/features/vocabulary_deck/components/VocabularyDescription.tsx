@@ -46,7 +46,7 @@ export default function VocabularyDescription({
   };
 
   return (
-    <div className="rounded-md bg-white">
+    <div className="rounded-md bg-[#fffeebb7] p-4">
       <div className="flex items-center justify-between ">
        
 

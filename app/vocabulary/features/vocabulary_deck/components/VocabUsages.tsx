@@ -38,7 +38,7 @@ export default function VocabUsages({
 
   return (
     <div className="">
-      <div className="grid gap-5 lg:grid-cols-1">
+      <div className="grid lg:grid-cols-1">
         {Object.values(usages).map((usage, index) => {
       
           return (

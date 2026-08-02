@@ -80,7 +80,7 @@ export default function VocabularyUsageItem({
   }
 
  return (
-  <div className="group relative border-b border-gray-200 py-1">
+  <div className="group relative border-b border-gray-200 py-3 px-6">
   <Button
     size="icon"
     variant="ghost"
