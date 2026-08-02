@@ -76,7 +76,7 @@ const firstVocabulary =
         {kanji.character}
       </div>
 
-      <div className="mt-1 text-xs font-semibold text-lime-600">
+      <div className="uppercase mt-1 text-xs font-semibold text-lime-600">
         {kanji.han_viet}
       </div>
 

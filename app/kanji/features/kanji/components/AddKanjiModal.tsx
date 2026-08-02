@@ -243,7 +243,7 @@ export default function AddKanjiModal({
                                 onChange={(e) =>
                                     setHanViet(e.target.value)
                                 }
-                                className="h-auto border-0 p-0 !text-2xl font-semibold text-neutral-400 shadow-none focus-visible:ring-0"
+                                className="uppercase h-auto border-0 p-0 !text-2xl font-semibold text-neutral-400 shadow-none focus-visible:ring-0"
                             />
 
                         </div>

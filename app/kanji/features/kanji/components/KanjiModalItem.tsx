@@ -78,7 +78,7 @@ const [open, setOpen] = useState(false);
           <EditableText
             defaultValue={kanji.han_viet}
             placeholder="Nhập từ ..."
-            className="mt-4 text-2xl font-semibold text-neutral-400"
+            className="uppercase mt-4 text-2xl font-semibold text-neutral-400"
             onSave={(value) =>
               handleSave({
                 ...kanji,
