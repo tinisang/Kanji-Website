@@ -14,107 +14,70 @@ import { updateGroupItemsAPI } from "@/app/kanji/features/collection/api/kanji-g
 export default function HomeClient() {
   const { data } = useKanji();
 
-  const [items, setItems] = useState(data.kanji_group_items);
-
-  const [groups, setGroups] = useState(
+  const getGroups = () =>
     Object.values(data.groups)
-      .filter(
-        (group) => group.name !== "Unclassified"
-      )
-      .map((group) => group.id)
-  );
+      .filter(group => group.name !== "Unclassified")
+      .map(group => group.id);
 
-  const initialItemsRef = useRef(items);
+  const [items, setItems] = useState(data.kanji_group_items);
+  const [groups, setGroups] = useState(getGroups);
+
+  const initialItemsRef = useRef(data.kanji_group_items);
+  const initialGroupsRef = useRef(getGroups());
+
+  useEffect(() => {
+    const next = getGroups();
+
+    setGroups(next);
+    initialGroupsRef.current = next;
+  }, [data.groups]);
 
   useEffect(() => {
     setItems(data.kanji_group_items);
-    initialItemsRef.current =
-      data.kanji_group_items;
+    initialItemsRef.current = structuredClone(
+      data.kanji_group_items
+    );
   }, [data.kanji_group_items]);
 
-  useEffect(() => {
-    setGroups(
-      Object.values(data.groups)
-        .filter(
-          (group) =>
-            group.name !== "Unclassified"
-        )
-        .map((group) => group.id)
-    );
-  }, [data.groups]);
-
   const saveChanges = async () => {
-    const groupUpdates = groups.map(
-      (groupId, position) => ({
-        groupId,
-        position,
-      })
+    const groupUpdates = groups.flatMap((groupId, position) =>
+      initialGroupsRef.current[position] !== groupId
+        ? [{ groupId, position }]
+        : []
     );
 
-    await updateGroupsAPI(groupUpdates);
-
-    const previous =
-      initialItemsRef.current;
-
-    const changedItems = Object.entries(
-      items
-    ).flatMap(([groupId, groupItems]) =>
-      groupItems.flatMap(
-        (kanjiId, position) => {
-          const oldGroupId = Object.entries(
-            previous
-          ).find(([, ids]) =>
-            ids.includes(kanjiId)
-          )?.[0];
-
-          const oldPosition =
-            oldGroupId != null
-              ? previous[
-                  oldGroupId
-                ].indexOf(kanjiId)
-              : -1;
-
-          if (
-            oldGroupId !== groupId ||
-            oldPosition !== position
-          ) {
-            return {
-              kanjiId,
-              groupId,
-              position,
-            };
-          }
-
-          return [];
-        }
-      )
-    );
-
-    if (changedItems.length > 0) {
-      await updateGroupItemsAPI(
-        changedItems
-      );
+    if (groupUpdates.length) {
+      await updateGroupsAPI(groupUpdates);
     }
 
-    initialItemsRef.current = items;
+    const changedItems = Object.entries(items).flatMap(
+      ([groupId, ids]) =>
+        ids.flatMap((kanjiId, position) =>
+          initialItemsRef.current[groupId]?.[position] !== kanjiId
+            ? [{ kanjiId, groupId, position }]
+            : []
+        )
+    );
+
+    if (changedItems.length) {
+      await updateGroupItemsAPI(changedItems);
+    }
+
+    initialGroupsRef.current = [...groups];
+    initialItemsRef.current = structuredClone(items);
   };
 
   return (
     <DragDropProvider
-      onDragOver={(event) => {
-        const { source } =
-          event.operation;
+      onDragOver={event => {
+        const { source } = event.operation;
 
         if (source?.type === "group") {
-          setGroups((prev) =>
-            move(prev, event)
-          );
+          setGroups(prev => move(prev, event));
           return;
         }
 
-        setItems((prev) =>
-          move(prev, event)
-        );
+        setItems(prev => move(prev, event));
       }}
       onDragEnd={saveChanges}
     >
