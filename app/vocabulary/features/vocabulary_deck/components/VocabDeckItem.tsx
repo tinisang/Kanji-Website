@@ -67,12 +67,12 @@ export default function VocabularyDeckItem({
     <Accordion
       type="single"
       collapsible
-      className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
+      className="overflow-hidden  border border-gray-200 bg-white shadow-sm"
     >
       <AccordionItem value="deck" className="border-none">
         <AccordionTrigger
   className="
-    px-2 py-4
+    px-2 py-2
     transition-all duration-200
     hover:no-underline
     [&>svg]:hidden
@@ -90,6 +90,7 @@ export default function VocabularyDeckItem({
 
   <div className="flex-1">
     <VocabularyDeckHeader
+    vocabulary={vocabulary}
       word={vocabulary.word}
       hanViet={vocabulary.reading}
       meaning={vocabulary.meaning}
@@ -99,7 +100,7 @@ export default function VocabularyDeckItem({
 </AccordionTrigger>
 
         <AccordionContent className="">
- <VocabularyDescription
+           <VocabularyDescription
           vocabulary= {vocabulary}
            
           />
@@ -107,6 +108,7 @@ export default function VocabularyDeckItem({
   vocabulary={vocabulary}
    usages={expressions}
 />
+
          
 
           <div className="grid gap-8 lg:grid-cols-2">

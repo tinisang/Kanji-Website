@@ -44,56 +44,53 @@ export default function VocabularyDescription({
     setValue(vocabulary.note ?? "");
     setEditing(false);
   };
-
-  return (
-    <div className="rounded-md bg-[#fffeebb7] p-4">
-      <div className="flex items-center justify-between ">
-       
-
-        {!editing ? (
+return (
+  <div className="rounded-md bg-gray-100 p-3">
+    <div className="flex items-center justify-between">
+      {!editing ? (
+        <button
+          onClick={handleEdit}
+          className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-gray-500 hover:bg-gray-200 hover:text-gray-700"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+          Edit
+        </button>
+      ) : (
+        <div className="flex gap-1.5">
           <button
-            onClick={handleEdit}
-            className="flex items-center gap-1 rounded-md px-2 py-1 text-sm hover:bg-gray-100"
+            onClick={handleSave}
+            className="flex items-center gap-1 rounded-md bg-emerald-500 px-2 py-1 text-xs text-white"
           >
-            <Pencil className="h-4 w-4" />
-            Edit
+            <Check className="h-3.5 w-3.5" />
+            Save
           </button>
-        ) : (
-          <div className="flex gap-2">
-            <button
-              onClick={handleSave}
-              className="flex items-center gap-1 rounded-md bg-emerald-500 px-2 py-1 text-sm text-white"
-            >
-              <Check className="h-4 w-4" />
-              Save
-            </button>
 
-            <button
-              onClick={handleCancel}
-              className="flex items-center gap-1 rounded-md border px-2 py-1 text-sm"
-            >
-              <X className="h-4 w-4" />
-              Cancel
-            </button>
-          </div>
-        )}
-      </div>
-
-      <div className="p-3">
-        {editing ? (
-          <TiptapEditor
-            value={value}
-            onChange={setValue}
-          />
-        ) : (
-          <div
-            className="prose max-w-none"
-            dangerouslySetInnerHTML={{
-              __html: (vocabulary.note ?? ""),
-            }}
-          />
-        )}
-      </div>
+          <button
+            onClick={handleCancel}
+            className="flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2 py-1 text-xs text-gray-500 hover:bg-gray-50"
+          >
+            <X className="h-3.5 w-3.5" />
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
-  );
+
+    <div className="max-h-[300px] overflow-y-auto px-2 py-2">
+      {editing ? (
+        <TiptapEditor
+          value={value}
+          onChange={setValue}
+        />
+      ) : (
+        <div
+          className="prose prose-sm max-w-none !text-[12px] text-gray-600"
+          dangerouslySetInnerHTML={{
+            __html: vocabulary.note ?? "",
+          }}
+        />
+      )}
+    </div>
+  </div>
+);
 }

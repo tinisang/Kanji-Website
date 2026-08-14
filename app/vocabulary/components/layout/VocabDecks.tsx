@@ -41,7 +41,7 @@ export default function VocabDecks() {
     <div>
       
 
-      <section className="space-y-2">
+      <section className="">
         {visibleItems.map((item, index) => (
           <VocabDeckItem
             key={item.vocabulary.id}

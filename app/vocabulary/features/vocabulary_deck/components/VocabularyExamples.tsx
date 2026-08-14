@@ -66,14 +66,23 @@ export default function VocabularyExamples({
 
         />
       ))}
-
-      <Button
+<Button
   variant="ghost"
   onClick={onAddExample}
-  className="group h-9 w-full justify-start rounded-md px-2 text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+  className="
+    group
+    h-0 overflow-hidden
+    w-full justify-start rounded-md px-1.5
+    text-muted-foreground/60
+    opacity-0
+    transition-all duration-200
+    group-hover/usage:h-7
+    group-hover/usage:opacity-100
+  "
 >
-  <Plus className="mr-2 h-4 w-4 transition-transform duration-150 group-hover:scale-105" />
-  <span className="text-sm">Add example</span>
+ 
+  <Plus className="mr-1.5 h-3.5 w-3.5" />
+  <span className="text-xs">Add example</span>
 </Button>
     </div>
   );
