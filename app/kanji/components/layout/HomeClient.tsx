@@ -10,6 +10,7 @@ import UnClassifiedKanjis from "./UnClassifiedKanjis";
 import { useKanji } from "@/contexts/Context";
 import { updateGroupsAPI } from "@/app/kanji/features/group/api/group.client";
 import { updateGroupItemsAPI } from "@/app/kanji/features/collection/api/kanji-group-item.client";
+import ContentMarker from "./ContentMarker";
 
 export default function HomeClient() {
   const { data } = useKanji();
@@ -81,7 +82,8 @@ export default function HomeClient() {
       }}
       onDragEnd={saveChanges}
     >
-      <UnClassifiedKanjis data={items} />
+      <ContentMarker/>
+      {/* <UnClassifiedKanjis data={items} /> */}
       <ClassifiedKanjis data={items} />
     </DragDropProvider>
   );

@@ -83,15 +83,7 @@ export default function KanjiItem({
   return null;
 }
 
-const hasNeedRevision =
-  (data.kanji_vocabulary_items[kanji.id] ?? []).some((vocabularyId) => {
-    const state = data.kanji_review_items[vocabularyId]?.progress?.state;
-
-    return (
-      state !== undefined &&
-      ["new", "learning", "relearning"].includes(state)
-    );
-  });
+const hasNeedRevision = false;
   return (
     <div ref={ref}>
       <ContextMenu

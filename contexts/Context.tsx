@@ -34,13 +34,7 @@ type KanjiData = {
     string[]
   >;
 
-  kanji_review_items: Record<
-  string,
-  {
-    item: ReviewItem;
-    progress?: ReviewProgress | null;
-  }
->;
+  
 };
 type LearnedFilter = "all" | "learned" | "unlearned";
 

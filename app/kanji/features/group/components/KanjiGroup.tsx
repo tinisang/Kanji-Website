@@ -83,7 +83,10 @@ export default function KanjiGroup({ data, id, index, children }: KanjiGroupProp
 
       <ContextMenu>
         <ContextMenuTrigger asChild>
-          <section className={`
+          <section
+          id={`kanji-group-${id}`}
+          className={`
+          
   border-l-4 border-l-kanji-primary
   p-4
   bg-white

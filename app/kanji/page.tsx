@@ -38,10 +38,7 @@ export default async function Home() {
   const kanjiReferenceItems = await getAllKanjiReferenceItems();
 const vocabularies = await getAllVocabulary();
 
-const kanjiReviewItems =await getReviewCards({
-      mode: "practice",
-      type: "kanji",
-    });
+
 
 const kanjiVocabularies =
   await getAllKanjiVocabulary();
@@ -123,17 +120,6 @@ kanji_vocabulary_items: (() => {
 })(),
 
 
- kanji_review_items: Object.fromEntries(
-  kanjiReviewItems.map(
-    ({ item, progress }) => [
-      item.target_id,
-      {
-        item,
-        progress,
-      },
-    ]
-  )
-),
   };
 
 
@@ -143,10 +129,7 @@ kanji_vocabulary_items: (() => {
         <ReferenceSection />
         <FloatingToolbar
 />
-        <div className="grid grid-cols-[1fr_3fr] gap-8">
-          <StatusTitle>未分類</StatusTitle>
-          <StatusTitle>分類済み</StatusTitle>
-        </div>
+       
 
 
 
