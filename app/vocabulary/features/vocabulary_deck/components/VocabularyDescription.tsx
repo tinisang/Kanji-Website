@@ -45,7 +45,7 @@ export default function VocabularyDescription({
     setEditing(false);
   };
 return (
-  <div className="rounded-md bg-gray-100 p-3">
+  <div className="rounded-md bg-[#d7fff1] p-5">
     <div className="flex items-center justify-between">
       {!editing ? (
         <button

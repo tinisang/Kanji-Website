@@ -45,7 +45,7 @@ export default function ContentMarker() {
 };
 
   return (
-    <div className="sticky top-5 h-fit rounded-xl border border-border bg-white p-2 shadow-sm">
+    <div className="">
       <div className="mb-2 flex items-center justify-between px-1">
         <span className="text-xs font-medium text-muted-foreground">
           Markers
@@ -56,7 +56,7 @@ export default function ContentMarker() {
         </span>
       </div>
 
-      <div className="grid max-h-[400px] grid-cols-5 gap-1 overflow-y-auto pr-1">
+      <div className="grid max-h-[40vh] grid-cols-5 gap-1 overflow-y-auto pr-1">
         {markers.map(({ groupId, character, count }) => (
           <button
             key={groupId}

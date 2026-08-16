@@ -82,8 +82,11 @@ export default function HomeClient() {
       }}
       onDragEnd={saveChanges}
     >
+       <div className="sticky top-5 h-fit rounded-xl border border-border bg-white p-2 shadow-sm">
+
       <ContentMarker/>
-      {/* <UnClassifiedKanjis data={items} /> */}
+      <UnClassifiedKanjis data={items} />
+       </div>
       <ClassifiedKanjis data={items} />
     </DragDropProvider>
   );
