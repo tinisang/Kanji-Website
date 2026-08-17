@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import KanjiReviewSection from "./components/layout/KanjiReviewSection";
+import VocabularyReviewSection from "./components/layout/VocabularyReviewSection";
 
 export default function ReviewPage() {
 
@@ -50,7 +51,7 @@ const triggerClass =
   </TabsContent>
 
   <TabsContent value="vocabulary" className="mt-6">
-    {/* Content */}
+    <VocabularyReviewSection/>
   </TabsContent>
 
   <TabsContent value="grammar" className="mt-6">

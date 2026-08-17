@@ -91,6 +91,7 @@ export default function VocabularyDeckItem({
   <div className="flex-1">
     <VocabularyDeckHeader
     vocabulary={vocabulary}
+    index={index}
       word={vocabulary.word}
       hanViet={vocabulary.reading}
       meaning={vocabulary.meaning}

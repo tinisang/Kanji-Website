@@ -2,12 +2,17 @@
 
 import { useState } from "react";
 import { Check, Pencil, Trash2, X } from "lucide-react";
-import { updateVocabularyUI, useVocabulary } from "@/app/vocabulary/context.ts/VocabularyContext";
+import {
+  updateVocabularyUI,
+  useVocabulary,
+} from "@/app/vocabulary/context.ts/VocabularyContext";
 import { Vocabulary } from "@/app/kanji/types/vocabulary";
 import { updateVocabulary } from "@/app/kanji/features/vocabulary/api/vocabulary.client";
+import { addToReview } from "@/app/review/clients/review.client";
 
 interface Props {
   vocabulary: Vocabulary;
+  index: number;
   word: string;
   hanViet: string;
   meaning: string;
@@ -24,10 +29,13 @@ export default function VocabularyDeckHeader({
   hanViet,
   meaning,
   vocabulary,
+  index,
   onEdit,
   onDelete,
 }: Props) {
   const [editing, setEditing] = useState(false);
+  const [needRevision, setNeedRevision] = useState(false);
+
   const { setVocabularyData } = useVocabulary();
 
   const [editWord, setEditWord] = useState(word);
@@ -49,32 +57,52 @@ export default function VocabularyDeckHeader({
   }
 
   async function saveEditing() {
-    onEdit?.({
-      word: editWord,
-      hanViet: editHanViet,
-      meaning: editMeaning,
-    });
-
     const updatedVocabulary = {
       ...vocabulary,
       word: editWord,
       reading: editHanViet,
       meaning: editMeaning,
     };
-    updateVocabularyUI(setVocabularyData, updatedVocabulary);
 
-   
+    onEdit?.({
+      word: editWord,
+      hanViet: editHanViet,
+      meaning: editMeaning,
+    });
+
+    updateVocabularyUI(setVocabularyData, updatedVocabulary);
 
     await updateVocabulary(updatedVocabulary);
 
     setEditing(false);
   }
 
+  async function handleRevisionChange(
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    e.stopPropagation();
+
+    const checked = e.target.checked;
+    setNeedRevision(checked);
+
+    if (!checked) return;
+
+    await addToReview(
+      "vocabulary",
+      vocabulary.id
+    )
+  }
+
   const inputClassName =
     "h-9 w-full rounded-md border border-zinc-200 bg-white px-2.5 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-100";
 
   return (
-    <div className="group grid grid-cols-[minmax(120px,0.7fr)_minmax(100px,0.5fr)_minmax(200px,1.5fr)_auto_auto_auto] items-center gap-6">
+    <div className="group grid grid-cols-[40px_minmax(120px,0.7fr)_minmax(100px,0.5fr)_minmax(200px,1.5fr)_auto_auto_auto] items-center gap-6">
+      {/* Index */}
+      <span className="text-sm font-medium text-zinc-400">
+        {index + 1}
+      </span>
+
       {/* Word */}
       {editing ? (
         <input
@@ -128,11 +156,14 @@ export default function VocabularyDeckHeader({
       >
         <input
           type="checkbox"
+          checked={needRevision}
+          onChange={handleRevisionChange}
           className="h-3.5 w-3.5 rounded border-zinc-300"
         />
         Need Revision
       </label>
 
+      {/* Actions */}
       {editing ? (
         <>
           {/* Save */}
@@ -151,11 +182,7 @@ export default function VocabularyDeckHeader({
                 saveEditing();
               }
             }}
-            className="
-              flex h-8 w-8 cursor-pointer items-center justify-center
-              rounded-md text-emerald-500
-              hover:bg-emerald-50
-            "
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-emerald-500 hover:bg-emerald-50"
           >
             <Check size={17} />
           </div>
@@ -176,11 +203,7 @@ export default function VocabularyDeckHeader({
                 cancelEditing();
               }
             }}
-            className="
-              flex h-8 w-8 cursor-pointer items-center justify-center
-              rounded-md text-zinc-400
-              hover:bg-zinc-100 hover:text-zinc-700
-            "
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
           >
             <X size={17} />
           </div>
@@ -203,13 +226,7 @@ export default function VocabularyDeckHeader({
                 startEditing();
               }
             }}
-            className="
-              flex h-8 w-8 cursor-pointer items-center justify-center
-              rounded-md text-zinc-400
-              opacity-0 transition-all
-              group-hover:opacity-100
-              hover:bg-zinc-100 hover:text-zinc-700
-            "
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-zinc-400 opacity-0 transition-all group-hover:opacity-100 hover:bg-zinc-100 hover:text-zinc-700"
           >
             <Pencil size={16} />
           </div>
@@ -230,13 +247,7 @@ export default function VocabularyDeckHeader({
                 onDelete?.();
               }
             }}
-            className="
-              flex h-8 w-8 cursor-pointer items-center justify-center
-              rounded-md text-zinc-400
-              opacity-0 transition-all
-              group-hover:opacity-100
-              hover:bg-red-50 hover:text-red-500
-            "
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-zinc-400 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-500"
           >
             <Trash2 size={16} />
           </div>
