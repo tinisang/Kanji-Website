@@ -14,7 +14,7 @@ import { getReviewCards } from "../../clients/review.client";
 import { ReviewMode } from "../../lib/repositories/review.repository";
 import { ReviewCard } from "../../lib/types/reviewCard";
 
-import VocabularyReview from "../ReviewCard";
+import VocabularyReview from "../VocabularyReview";
 
 export default function KanjiReviewSection() {
   const [mode, setMode] =
