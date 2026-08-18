@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowRight, BookOpen } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import {
@@ -81,16 +83,57 @@ export default function VocabularyReviewSection() {
       `}
     >
       <div className="mb-5 flex flex-col gap-4">
-        <div>
-          <h2 className="text-xl font-bold">
-            Vocabulary Review
-          </h2>
+        {/* Header */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-xl font-bold">
+              Vocabulary Review
+            </h2>
 
-          <p className="text-sm text-muted-foreground">
-            {cards.length} cards
-          </p>
+            <p className="text-sm text-muted-foreground">
+              {cards.length} cards
+            </p>
+          </div>
+
+          {/* Go to Vocabulary */}
+          <Link
+            href="/vocabulary"
+            className="
+              group
+              inline-flex
+              w-fit
+              items-center
+              gap-2
+              rounded-xl
+              border
+              bg-zinc-50
+              px-3
+              py-2
+              text-sm
+              font-semibold
+              text-zinc-700
+              transition-all
+              hover:border-emerald-300
+              hover:bg-emerald-50
+              hover:text-emerald-700
+              sm:px-4
+            "
+          >
+            <BookOpen className="h-4 w-4" />
+
+            <span>Go to Vocabulary</span>
+
+            <ArrowRight
+              className="
+                h-4 w-4
+                transition-transform
+                group-hover:translate-x-0.5
+              "
+            />
+          </Link>
         </div>
 
+        {/* Controls */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Tabs
             value={mode}

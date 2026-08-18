@@ -127,9 +127,9 @@ kanji_vocabulary_items: (() => {
     <div>
       <KanjiProvider initialData={data}>
         <ReferenceSection />
-        <FloatingToolbar
-/>
-       
+        <div className="hidden md:block">
+  <FloatingToolbar />
+</div>
 
 
 
