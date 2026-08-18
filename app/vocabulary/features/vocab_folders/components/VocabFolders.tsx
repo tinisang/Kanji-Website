@@ -25,51 +25,31 @@ export default function VocabFolders() {
     setActiveFolderId,
   } = useVocabulary();
 
-  const [
-    selectedFolderId,
-    setSelectedFolderId,
-  ] = useState("all");
+  const [selectedFolderId, setSelectedFolderId] =
+    useState("all");
 
   return (
     <FolderTree
       folders={vocabularyData.folders}
-      selectedFolderId={
-        selectedFolderId
-      }
-      setSelectedFolderId={
-        setSelectedFolderId
-      }
+      selectedFolderId={selectedFolderId}
+      setSelectedFolderId={setSelectedFolderId}
       setData={setVocabularyData}
-      createFolder={
-        createVocabularyFolder
-      }
+      createFolder={createVocabularyFolder}
       addFolderUI={addFolderUI}
-      FolderItemComponent={({
-        folder,
-        active,
-      }) => (
+      FolderItemComponent={({ folder, active }) => (
         <FolderItem
           folder={folder}
           active={active}
           itemCount={
             Object.keys(
-              vocabularyData
-                .vocab_folder_items[
-                folder.id
-              ] ?? {}
+              vocabularyData.vocab_folder_items[folder.id] ?? {}
             ).length
           }
           onSelect={() => {
-            setSelectedFolderId(
-              folder.id
-            );
-            setActiveFolderId(
-              folder.id
-            );
+            setSelectedFolderId(folder.id);
+            setActiveFolderId(folder.id);
           }}
-          onRename={async (
-            name
-          ) => {
+          onRename={async (name) => {
             const updated = {
               ...folder,
               name,
@@ -80,9 +60,7 @@ export default function VocabFolders() {
               updated
             );
 
-            await updateVocabularyFolder(
-              updated
-            );
+            await updateVocabularyFolder(updated);
           }}
           onDelete={async () => {
             deleteFolderUI(
@@ -90,9 +68,7 @@ export default function VocabFolders() {
               folder.id
             );
 
-            await deleteVocabularyFolder(
-              folder.id
-            );
+            await deleteVocabularyFolder(folder.id);
           }}
         />
       )}

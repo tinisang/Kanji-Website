@@ -121,32 +121,32 @@ while (current.parent_id) {
   }
 }
     return (
-        <div>
-              <DragDropProvider
-            onDragOver={(event) => {
-           
-            if (
-              event.operation.source?.type === "folder" ||
-              !event.operation.target
-            ) {
-              
-              return;
-            }       
-              setItems((prev) => move(prev, event));
-            }}
-            onDragEnd={saveChanges}
-          >
-              <div className="flex gap-4 mt-8">
-                  <VocabFolders />
-                  <div className="flex-1">
-                      <VocabDecks
-                       
-                      />
-                  </div>
-               
-        
-              </div>
-             </DragDropProvider>
-            </div>
+       <div className="w-full">
+  <DragDropProvider
+    onDragOver={(event) => {
+      if (
+        event.operation.source?.type === "folder" ||
+        !event.operation.target
+      ) {
+        return;
+      }
+
+      setItems((prev) => move(prev, event));
+    }}
+    onDragEnd={saveChanges}
+  >
+    <div className="mt-8 flex w-full flex-col gap-4 md:flex-row">
+      {/* Folder */}
+      <div className="w-full shrink-0 md:w-64 lg:w-72">
+        <VocabFolders />
+      </div>
+
+      {/* Decks */}
+      <div className="min-w-0 flex-1">
+        <VocabDecks />
+      </div>
+    </div>
+  </DragDropProvider>
+</div>
     )
 }
