@@ -1,14 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Pencil, Trash2, X } from "lucide-react";
+
 import {
   updateVocabularyUI,
   useVocabulary,
 } from "@/app/vocabulary/context.ts/VocabularyContext";
+
 import { Vocabulary } from "@/app/kanji/types/vocabulary";
 import { updateVocabulary } from "@/app/kanji/features/vocabulary/api/vocabulary.client";
-import { addToReview } from "@/app/review/clients/review.client";
+
+import {
+  addToReview,
+  deleteReviewItemByTarget,
+  getReviewItemByTarget,
+} from "@/app/review/clients/review.client";
 
 interface Props {
   vocabulary: Vocabulary;
@@ -16,6 +23,7 @@ interface Props {
   word: string;
   hanViet: string;
   meaning: string;
+  needRevision: boolean;
   onEdit?: (data: {
     word: string;
     hanViet: string;
@@ -30,17 +38,24 @@ export default function VocabularyDeckHeader({
   meaning,
   vocabulary,
   index,
+  needRevision: initialNeedRevision,
   onEdit,
   onDelete,
 }: Props) {
   const [editing, setEditing] = useState(false);
-  const [needRevision, setNeedRevision] = useState(false);
+  const [needRevision, setNeedRevision] = useState(
+    initialNeedRevision
+  );
 
   const { setVocabularyData } = useVocabulary();
 
   const [editWord, setEditWord] = useState(word);
   const [editHanViet, setEditHanViet] = useState(hanViet);
   const [editMeaning, setEditMeaning] = useState(meaning);
+
+  useEffect(() => {
+    setNeedRevision(initialNeedRevision);
+  }, [initialNeedRevision]);
 
   function startEditing() {
     setEditWord(word);
@@ -70,7 +85,10 @@ export default function VocabularyDeckHeader({
       meaning: editMeaning,
     });
 
-    updateVocabularyUI(setVocabularyData, updatedVocabulary);
+    updateVocabularyUI(
+      setVocabularyData,
+      updatedVocabulary
+    );
 
     await updateVocabulary(updatedVocabulary);
 
@@ -78,32 +96,53 @@ export default function VocabularyDeckHeader({
   }
 
   async function handleRevisionChange(
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) {
     e.stopPropagation();
 
     const checked = e.target.checked;
+
     setNeedRevision(checked);
 
-    if (!checked) return;
-
-    await addToReview(
+    const reviewItem = await getReviewItemByTarget(
       "vocabulary",
       vocabulary.id
-    )
+    );
+
+    if (checked) {
+      if (!reviewItem) {
+        await addToReview(
+          "vocabulary",
+          vocabulary.id
+        );
+      }
+
+      return;
+    }
+
+    if (reviewItem) {
+      await deleteReviewItemByTarget(
+        "vocabulary",
+        vocabulary.id
+      );
+    }
   }
 
   const inputClassName =
     "h-9 w-full rounded-md border border-zinc-200 bg-white px-2.5 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-100";
 
   return (
-    <div className="group grid grid-cols-[40px_minmax(120px,0.7fr)_minmax(100px,0.5fr)_minmax(200px,1.5fr)_auto_auto_auto] items-center gap-6">
-      {/* Index */}
+    <div
+      className={`
+        group grid grid-cols-[40px_minmax(120px,0.7fr)_minmax(100px,0.5fr)_minmax(200px,1.5fr)_auto_auto_auto]
+        items-center gap-6 rounded-md px-2 py-1 transition-colors
+        ${needRevision ? "bg-yellow-100" : "bg-transparent"}
+      `}
+    >
       <span className="text-sm font-medium text-zinc-400">
         {index + 1}
       </span>
 
-      {/* Word */}
       {editing ? (
         <input
           autoFocus
@@ -119,7 +158,6 @@ export default function VocabularyDeckHeader({
         </h1>
       )}
 
-      {/* Hán Việt */}
       {editing ? (
         <input
           value={editHanViet}
@@ -134,7 +172,6 @@ export default function VocabularyDeckHeader({
         </span>
       )}
 
-      {/* Meaning */}
       {editing ? (
         <input
           value={editMeaning}
@@ -149,7 +186,6 @@ export default function VocabularyDeckHeader({
         </span>
       )}
 
-      {/* Need Revision */}
       <label
         className="flex cursor-pointer items-center gap-2 whitespace-nowrap text-sm text-zinc-500"
         onClick={(e) => e.stopPropagation()}
@@ -163,10 +199,8 @@ export default function VocabularyDeckHeader({
         Need Revision
       </label>
 
-      {/* Actions */}
       {editing ? (
         <>
-          {/* Save */}
           <div
             role="button"
             tabIndex={0}
@@ -187,7 +221,6 @@ export default function VocabularyDeckHeader({
             <Check size={17} />
           </div>
 
-          {/* Cancel */}
           <div
             role="button"
             tabIndex={0}
@@ -210,7 +243,6 @@ export default function VocabularyDeckHeader({
         </>
       ) : (
         <>
-          {/* Edit */}
           <div
             role="button"
             tabIndex={0}
@@ -231,7 +263,6 @@ export default function VocabularyDeckHeader({
             <Pencil size={16} />
           </div>
 
-          {/* Delete */}
           <div
             role="button"
             tabIndex={0}

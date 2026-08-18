@@ -1,4 +1,5 @@
-'use client'
+"use client";
+
 import {
   Accordion,
   AccordionContent,
@@ -17,159 +18,207 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-
 import VocabularyDeckHeader from "./VocabularyDeckHeader";
 import VocabularyDescription from "./VocabularyDescription";
-import VocabularyUsageItem from "./VocabularyUsageItem";
-import VocabularyReferenceSection from "./VocabularyReferenceSection";
-
-import { usages, references } from "./mock";
-import { useState } from "react";
-import { Trash2 } from "lucide-react";
 import VocabUsages from "./VocabUsages";
+
+import { useEffect, useState } from "react";
+import { GripVertical, Trash2 } from "lucide-react";
+
 import { Vocabulary } from "@/app/vocabulary/lib/types/vocabulary";
-import { VocabularyExpression } from "@/app/vocabulary/lib/types/vocabularyExpression";
 import { Usage } from "@/app/vocabulary/lib/types/Usage";
+
 import { useSortable } from "@dnd-kit/react/sortable";
-import { GripVertical } from "lucide-react";
-import { deleteVocabularyUI, useVocabulary } from "@/app/vocabulary/context.ts/VocabularyContext";
+
+import {
+  deleteVocabularyUI,
+  useVocabulary,
+} from "@/app/vocabulary/context.ts/VocabularyContext";
+
 import { deleteVocabulary } from "../clients/vocabularyClient";
+
+import {
+  getReviewItemByTarget,
+  getReviewProgressByItemId,
+} from "@/app/review/clients/review.client";
 
 export default function VocabularyDeckItem({
   vocabulary,
   expressions,
-  index
+  index,
 }: {
   vocabulary: Vocabulary;
   expressions: Record<string, Usage>;
-  index: number
+  index: number;
 }) {
   const [openDelete, setOpenDelete] = useState(false);
-  const {activeFolderId, setVocabularyData} = useVocabulary();
+  const [reviewItem, setReviewItem] = useState<any>(null);
+  const [reviewProgress, setReviewProgress] = useState<any>(null);
 
-  
+  const { activeFolderId, setVocabularyData } = useVocabulary();
 
-   const { ref, handleRef } = useSortable({
+  const { ref, handleRef } = useSortable({
     id: vocabulary.id,
-    index:index,
+    index,
     type: "item",
     accept: "item",
-    group: activeFolderId ,
-  
-
+    group: activeFolderId,
   });
 
-  
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadReview() {
+      try {
+        const item = await getReviewItemByTarget(
+          "vocabulary",
+          vocabulary.id
+        );
+
+        if (cancelled) return;
+
+        setReviewItem(item);
+
+        if (!item?.id) {
+          setReviewProgress(null);
+          return;
+        }
+
+        const progress = await getReviewProgressByItemId(item.id);
+
+        if (!cancelled) {
+          setReviewProgress(progress);
+        }
+      } catch (error) {
+        console.error("Failed to load review data:", error);
+      }
+    }
+
+    loadReview();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [vocabulary.id]);
+
+  const handleDelete = async () => {
+    deleteVocabularyUI(
+      setVocabularyData,
+      vocabulary.id
+    );
+
+    await deleteVocabulary(vocabulary.id);
+
+    setOpenDelete(false);
+  };
+
+  const isActiveReview =
+    reviewItem !== null &&
+    reviewItem.archived === false;
+const needRevision = isActiveReview;
   return (
     <div ref={ref}>
+      <Accordion
+        type="single"
+        collapsible
+        className="overflow-hidden border border-gray-200 bg-white shadow-sm"
+      >
+        <AccordionItem
+          value="deck"
+          className="border-none"
+        >
+          <AccordionTrigger
+            className={`
+              px-2 py-2
+              transition-all duration-200
+              hover:no-underline
+              [&>svg]:hidden
+              data-[state=closed]:bg-white data-[state=open]:bg-[#1dffb0]
+          
+            `}
+          >
+            <div
+              ref={handleRef}
+              onClick={(e) => e.stopPropagation()}
+              className="
+                mr-3 cursor-grab rounded p-1
+                text-gray-400
+                hover:bg-black/5
+                hover:text-gray-700
+                active:cursor-grabbing
+              "
+            >
+              <GripVertical className="h-5 w-5" />
+            </div>
 
-  
-    <Accordion
-      type="single"
-      collapsible
-      className="overflow-hidden  border border-gray-200 bg-white shadow-sm"
-    >
-      <AccordionItem value="deck" className="border-none">
-        <AccordionTrigger
-  className="
-    px-2 py-2
-    transition-all duration-200
-    hover:no-underline
-    [&>svg]:hidden
-    data-[state=closed]:bg-white
-    data-[state=open]:bg-[#1dffb0]
-  "
->
-  <div
-    ref={handleRef}
-    onClick={(e) => e.stopPropagation()}
-    className="mr-3 cursor-grab rounded p-1 text-gray-400 hover:bg-black/5 hover:text-gray-700 active:cursor-grabbing"
-  >
-    <GripVertical className="h-5 w-5" />
-  </div>
+            <div className="flex-1">
+              <VocabularyDeckHeader
+                vocabulary={vocabulary}
+                index={index}
+                word={vocabulary.word}
+                hanViet={vocabulary.reading}
+                meaning={vocabulary.meaning}
+                onDelete={() => setOpenDelete(true)}
+                needRevision={needRevision}
+              />
+            </div>
+          </AccordionTrigger>
 
-  <div className="flex-1">
-    <VocabularyDeckHeader
-    vocabulary={vocabulary}
-    index={index}
-      word={vocabulary.word}
-      hanViet={vocabulary.reading}
-      meaning={vocabulary.meaning}
-      onDelete={() => setOpenDelete(true)}
-    />
-  </div>
-</AccordionTrigger>
-
-        <AccordionContent className="">
-           <VocabularyDescription
-          vocabulary= {vocabulary}
-           
-          />
-         <VocabUsages
-  vocabulary={vocabulary}
-   usages={expressions}
-/>
-
-         
-
-          <div className="grid gap-8 lg:grid-cols-2">
-            {/* <VocabularyReferenceSection
-              title="Từ đồng nghĩa"
-              color="bg-emerald-400"
-              items={references.synonyms}
+          <AccordionContent>
+            <VocabularyDescription
+              vocabulary={vocabulary}
             />
 
-            <VocabularyReferenceSection
-              title="Từ trái nghĩa"
-              color="bg-pink-500"
-              items={references.antonyms}
-            /> */}
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+            <VocabUsages
+              vocabulary={vocabulary}
+              usages={expressions}
+            />
 
-    <AlertDialog
-  open={openDelete}
-  onOpenChange={setOpenDelete}
->
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle>
-        Xóa từ vựng?
-      </AlertDialogTitle>
+            {reviewItem && (
+              <div className="mt-4">
+                {/* Review */}
+                {/* reviewItem */}
+                {/* reviewProgress */}
+              </div>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
-      <AlertDialogDescription>
-        Bạn có chắc muốn xóa từ vựng{" "}
-        <span className="font-semibold">
-          {vocabulary.word}
-        </span>
-        ? Hành động này không thể hoàn tác.
-      </AlertDialogDescription>
-    </AlertDialogHeader>
-
-    <AlertDialogFooter>
-      <AlertDialogCancel>
-        Hủy
-      </AlertDialogCancel>
-
-      <AlertDialogAction
-        className="bg-red-600 hover:bg-red-700"
-        onClick={async () => {
-          deleteVocabularyUI(
-            setVocabularyData,
-            vocabulary.id
-          )
-
-          await deleteVocabulary(vocabulary.id)
-        }}
+      <AlertDialog
+        open={openDelete}
+        onOpenChange={setOpenDelete}
       >
-        <Trash2 className="mr-2 h-4 w-4" />
-        Xóa
-      </AlertDialogAction>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
-      </div>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Xóa từ vựng?
+            </AlertDialogTitle>
+
+            <AlertDialogDescription>
+              Bạn có chắc muốn xóa từ vựng{" "}
+              <span className="font-semibold">
+                {vocabulary.word}
+              </span>
+              ? Hành động này không thể hoàn tác.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              Hủy
+            </AlertDialogCancel>
+
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700"
+              onClick={handleDelete}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Xóa
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 }
