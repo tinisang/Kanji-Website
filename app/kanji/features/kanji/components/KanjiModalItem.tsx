@@ -88,43 +88,7 @@ const [open, setOpen] = useState(false);
           />
         </div>
 
-        <div className="mt-4 space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="w-20 text-sm font-medium text-neutral-500">
-              Onyomi
-            </span>
-
-            <EditableText
-              defaultValue={kanji.onyomi ?? ""}
-              className="text-lg"
-              placeholder="オンヨミ"
-              onSave={(value) =>
-                handleSave({
-                  ...kanji,
-                  onyomi: value,
-                })
-              }
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="w-20 text-sm font-medium text-neutral-500">
-              Kunyomi
-            </span>
-
-            <EditableText
-              defaultValue={kanji.kunyomi ?? ""}
-              className="text-lg"
-              placeholder="くんよみ"
-              onSave={(value) =>
-                handleSave({
-                  ...kanji,
-                  kunyomi: value,
-                })
-              }
-            />
-          </div>
-        </div>
+       
 
         <ReferenceBadge
           kanji={kanji}

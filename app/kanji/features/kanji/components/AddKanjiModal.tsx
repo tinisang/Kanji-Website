@@ -219,190 +219,71 @@ export default function AddKanjiModal({
             </DialogTrigger>
 
             <DialogContent
-                showCloseButton={false}
-                className="!max-w-5xl p-0 font-inherit"
-            >
-                <form onSubmit={handleSubmit} className="overflow-hidden rounded-lg border-l-4 border-l-lime-500">
-                    {/* Header */}
-                    <DialogHeader className="border-b bg-neutral-50 p-6 grid grid-cols-[1fr_3fr]">
-                        <div>
-                            <Input
-                                name="character"
-                                placeholder="漢"
-                                value={character}
-                                onChange={(e) =>
-                                    setCharacter(e.target.value)
-                                }
-                                className="h-auto border-0 p-0 !text-7xl font-bold shadow-none focus-visible:ring-0"
-                            />
+  showCloseButton={false}
+  className="
+    w-[calc(100%-1rem)]
+    max-w-5xl
+    max-h-[95vh]
+    overflow-hidden
+    p-0
+    font-inherit
+    sm:w-full
+  "
+>
+  <form
+    onSubmit={handleSubmit}
+    className="flex max-h-[95vh] flex-col overflow-hidden rounded-lg border-l-4 border-l-lime-500"
+  >
+    {/* Header */}
+    <DialogHeader className="grid grid-cols-1 gap-5 border-b bg-neutral-50 p-4 sm:grid-cols-[1fr_3fr] sm:gap-6 sm:p-6">
+      <div>
+        <Input
+          name="character"
+          placeholder="漢"
+          value={character}
+          onChange={(e) => setCharacter(e.target.value)}
+          className="h-auto border-0 p-0 !text-6xl font-bold shadow-none focus-visible:ring-0 sm:!text-7xl"
+        />
 
-                            <Input
-                                name="han_viet"
-                                placeholder="HÁN"
-                                value={hanViet}
-                                onChange={(e) =>
-                                    setHanViet(e.target.value)
-                                }
-                                className="uppercase h-auto border-0 p-0 !text-2xl font-semibold text-neutral-400 shadow-none focus-visible:ring-0"
-                            />
+        <Input
+          name="han_viet"
+          placeholder="HÁN"
+          value={hanViet}
+          onChange={(e) => setHanViet(e.target.value)}
+          className="h-auto border-0 p-0 uppercase !text-xl font-semibold text-neutral-400 shadow-none focus-visible:ring-0 sm:!text-2xl"
+        />
+      </div>
 
-                        </div>
+     
+    </DialogHeader>
 
-                        <div className="mt-4 grid grid-cols-1 gap-4">
-                            <div>
-                                <label className="mb-1 block text-sm font-medium text-neutral-500">
-                                    Onyomi
-                                </label>
+    {/* Body */}
+    <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">
+   
+    </div>
 
-                                <Input
-                                    name="onyomi"
-                                    placeholder="カン"
-                                    value={onyomi}
-                                    onChange={(e) =>
-                                        setOnyomi(e.target.value)
-                                    }
-                                />
-                            </div>
+    {/* Footer */}
+    <DialogFooter className="border-t bg-neutral-50 p-3 sm:p-4">
+  <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end p-2">
+    <Button
+      type="button"
+      variant="outline"
+      onClick={() => setOpen(false)}
+      className="w-full sm:w-auto sm:min-w-[100px]"
+    >
+      Huỷ
+    </Button>
 
-                            <div>
-                                <label className="mb-1 block text-sm font-medium text-neutral-500">
-                                    Kunyomi
-                                </label>
-
-                                <Input
-                                    name="kunyomi"
-                                    placeholder="あや"
-                                    value={kunyomi}
-                                    onChange={(e) =>
-                                        setKunyomi(e.target.value)
-                                    }
-                                />
-                            </div>
-                        </div>
-                    </DialogHeader>
-
-                    <div className="-mx-4 no-scrollbar max-h-[60vh] overflow-y-auto px-4 overflow-y-auto">
-
-                        {/* Vocabulary */}
-                        <div className="space-y-4 border-t p-6">
-                            {vocabularies.map((item, index) => (
-                                <div
-                                    key={index}
-                                    className="flex items-center gap-4"
-                                >
-                                    <Input
-                                        placeholder="漢字"
-                                        value={item.word}
-                                        onChange={(e) =>
-                                            updateVocabulary(index, "word", e.target.value)
-                                        }
-                                        className="max-w-[180px] border-0 !text-3xl font-bold shadow-none focus-visible:ring-0"
-                                    />
-
-                                    <Input
-                                        placeholder="(かんじ)"
-                                        value={item.reading}
-                                        onChange={(e) =>
-                                            updateVocabulary(index, "reading", e.target.value)
-                                        }
-                                        className="max-w-[180px] border-0 !text-lg shadow-none focus-visible:ring-0"
-                                    />
-
-                                    <Input
-                                        placeholder="Hán tự"
-                                        value={item.meaning}
-                                        onChange={(e) =>
-                                            updateVocabulary(index, "meaning", e.target.value)
-                                        }
-                                        className="max-w-[250px] border-0 shadow-none focus-visible:ring-0"
-                                    />
-                                    <div className="ml-auto flex gap-1">
-                                        <Button
-                                            type="button"
-                                            size="icon"
-                                            variant="ghost"
-                                            disabled={index === 0}
-                                            onClick={() =>
-                                                moveVocabularyUp(index)
-                                            }
-                                        >
-                                            <ChevronUp className="h-4 w-4" />
-                                        </Button>
-
-                                        <Button
-                                            type="button"
-                                            size="icon"
-                                            variant="ghost"
-                                            disabled={
-                                                index ===
-                                                vocabularies.length - 1
-                                            }
-                                            onClick={() =>
-                                                moveVocabularyDown(index)
-                                            }
-                                        >
-                                            <ChevronDown className="h-4 w-4" />
-                                        </Button>
-
-                                        <Button
-                                            type="button"
-                                            size="icon"
-                                            variant="ghost"
-                                            className="
-      text-red-500
-      hover:text-red-600
-    "
-                                            onClick={() =>
-                                                removeVocabulary(index)
-                                            }
-                                        >
-                                            ✕
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))}
-
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={addVocabulary}
-                            >
-                                + Thêm từ vựng
-                            </Button>
-                        </div>
-
-                        {/* Description */}
-                        <div className="bg-lime-50 p-6">
-                            <h3 className="mb-3">
-                                Ghi chú
-                            </h3>
-                            <TiptapEditor
-                                value={content}
-                                onChange={setContent}
-                            />
-                        </div>
-
-                    </div>
-
-                    {/* Footer */}
-                    <DialogFooter className="border-t p-4">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setOpen(false)}
-                        >
-                            Huỷ
-                        </Button>
-
-                        <Button
-                            type="submit"
-
-                        >
-                            Lưu
-                        </Button>
-                    </DialogFooter>
-                </form>
-            </DialogContent>
+    <Button
+      type="submit"
+      className="w-full bg-lime-500 text-black hover:bg-lime-600 sm:w-auto sm:min-w-[100px]"
+    >
+      Lưu
+    </Button>
+  </div>
+</DialogFooter>
+  </form>
+</DialogContent>
         </Dialog>
     );
 }

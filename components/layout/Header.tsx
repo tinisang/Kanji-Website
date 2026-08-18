@@ -28,8 +28,6 @@ const themes = {
       { href: "/kanji", label: "自主漢字" },
       { href: "/grammar", label: "自主文法" },
     ],
-    
-   
   },
 
   grammar: {
@@ -45,55 +43,104 @@ const themes = {
   },
 } as const;
 
-export default function Header({ theme = "kanji" }: HeaderProps) {
+export default function Header({
+  theme = "kanji",
+}: HeaderProps) {
   const current = themes[theme];
 
   return (
-    <header className="relative">
+    <header className="relative px-2 sm:px-0">
+      {/* Mascot */}
       <img
-  src={current.mascot}
-  alt=""
-  className="absolute left-4 bottom-0  z-10 w-[150px]"
-/>
+        src={current.mascot}
+        alt=""
+        className="
+          absolute bottom-0 left-2 z-10
+          w-[90px]
+          sm:left-4 sm:w-[150px]
+        "
+      />
 
       <div
-        className={`${current.bg} relative mt-8 flex items-center justify-between overflow-hidden rounded-xl px-4 py-4 shadow-lg`}
+        className={`
+          ${current.bg}
+          relative mt-4
+          flex min-h-[90px] items-center
+          overflow-hidden rounded-xl
+          px-3 py-3
+          shadow-lg
+          sm:mt-8 sm:min-h-0 sm:px-4 sm:py-4
+        `}
       >
-        <div className="absolute -top-20 -right-10 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute -bottom-20 -left-10 h-64 w-64 rounded-full bg-white/5 blur-3xl" />
+        {/* Background decorations */}
+        <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full bg-white/10 blur-3xl sm:-right-10 sm:-top-20 sm:h-72 sm:w-72" />
 
-        <div className="relative flex items-center gap-4 pl-[140px]">
+        <div className="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-white/5 blur-3xl sm:h-64 sm:w-64" />
+
+        {/* Content */}
+        <div
+          className="
+            relative flex w-full
+            flex-col items-start
+            gap-2
+            pl-[80px]
+            pr-10
+            sm:flex-row sm:items-center sm:gap-4
+            sm:pl-[140px] sm:pr-0
+            z-10
+          "
+        >
           <Link
             href={current.href}
-            className={`px-[.1em] py-[.1em] text-5xl font-bold ${current.highlight}`}
+            className={`
+              w-fit
+              px-[.1em] py-[.1em]
+              text-3xl font-bold leading-none
+              sm:text-5xl
+              ${current.highlight}
+            `}
           >
             {current.title}
           </Link>
 
-          <nav className="mt-1 flex items-center gap-3 text-sm font-bold">
+          <nav
+            className="
+              flex flex-wrap items-center
+              gap-x-2 gap-y-1
+              text-[11px] font-bold
+              sm:mt-1 sm:gap-3 sm:text-sm
+              z-10
+            "
+          >
             {current.nav.map((item, index) => (
-              <div key={item.href} className="flex items-center gap-3">
-                {index > 0 && <span>|</span>}
-                <Link href={item.href}>{item.label}</Link>
+              <div
+                key={item.href}
+                className="flex items-center gap-2 sm:gap-3"
+              >
+                {index > 0 && (
+                  <span className="opacity-70">
+                    |
+                  </span>
+                )}
+
+                <Link
+                  href={item.href}
+                  className="whitespace-nowrap"
+                >
+                  {item.label}
+                </Link>
               </div>
             ))}
           </nav>
         </div>
 
-        <div className="relative">
+        {/* Logout */}
+        <div className="relative z-20 ml-auto shrink-0">
           <LogoutButton />
         </div>
 
-        <img
-          src="/images/Mask group-1.png"
-          alt=""
-          className="absolute -right-30 bottom-0 -z-10 h-48"
-        />
-        <img
-          src="/images/Mask group.png"
-          alt=""
-          className="absolute -bottom-20 -left-80 -z-10 w-200"
-        />
+        {/* Decorations */}
+        
       </div>
     </header>
   );

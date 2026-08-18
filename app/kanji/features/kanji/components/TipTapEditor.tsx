@@ -10,10 +10,10 @@ import { TextStyle } from "@tiptap/extension-text-style";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 
-
 import TableRow from "@tiptap/extension-table-row";
 import TableHeader from "@tiptap/extension-table-header";
 import TableCell from "@tiptap/extension-table-cell";
+import { Table } from "@tiptap/extension-table";
 
 import {
   Bold,
@@ -26,7 +26,6 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Table } from "@tiptap/extension-table";
 
 type Props = {
   value: string;
@@ -40,11 +39,8 @@ export default function TiptapEditor({
   const editor = useEditor({
     extensions: [
       StarterKit,
-
       Underline,
-
       TextStyle,
-
       Color,
 
       Highlight.configure({
@@ -76,7 +72,6 @@ export default function TiptapEditor({
     ],
 
     content: value,
-
     immediatelyRender: false,
 
     onUpdate({ editor }) {
@@ -86,7 +81,7 @@ export default function TiptapEditor({
     editorProps: {
       attributes: {
         class:
-          "prose max-w-none min-h-[300px] p-4 focus:outline-none",
+          "prose prose-neutral max-w-none min-h-[250px] p-3 sm:min-h-[300px] sm:p-4 focus:outline-none",
       },
 
       handlePaste(view, event) {
@@ -116,8 +111,22 @@ export default function TiptapEditor({
   if (!editor) return null;
 
   return (
-    <div className="overflow-hidden rounded-md border bg-white">
-      <div className="flex flex-wrap gap-2 border-b p-2">
+    <div className="w-full overflow-hidden rounded-md border bg-white">
+      {/* Toolbar */}
+      <div
+        className="
+          flex
+          max-h-[120px]
+          flex-wrap
+          gap-1.5
+          overflow-y-auto
+          border-b
+          bg-neutral-50
+          p-2
+          sm:max-h-none
+          sm:gap-2
+        "
+      >
         <Button
           size="icon"
           type="button"
@@ -129,6 +138,7 @@ export default function TiptapEditor({
           onClick={() =>
             editor.chain().focus().toggleBold().run()
           }
+          className="h-8 w-8 sm:h-9 sm:w-9"
         >
           <Bold size={16} />
         </Button>
@@ -144,6 +154,7 @@ export default function TiptapEditor({
           onClick={() =>
             editor.chain().focus().toggleItalic().run()
           }
+          className="h-8 w-8 sm:h-9 sm:w-9"
         >
           <Italic size={16} />
         </Button>
@@ -157,12 +168,9 @@ export default function TiptapEditor({
               : "outline"
           }
           onClick={() =>
-            editor
-              .chain()
-              .focus()
-              .toggleUnderline()
-              .run()
+            editor.chain().focus().toggleUnderline().run()
           }
+          className="h-8 w-8 sm:h-9 sm:w-9"
         >
           <UnderlineIcon size={16} />
         </Button>
@@ -171,9 +179,7 @@ export default function TiptapEditor({
           size="icon"
           type="button"
           variant={
-            editor.isActive("heading", {
-              level: 2,
-            })
+            editor.isActive("heading", { level: 2 })
               ? "default"
               : "outline"
           }
@@ -181,11 +187,10 @@ export default function TiptapEditor({
             editor
               .chain()
               .focus()
-              .toggleHeading({
-                level: 2,
-              })
+              .toggleHeading({ level: 2 })
               .run()
           }
+          className="h-8 w-8 sm:h-9 sm:w-9"
         >
           <Heading2 size={16} />
         </Button>
@@ -205,6 +210,7 @@ export default function TiptapEditor({
               .toggleBulletList()
               .run()
           }
+          className="h-8 w-8 sm:h-9 sm:w-9"
         >
           <List size={16} />
         </Button>
@@ -224,6 +230,7 @@ export default function TiptapEditor({
               .toggleOrderedList()
               .run()
           }
+          className="h-8 w-8 sm:h-9 sm:w-9"
         >
           <ListOrdered size={16} />
         </Button>
@@ -243,6 +250,7 @@ export default function TiptapEditor({
               .toggleHighlight()
               .run()
           }
+          className="h-8 w-8 sm:h-9 sm:w-9"
         >
           H
         </Button>
@@ -259,6 +267,7 @@ export default function TiptapEditor({
               })
               .run()
           }
+          className="h-8 px-2 text-sm sm:h-9"
         >
           🖍️
         </Button>
@@ -273,6 +282,7 @@ export default function TiptapEditor({
               .setColor("#ef4444")
               .run()
           }
+          className="h-8 px-2 text-sm sm:h-9"
         >
           🔴
         </Button>
@@ -287,6 +297,7 @@ export default function TiptapEditor({
               .unsetColor()
               .run()
           }
+          className="h-8 px-2 text-xs sm:h-9 sm:text-sm"
         >
           Reset
         </Button>
@@ -306,6 +317,7 @@ export default function TiptapEditor({
               })
               .run()
           }
+          className="h-8 w-8 sm:h-9 sm:w-9"
         >
           <Table2 size={16} />
         </Button>
@@ -320,6 +332,7 @@ export default function TiptapEditor({
               .addRowAfter()
               .run()
           }
+          className="h-8 px-2 text-xs sm:h-9 sm:text-sm"
         >
           + Row
         </Button>
@@ -334,6 +347,7 @@ export default function TiptapEditor({
               .addColumnAfter()
               .run()
           }
+          className="h-8 px-2 text-xs sm:h-9 sm:text-sm"
         >
           + Col
         </Button>
@@ -348,6 +362,7 @@ export default function TiptapEditor({
               .deleteRow()
               .run()
           }
+          className="h-8 px-2 text-xs sm:h-9 sm:text-sm"
         >
           - Row
         </Button>
@@ -362,6 +377,7 @@ export default function TiptapEditor({
               .deleteColumn()
               .run()
           }
+          className="h-8 px-2 text-xs sm:h-9 sm:text-sm"
         >
           - Col
         </Button>
@@ -376,14 +392,29 @@ export default function TiptapEditor({
               .deleteTable()
               .run()
           }
+          className="h-8 px-2 text-xs sm:h-9 sm:px-3 sm:text-sm"
         >
           Delete Table
         </Button>
       </div>
 
+      {/* Editor */}
       <EditorContent
         editor={editor}
-        className="prose prose-neutral max-w-none max-h-[30vh] overflow-y-auto p-4"
+        className="
+          prose prose-neutral
+          max-w-none
+          max-h-[40vh]
+          min-h-[250px]
+          overflow-x-auto
+          overflow-y-auto
+          p-3
+          text-sm
+          sm:max-h-[30vh]
+          sm:min-h-[300px]
+          sm:p-4
+          sm:text-base
+        "
       />
     </div>
   );

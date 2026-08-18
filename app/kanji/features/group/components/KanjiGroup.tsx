@@ -1,4 +1,5 @@
 'use client';
+
 import { Trash2 } from "lucide-react";
 
 import {
@@ -12,129 +13,126 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-
-
-import { DragDropProvider, useDroppable } from "@dnd-kit/react";
-import { useEffect, useState } from "react";
-import AddPlaceHolder from "./AddPlaceHolder";
+import { useState } from "react";
 import { useSortable } from "@dnd-kit/react/sortable";
-import { CollisionPriority } from '@dnd-kit/abstract';
-import { group } from "console";
+import { CollisionPriority } from "@dnd-kit/abstract";
+
 import { removeGroupUI, useKanji } from "@/contexts/Context";
 import KanjiItem from "../../kanji/components/KanjiItem";
+import AddKanjiModal from "../../kanji/components/AddKanjiModal";
+import { deleteGroupAPI } from "../api/group.client";
+
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "@/components/ui/context-menu"
-import AddKanjiModal from "../../kanji/components/AddKanjiModal";
-import { deleteGroupAPI } from "../api/group.client";
-
+} from "@/components/ui/context-menu";
 
 interface KanjiGroupProps {
-
   id: string;
   index: number;
   children: React.ReactNode;
-  data: string[]
-
+  data: string[];
 }
 
-export default function KanjiGroup({ data, id, index, children }: KanjiGroupProps) {
-
-
+export default function KanjiGroup({
+  data,
+  id,
+  index,
+}: KanjiGroupProps) {
   const [openDelete, setOpenDelete] = useState(false);
-  const { data: globalData, setData, dragEnabled } = useKanji();
 
-  const itemIdList = data;
+  const {
+    data: globalData,
+    setData,
+    dragEnabled,
+  } = useKanji();
 
-
-
-
-  const itemArray = itemIdList
-    ?.map(item => globalData.kanjis[item])
+  const itemArray = data
+    ?.map((item) => globalData.kanjis[item])
     .filter(Boolean);
 
+  function setItemArray() {}
 
-  function setItemArray() { };
-
-  const { isDragSource, ref: sortableRef } = useSortable({
-    id: id,
-    index: index,
-    type: 'group',
-    accept: ['item', 'group'],
-    group: "classified",
-    collisionPriority: CollisionPriority.Low,
-    disabled: !dragEnabled
-
-  });
-
-
-
+  const { isDragSource, ref: sortableRef } =
+    useSortable({
+      id,
+      index,
+      type: "group",
+      accept: ["item", "group"],
+      group: "classified",
+      collisionPriority: CollisionPriority.Low,
+      disabled: !dragEnabled,
+    });
 
   return (
-    <div ref={(node) => {
-
-      sortableRef(node);
-
-    }}  >
-
-
+    <div
+      ref={(node) => {
+        sortableRef(node);
+      }}
+      className="w-full"
+    >
       <ContextMenu>
         <ContextMenuTrigger asChild>
           <section
-          id={`kanji-group-${id}`}
-          className={`
-          
-  border-l-4 border-l-kanji-primary
-  p-4
-  bg-white
-data-[state=open]:bg-lime-50
-      data-[state=open]:ring-1
-      data-[state=open]:ring-lime-300
-  
-  ${isDragSource
-              ? ' scale-110 shadow-xl  z-50'
-              : 'shadow-sm hover:shadow-md'
-            }
-`}>
-
-
-
-            <div className="flex gap-2 flex-wrap">
-
-              {
-                itemArray?.map((item, index) => (
-                  <KanjiItem setItemArray={setItemArray} isClassified={true} key={item.id} index={index} kanji={item} groupId={id}>
-
-                  </KanjiItem>
-                ))
+            id={`kanji-group-${id}`}
+            className={`
+              w-full
+              border-l-4 border-l-kanji-primary
+              bg-white
+              p-3 sm:p-4
+              transition-all
+              data-[state=open]:bg-lime-50
+              data-[state=open]:ring-1
+              data-[state=open]:ring-lime-300
+              ${
+                isDragSource
+                  ? "z-50 scale-[1.02] shadow-xl sm:scale-110"
+                  : "shadow-sm hover:shadow-md"
               }
+            `}
+          >
+            <div className="flex min-w-0 flex-wrap gap-2">
+              {itemArray?.map((item, itemIndex) => (
+                <KanjiItem
+                  setItemArray={setItemArray}
+                  isClassified={true}
+                  key={item.id}
+                  index={itemIndex}
+                  kanji={item}
+                  groupId={id}
+                />
+              ))}
 
-              <AddKanjiModal setItemArray={setItemArray} groupId={id} />
+              <AddKanjiModal
+                setItemArray={setItemArray}
+                groupId={id}
+              />
             </div>
           </section>
         </ContextMenuTrigger>
+
         <ContextMenuContent>
           <ContextMenuItem
             onSelect={() => setOpenDelete(true)}
             className="
-      text-red-600
-      focus:bg-red-50
-      focus:text-red-700
-    "
+              text-red-600
+              focus:bg-red-50
+              focus:text-red-700
+            "
           >
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Group
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
+
       <AlertDialog
         open={openDelete}
         onOpenChange={setOpenDelete}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="w-[calc(100%-2rem)] rounded-xl sm:max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>
               Delete Group?
@@ -146,16 +144,18 @@ data-[state=open]:bg-lime-50
             </AlertDialogDescription>
           </AlertDialogHeader>
 
-          <AlertDialogFooter>
-            <AlertDialogCancel>
+          <AlertDialogFooter className="flex-col-reverse gap-2 sm:flex-row">
+            <AlertDialogCancel className="mt-0 w-full sm:w-auto">
               Cancel
             </AlertDialogCancel>
 
             <AlertDialogAction
               className="
-          bg-red-600
-          hover:bg-red-700
-        "
+                w-full
+                bg-red-600
+                hover:bg-red-700
+                sm:w-auto
+              "
               onClick={async () => {
                 await deleteGroupAPI(id);
 
@@ -169,8 +169,6 @@ data-[state=open]:bg-lime-50
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-
     </div>
   );
 }

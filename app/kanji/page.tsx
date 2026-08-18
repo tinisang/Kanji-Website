@@ -133,7 +133,7 @@ kanji_vocabulary_items: (() => {
 
 
 
-        <div className="mt-8 grid grid-cols-[1fr_3fr] gap-4">
+        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-[1fr_3fr]">
 
 
 
