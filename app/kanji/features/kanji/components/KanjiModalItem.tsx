@@ -64,9 +64,18 @@ const [open, setOpen] = useState(false);
       <DialogTrigger  asChild>{children}</DialogTrigger>
       <DialogContent
   showCloseButton={false}
-  className="!max-w-5xl p-0 max-h-[90vh] overflow-hidden"
+  className="
+    w-[calc(100%-1.5rem)]
+    !max-w-5xl
+    max-h-[80vh]
+    overflow-y-auto
+    overflow-x-hidden
+    p-0
+    sm:w-[calc(100% - 55rem)]
+
+  "
 >
-  <div className="flex h-[90vh] flex-col overflow-hidden rounded-lg border-l-4 border-l-lime-500">
+  <div className="flex h-[80vh] flex-col overflow-hidden rounded-lg border-l-4 border-l-lime-500">
     {/* Header */}
     <div className="shrink-0 bg-neutral-50 p-6">
       <div className="flex justify-between">
