@@ -8,6 +8,7 @@ import { Vocabulary } from "@/app/vocabulary/lib/types/vocabulary";
 import { ReviewCard } from "../lib/types/reviewCard";
 import { ReviewRating } from "../lib/types/reviewType";
 import { submitReview } from "../clients/review.client";
+
 import {
   Dialog,
   DialogContent,
@@ -18,7 +19,13 @@ import {
 
 import { Usage } from "@/app/vocabulary/lib/types/Usage";
 import { getUsagesByVocabularyId } from "@/app/vocabulary/features/vocabulary_deck/clients/vocabularyExpressionClient";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface Props {
   cards: ReviewCard<Vocabulary>[];
@@ -67,13 +74,13 @@ export default function VocabularyReview({
 
   if (!current) {
     return (
-      <div className="flex h-[70vh] items-center justify-center">
+      <div className="flex min-h-[50vh] items-center justify-center sm:h-[70vh]">
         <div className="text-center">
-          <h2 className="text-3xl font-bold">
+          <h2 className="text-2xl font-bold sm:text-3xl">
             🎉 Finished
           </h2>
 
-          <p className="mt-2 text-muted-foreground">
+          <p className="mt-2 text-sm text-muted-foreground sm:text-base">
             No more cards to review.
           </p>
         </div>
@@ -82,24 +89,27 @@ export default function VocabularyReview({
   }
 
   async function rate(rating: ReviewRating) {
-    await submitReview(
-      current.item.id,
-      rating
-    );
-
     setShowAnswer(false);
     setUsages({});
     setIndex((i) => i + 1);
+
+    if (onRate) {
+      await onRate(current.item.id, rating);
+    } else {
+      await submitReview(
+        current.item.id,
+        rating
+      );
+    }
   }
 
   const usageList = Object.values(usages);
 
   return (
-    <div className="mx-auto flex min-h-[75vh] max-w-5xl flex-col">
+    <div className="mx-auto flex min-h-[65vh] max-w-5xl flex-col sm:min-h-[75vh]">
       {/* Progress */}
-
-      <div className="mb-8">
-        <div className="mb-2 flex justify-between text-sm text-muted-foreground">
+      <div className="mb-5 sm:mb-8">
+        <div className="mb-2 flex justify-between text-xs text-muted-foreground sm:text-sm">
           <span>
             {index + 1} / {cards.length}
           </span>
@@ -109,31 +119,34 @@ export default function VocabularyReview({
           </span>
         </div>
 
-        <div className="h-2 overflow-hidden rounded-full bg-neutral-200">
+        <div className="h-1.5 overflow-hidden rounded-full bg-neutral-200 sm:h-2">
           <div
             className="h-full rounded-full bg-black transition-all"
             style={{
-              width: `${((index + 1) / cards.length) * 100
-                }%`,
+              width: `${
+                ((index + 1) / cards.length) * 100
+              }%`,
             }}
           />
         </div>
       </div>
 
       {/* Card */}
-
       <div className="flex flex-1 items-center justify-center">
-        <div className="w-full rounded-3xl border bg-white p-12 shadow-sm">
+        <div className="w-full rounded-2xl border bg-white p-5 shadow-sm sm:rounded-3xl sm:p-8 md:p-12">
+          {/* Question */}
           <div className="text-center">
-            <div className="text-7xl font-bold tracking-tight">
+            <div className="break-words text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
               {current.content.word}
             </div>
           </div>
 
+          {/* Show Answer */}
           {!showAnswer ? (
-            <div className="mt-14 flex justify-center">
+            <div className="mt-10 flex justify-center sm:mt-14">
               <Button
                 size="lg"
+                className="w-full sm:w-auto"
                 onClick={() => setShowAnswer(true)}
               >
                 <Eye className="mr-2 h-4 w-4" />
@@ -142,170 +155,204 @@ export default function VocabularyReview({
             </div>
           ) : (
             <>
-              <div className="mt-12 border-t pt-10">
+              <div className="mt-8 border-t pt-7 sm:mt-12 sm:pt-10">
                 <div className="text-center">
                   {current.content.reading && (
-                    <div className="mt-4 text-2xl text-muted-foreground">
+                    <div className="mt-2 text-xl text-muted-foreground sm:mt-4 sm:text-2xl">
                       {current.content.reading}
                     </div>
                   )}
 
-                  <div className="text-3xl font-semibold">
+                  <div className="mt-2 break-words text-2xl font-semibold sm:text-3xl">
                     {current.content.meaning}
                   </div>
                 </div>
 
                 {(current.content.note ||
                   usageList.length > 0) && (
-                    <Dialog>
-                      <DialogTrigger asChild>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div className="mt-5 flex justify-center sm:mt-6">
                         <Button
                           variant="outline"
                           size="sm"
-                          className="mt-6"
                         >
                           View Note
                         </Button>
-                      </DialogTrigger>
+                      </div>
+                    </DialogTrigger>
 
-                      <DialogContent className="!max-w-4xl">
-                        <DialogHeader>
-                          <DialogTitle>
-                            {current.content.word}
-                          </DialogTitle>
-                        </DialogHeader>
+                    <DialogContent className="w-[calc(100%-2rem)] max-w-4xl rounded-xl sm:w-full">
+                      <DialogHeader>
+                        <DialogTitle>
+                          {current.content.word}
+                        </DialogTitle>
+                      </DialogHeader>
 
-                        <div className="max-h-[70vh] overflow-y-auto">
-                          {/* Note */}
+                      <div className="max-h-[70vh] overflow-y-auto">
+                        {/* Note */}
+                        {current.content.note && (
+                          <div
+                            className="prose prose-neutral max-w-none text-sm sm:text-base"
+                            dangerouslySetInnerHTML={{
+                              __html:
+                                current.content.note,
+                            }}
+                          />
+                        )}
 
-                          {current.content.note && (
-                            <div
-                              className="prose prose-neutral"
-                              dangerouslySetInnerHTML={{
-                                __html:
-                                  current.content.note,
-                              }}
-                            />
-                          )}
+                        {/* Expressions */}
+                        {usageList.length > 0 && (
+                          <div className="mt-6 border-t pt-5 sm:mt-8 sm:pt-6">
+                            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                              Expressions
+                            </h4>
 
-                          {/* Expressions */}
+                            <Accordion
+                              type="multiple"
+                              className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3"
+                            >
+                              {usageList.map((usage) => {
+                                const expression =
+                                  usage.expression.word;
 
-                          {usageList.length > 0 && (
-                            <div className="mt-8 border-t pt-6">
-                              <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                                Expressions
-                              </h4>
+                                const word =
+                                  current.content.word;
 
-                              <Accordion
-  type="multiple"
-  className="grid grid-cols-3 gap-2"
->
-  {usageList.map((usage) => {
-    const expression = usage.expression.word;
-    const word = current.content.word;
-    const index = expression.indexOf(word);
-    const examples = Object.values(usage.examples);
+                                const expressionIndex =
+                                  expression.indexOf(word);
 
-    return (
-      <AccordionItem
-        key={usage.expression.id}
-        value={usage.expression.id}
-        className="rounded-2xl border bg-muted/20 px-5 data-[state=open]:bg-muted/30"
-      >
-         <AccordionTrigger className="py-4 hover:no-underline">
-  <div className="flex w-full flex-col items-start">
-    <div className="flex items-center gap-2">
-      {/* Red dot */}
-      {examples.length > 0 && (
-        <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />
-      )}
+                                const examples =
+                                  Object.values(
+                                    usage.examples
+                                  );
 
-      {/* Expression */}
-      <div className="flex items-baseline gap-3">
-        <div className="text-xl font-bold tracking-tight">
-          {index === -1 ? (
-            expression
-          ) : (
-            <>
-              {expression.slice(0, index)}
+                                return (
+                                  <AccordionItem
+                                    key={
+                                      usage.expression.id
+                                    }
+                                    value={
+                                      usage.expression.id
+                                    }
+                                    className="rounded-2xl border bg-muted/20 px-4 data-[state=open]:bg-muted/30 sm:px-5"
+                                  >
+                                    <AccordionTrigger className="py-3 hover:no-underline sm:py-4">
+                                      <div className="flex w-full min-w-0 flex-col items-start">
+                                        <div className="flex w-full min-w-0 items-center gap-2">
+                                          {examples.length >
+                                            0 && (
+                                            <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />
+                                          )}
 
-              <span className="text-gray-400">
-                {expression.slice(
-                  index,
-                  index + word.length
+                                          <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+                                            <div className="break-all text-lg font-bold tracking-tight sm:text-xl">
+                                              {expressionIndex ===
+                                              -1 ? (
+                                                expression
+                                              ) : (
+                                                <>
+                                                  {expression.slice(
+                                                    0,
+                                                    expressionIndex
+                                                  )}
+
+                                                  <span className="text-gray-400">
+                                                    {expression.slice(
+                                                      expressionIndex,
+                                                      expressionIndex +
+                                                        word.length
+                                                    )}
+                                                  </span>
+
+                                                  {expression.slice(
+                                                    expressionIndex +
+                                                      word.length
+                                                  )}
+                                                </>
+                                              )}
+                                            </div>
+
+                                            {usage
+                                              .expression
+                                              .reading && (
+                                              <span className="text-xs font-normal text-muted-foreground sm:text-sm">
+                                                {
+                                                  usage
+                                                    .expression
+                                                    .reading
+                                                }
+                                              </span>
+                                            )}
+                                          </div>
+                                        </div>
+
+                                        {usage.expression
+                                          .meaning && (
+                                          <div className="mt-1 ml-4 text-left text-xs font-medium text-muted-foreground sm:text-sm">
+                                            {
+                                              usage
+                                                .expression
+                                                .meaning
+                                            }
+                                          </div>
+                                        )}
+                                      </div>
+                                    </AccordionTrigger>
+
+                                    <AccordionContent className="pb-4 sm:pb-5">
+                                      {examples.length > 0 ? (
+                                        <div className="space-y-3 border-t pt-4">
+                                          {examples.map(
+                                            (example) => (
+                                              <div
+                                                key={
+                                                  example.id
+                                                }
+                                                className="rounded-lg bg-background/60 p-3"
+                                              >
+                                                <div className="text-sm leading-relaxed">
+                                                  <div className="break-words font-medium">
+                                                    {
+                                                      example.example
+                                                    }
+                                                  </div>
+                                                </div>
+
+                                                {example.meaning && (
+                                                  <div className="mt-1 text-sm text-muted-foreground">
+                                                    {
+                                                      example.meaning
+                                                    }
+                                                  </div>
+                                                )}
+                                              </div>
+                                            )
+                                          )}
+                                        </div>
+                                      ) : (
+                                        <div className="border-t pt-4 text-sm text-muted-foreground">
+                                          No examples.
+                                        </div>
+                                      )}
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                );
+                              })}
+                            </Accordion>
+                          </div>
+                        )}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 )}
-              </span>
-
-              {expression.slice(index + word.length)}
-            </>
-          )}
-        </div>
-
-        {usage.expression.reading && (
-          <span className="text-sm font-normal text-muted-foreground">
-            {usage.expression.reading}
-          </span>
-        )}
-      </div>
-    </div>
-
-    {usage.expression.meaning && (
-      <div className="mt-1 ml-4 text-sm font-medium text-muted-foreground">
-        {usage.expression.meaning}
-      </div>
-    )}
-  </div>
-</AccordionTrigger>
-
-       <AccordionContent className="pb-5">
-  {examples.length > 0 ? (
-    <div className="space-y-3 border-t pt-4">
-      {examples.map((example) => (
-        <div
-          key={example.id}
-          className="rounded-lg bg-background/60 p-3"
-        >
-          {/* Example */}
-          <div className="relative text-sm leading-relaxed">
-           
-
-            <div className="font-medium">
-              {example.example}
-            </div>
-          </div>
-
-          {/* Meaning */}
-          {example.meaning && (
-            <div className="mt-1  text-sm text-muted-foreground">
-              {example.meaning}
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  ) : (
-    <div className="border-t pt-4 text-sm text-muted-foreground">
-      No examples.
-    </div>
-  )}
-</AccordionContent>
-      </AccordionItem>
-    );
-  })}
-</Accordion>
-                            </div>
-                          )}
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  )}
               </div>
 
               {/* Rating */}
-
-              <div className="mt-10 grid grid-cols-4 gap-3">
+              <div className="mt-7 grid grid-cols-2 gap-2 sm:mt-10 sm:grid-cols-4 sm:gap-3">
                 <Button
                   variant="destructive"
+                  className="h-11"
                   onClick={() => rate(1)}
                 >
                   Again
@@ -313,19 +360,21 @@ export default function VocabularyReview({
 
                 <Button
                   variant="secondary"
+                  className="h-11"
                   onClick={() => rate(2)}
                 >
                   Hard
                 </Button>
 
                 <Button
-                  className="bg-emerald-600 hover:bg-emerald-700"
+                  className="h-11 bg-emerald-600 hover:bg-emerald-700"
                   onClick={() => rate(3)}
                 >
                   Good
                 </Button>
 
                 <Button
+                  className="h-11"
                   onClick={() => rate(4)}
                 >
                   Easy

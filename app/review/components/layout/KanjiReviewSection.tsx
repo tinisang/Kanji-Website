@@ -16,19 +16,11 @@ import { ReviewCard } from "../../lib/types/reviewCard";
 
 import VocabularyReview from "../VocabularyReview";
 
-export default function KanjiReviewSection() {
-  const [mode, setMode] =
-    useState<ReviewMode>("review");
-
-  const [shuffle, setShuffle] =
-    useState(false);
-
-  const [cards, setCards] = useState<
-    ReviewCard<any>[]
-  >([]);
-
-  const [loading, setLoading] =
-    useState(false);
+export default function VocabularyReviewSection() {
+  const [mode, setMode] = useState<ReviewMode>("review");
+  const [shuffle, setShuffle] = useState(false);
+  const [cards, setCards] = useState<ReviewCard<any>[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadCards();
@@ -47,9 +39,7 @@ export default function KanjiReviewSection() {
         (
           card
         ): card is typeof card & {
-          content: NonNullable<
-            typeof card.content
-          >;
+          content: NonNullable<typeof card.content>;
         } => card.content != null
       );
 
@@ -76,20 +66,21 @@ export default function KanjiReviewSection() {
   if (cards.length === 0 && !loading) {
     return (
       <div className="rounded-xl border border-dashed py-12 text-center text-muted-foreground">
-        No cards to review 🎉
+        No vocabulary to review 🎉
       </div>
     );
   }
 
   return (
     <section
-      className={`rounded-2xl border bg-white p-6 transition-opacity duration-200 ${
-        loading
-          ? "pointer-events-none opacity-50"
-          : "opacity-100"
-      }`}
+      className={`
+        rounded-2xl border bg-white
+        p-4 sm:p-6
+        transition-opacity duration-200
+        ${loading ? "pointer-events-none opacity-50" : "opacity-100"}
+      `}
     >
-      <div className="mb-5 flex items-center justify-between">
+      <div className="mb-5 flex flex-col gap-4">
         <div>
           <h2 className="text-xl font-bold">
             Kanji Review
@@ -100,14 +91,15 @@ export default function KanjiReviewSection() {
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Tabs
             value={mode}
             onValueChange={(value) =>
               setMode(value as ReviewMode)
             }
+            className="w-full sm:w-auto"
           >
-            <TabsList>
+            <TabsList className="grid w-full grid-cols-4 sm:flex sm:w-auto">
               <TabsTrigger value="review">
                 Review
               </TabsTrigger>
@@ -128,21 +120,19 @@ export default function KanjiReviewSection() {
 
           <div className="flex items-center gap-2">
             <Switch
-              id="shuffle"
+              id="vocabulary-shuffle"
               checked={shuffle}
               onCheckedChange={setShuffle}
             />
 
-            <Label htmlFor="shuffle">
+            <Label htmlFor="vocabulary-shuffle">
               Shuffle
             </Label>
           </div>
         </div>
       </div>
 
-      <VocabularyReview
-        cards={displayCards}
-      />
+      <VocabularyReview cards={displayCards} />
     </section>
   );
 }
