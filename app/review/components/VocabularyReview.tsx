@@ -33,14 +33,54 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+import { getReviewPreviews } from "../services/reviewScheduler";
+
 interface Props {
+  type: ReviewType;
   onRate?: (
     reviewItemId: string,
     rating: ReviewRating
   ) => Promise<void>;
 }
 
+function formatReviewTime(date: Date) {
+  const diff =
+    date.getTime() - Date.now();
+
+  const minutes = Math.max(
+    0,
+    Math.round(diff / 60000)
+  );
+
+  if (minutes < 60) {
+    return `${minutes}m`;
+  }
+
+  const hours = Math.round(minutes / 60);
+
+  if (hours < 24) {
+    return `${hours}h`;
+  }
+
+  const days = Math.round(hours / 24);
+
+  if (days < 30) {
+    return `${days}d`;
+  }
+
+  const months = Math.round(days / 30);
+
+  if (months < 12) {
+    return `${months}mo`;
+  }
+
+  const years = Math.round(months / 12);
+
+  return `${years}y`;
+}
+
 export default function VocabularyReview({
+  type,
   onRate,
 }: Props) {
   const [current, setCurrent] =
@@ -53,16 +93,12 @@ export default function VocabularyReview({
   const [ratingLoading, setRatingLoading] =
     useState(false);
 
-  // --------------------------------------------------------------------------
-  // Load next card
-  // --------------------------------------------------------------------------
-
   async function loadNextCard() {
     try {
       setLoading(true);
 
       const card = await getNextReviewCard(
-        "vocabulary"
+        type
       );
 
       setCurrent(card);
@@ -73,6 +109,7 @@ export default function VocabularyReview({
         "Failed to load next review card:",
         error
       );
+
       setCurrent(null);
     } finally {
       setLoading(false);
@@ -83,42 +120,34 @@ export default function VocabularyReview({
     loadNextCard();
   }, []);
 
-  // --------------------------------------------------------------------------
-  // Load usages
-  // --------------------------------------------------------------------------
-
   const vocabId = current?.content?.id;
 
-useEffect(() => {
-  if (!vocabId) {
-    setUsages({});
-    return;
-  }
-
-  const id = vocabId;
-
-  async function loadUsages() {
-    try {
-      const data =
-        await getUsagesByVocabularyId(id);
-
-      setUsages(data);
-    } catch (error) {
-      console.error(
-        "Failed to load vocabulary usages:",
-        error
-      );
-
+  useEffect(() => {
+    if (!vocabId) {
       setUsages({});
+      return;
     }
-  }
 
-  loadUsages();
-}, [vocabId]);
+    const id = vocabId;
 
-  // --------------------------------------------------------------------------
-  // Loading
-  // --------------------------------------------------------------------------
+    async function loadUsages() {
+      try {
+        const data =
+          await getUsagesByVocabularyId(id);
+
+        setUsages(data);
+      } catch (error) {
+        console.error(
+          "Failed to load vocabulary usages:",
+          error
+        );
+
+        setUsages({});
+      }
+    }
+
+    loadUsages();
+  }, [vocabId]);
 
   if (loading) {
     return (
@@ -129,10 +158,6 @@ useEffect(() => {
       </div>
     );
   }
-
-  // --------------------------------------------------------------------------
-  // Finished
-  // --------------------------------------------------------------------------
 
   if (!current) {
     return (
@@ -150,46 +175,50 @@ useEffect(() => {
     );
   }
 
-  // --------------------------------------------------------------------------
-  // Rate
-  // --------------------------------------------------------------------------
-
- async function rate(rating: ReviewRating) {
-  if (ratingLoading || !current) return;
-
-  try {
-    setRatingLoading(true);
-
-    const reviewItemId = current.item.id;
-
-    if (onRate) {
-      await onRate(
-        reviewItemId,
-        rating
-      );
-    } else {
-      await submitReview(
-        reviewItemId,
-        rating
-      );
+  async function rate(rating: ReviewRating) {
+    if (ratingLoading || !current) {
+      return;
     }
 
-    await loadNextCard();
-  } catch (error) {
-    console.error(
-      "Failed to submit review:",
-      error
-    );
-  } finally {
-    setRatingLoading(false);
-  }
-}
+    try {
+      setRatingLoading(true);
 
-  const usageList = Object.values(usages);
+      const reviewItemId =
+        current.item.id;
+
+      if (onRate) {
+        await onRate(
+          reviewItemId,
+          rating
+        );
+      } else {
+        await submitReview(
+          reviewItemId,
+          rating
+        );
+      }
+
+      await loadNextCard();
+    } catch (error) {
+      console.error(
+        "Failed to submit review:",
+        error
+      );
+    } finally {
+      setRatingLoading(false);
+    }
+  }
+
+  const usageList =
+    Object.values(usages);
+
+  const previews =
+    getReviewPreviews(
+      current.progress
+    );
 
   return (
     <div className="mx-auto flex min-h-[65vh] max-w-5xl flex-col sm:min-h-[75vh]">
-      {/* Card */}
       <div className="flex flex-1 items-center justify-center">
         <div className="w-full rounded-2xl border bg-white p-5 shadow-sm sm:rounded-3xl sm:p-8 md:p-12">
           {/* Question */}
@@ -297,12 +326,10 @@ useEffect(() => {
                                   return (
                                     <AccordionItem
                                       key={
-                                        usage.expression
-                                          .id
+                                        usage.expression.id
                                       }
                                       value={
-                                        usage.expression
-                                          .id
+                                        usage.expression.id
                                       }
                                       className="rounded-2xl border bg-muted/20 px-4 data-[state=open]:bg-muted/30 sm:px-5"
                                     >
@@ -342,8 +369,7 @@ useEffect(() => {
                                                 )}
                                               </div>
 
-                                              {usage
-                                                .expression
+                                              {usage.expression
                                                 .reading && (
                                                 <span className="text-xs font-normal text-muted-foreground sm:text-sm">
                                                   {
@@ -356,8 +382,7 @@ useEffect(() => {
                                             </div>
                                           </div>
 
-                                          {usage
-                                            .expression
+                                          {usage.expression
                                             .meaning && (
                                             <div className="mt-1 ml-4 text-left text-xs font-medium text-muted-foreground sm:text-sm">
                                               {
@@ -375,9 +400,7 @@ useEffect(() => {
                                         0 ? (
                                           <div className="space-y-3 border-t pt-4">
                                             {examples.map(
-                                              (
-                                                example
-                                              ) => (
+                                              (example) => (
                                                 <div
                                                   key={
                                                     example.id
@@ -426,36 +449,64 @@ useEffect(() => {
               <div className="mt-7 grid grid-cols-2 gap-2 sm:mt-10 sm:grid-cols-4 sm:gap-3">
                 <Button
                   variant="destructive"
-                  className="h-11"
+                  className="h-auto min-h-11 py-2"
                   disabled={ratingLoading}
                   onClick={() => rate(1)}
                 >
-                  Again
+                  <div className="flex flex-col items-center leading-tight">
+                    <span>Again</span>
+                    <span className="text-xs font-normal opacity-70">
+                      {formatReviewTime(
+                        previews.again.card.due
+                      )}
+                    </span>
+                  </div>
                 </Button>
 
                 <Button
                   variant="secondary"
-                  className="h-11"
+                  className="h-auto min-h-11 py-2"
                   disabled={ratingLoading}
                   onClick={() => rate(2)}
                 >
-                  Hard
+                  <div className="flex flex-col items-center leading-tight">
+                    <span>Hard</span>
+                    <span className="text-xs font-normal opacity-70">
+                      {formatReviewTime(
+                        previews.hard.card.due
+                      )}
+                    </span>
+                  </div>
                 </Button>
 
                 <Button
-                  className="h-11 bg-emerald-600 hover:bg-emerald-700"
+                  className="h-auto min-h-11 py-2 bg-emerald-600 hover:bg-emerald-700"
                   disabled={ratingLoading}
                   onClick={() => rate(3)}
                 >
-                  Good
+                  <div className="flex flex-col items-center leading-tight">
+                    <span>Good</span>
+                    <span className="text-xs font-normal opacity-70">
+                      {formatReviewTime(
+                        previews.good.card.due
+                      )}
+                    </span>
+                  </div>
                 </Button>
 
                 <Button
-                  className="h-11"
+                  className="h-auto min-h-11 py-2"
                   disabled={ratingLoading}
                   onClick={() => rate(4)}
                 >
-                  Easy
+                  <div className="flex flex-col items-center leading-tight">
+                    <span>Easy</span>
+                    <span className="text-xs font-normal opacity-70">
+                      {formatReviewTime(
+                        previews.easy.card.due
+                      )}
+                    </span>
+                  </div>
                 </Button>
               </div>
             </>

@@ -72,7 +72,24 @@ function toCard(
 
   return card;
 }
+export function getReviewPreviews(
+  progress: ReviewProgress
+) {
+  const card = toCard(progress);
+  const now = new Date();
 
+  const scheduling = scheduler.repeat(
+    card,
+    now
+  );
+
+  return {
+    again: scheduling[1],
+    hard: scheduling[2],
+    good: scheduling[3],
+    easy: scheduling[4],
+  };
+}
 export function scheduleReview(
   progress: ReviewProgress,
   rating: ReviewRating

@@ -175,7 +175,7 @@ export default function VocabularyReviewSection() {
         </div>
       </div>
 
-      <VocabularyReview />
+      <VocabularyReview type="vocabulary" />
     </section>
   );
 }

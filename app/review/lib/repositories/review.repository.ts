@@ -259,6 +259,12 @@ export async function getNextDueReviewProgress(
       AND ri.archived = FALSE
       AND rp.due_at <= NOW()
     ORDER BY
+      CASE
+        WHEN rp.state IN ('learning', 'relearning') THEN 0
+        WHEN rp.state = 'review' THEN 1
+        WHEN rp.state = 'new' THEN 2
+        ELSE 3
+      END,
       rp.due_at ASC
     LIMIT 1;
   `;
