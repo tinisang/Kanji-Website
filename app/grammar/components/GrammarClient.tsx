@@ -155,13 +155,15 @@ export default function GrammarClient({
       }}
       onDragEnd={saveChanges}
     >
-      <div className="flex gap-4 mt-8">
-        <GrammarFolders />
+      <div className="mt-8 flex flex-col gap-4 lg:flex-row lg:gap-4">
+  <div className="w-full lg:w-64 lg:shrink-0">
+    <GrammarFolders />
+  </div>
 
-        <div className="flex-1">
-          <GrammarDecks />
-        </div>
-      </div>
+  <div className="min-w-0 flex-1">
+    <GrammarDecks />
+  </div>
+</div>
     </DragDropProvider>
   );
 }

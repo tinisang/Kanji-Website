@@ -11,43 +11,10 @@ import { ReviewCard } from "../../lib/types/reviewCard";
 import VocabularyReview from "../VocabularyReview";
 
 export default function VocabularyReviewSection() {
-  const [mode, setMode] =
-    useState<ReviewMode>("review");
-
-  const [cards, setCards] =
-    useState<ReviewCard<any>[]>([]);
 
   const [loading, setLoading] =
     useState(false);
 
-  useEffect(() => {
-    loadCards();
-  }, [mode]);
-
-  async function loadCards() {
-    setLoading(true);
-
-    try {
-      const data = (
-        await getReviewCards({
-          mode,
-          type: "vocabulary",
-        })
-      ).filter(
-        (
-          card
-        ): card is typeof card & {
-          content: NonNullable<
-            typeof card.content
-          >;
-        } => card.content != null
-      );
-
-      setCards(data);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   return (
     <section
@@ -76,9 +43,6 @@ export default function VocabularyReviewSection() {
               Vocabulary Review
             </h2>
 
-            <p className="mt-1 text-sm text-muted-foreground">
-              {cards.length} cards
-            </p>
           </div>
 
           {/* Go to Vocabulary */}

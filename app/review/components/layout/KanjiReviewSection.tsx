@@ -4,52 +4,12 @@ import Link from "next/link";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-
-import { getReviewCards } from "../../clients/review.client";
-import { ReviewMode } from "../../lib/repositories/review.repository";
-import { ReviewCard } from "../../lib/types/reviewCard";
-
 import VocabularyReview from "../VocabularyReview";
 
 export default function VocabularyReviewSection() {
-  const [mode, setMode] = useState<ReviewMode>("review");
-  const [shuffle, setShuffle] = useState(false);
-  const [cards, setCards] = useState<ReviewCard<any>[]>([]);
+
+
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    loadCards();
-  }, [mode]);
-
-  async function loadCards() {
-    setLoading(true);
-
-    try {
-      const data = (
-        await getReviewCards({
-          mode,
-          type: "kanji",
-        })
-      ).filter(
-        (
-          card
-        ): card is typeof card & {
-          content: NonNullable<typeof card.content>;
-        } => card.content != null
-      );
-
-      setCards(data);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   
 
@@ -66,13 +26,9 @@ export default function VocabularyReviewSection() {
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-xl font-bold">
-              Kanji Review
-            </h2>
+          
 
-            <p className="text-sm text-muted-foreground">
-              {cards.length} cards
-            </p>
+           
           </div>
 
           {/* Go to Kanji */}
