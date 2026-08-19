@@ -34,6 +34,9 @@ import {
 } from "@/components/ui/accordion";
 
 import { getReviewPreviews } from "../services/reviewScheduler";
+import { EditableText } from "@/app/kanji/features/kanji/components/EditableText";
+import { updateVocabulary } from "@/app/kanji/features/vocabulary/api/vocabulary.client";
+import TiptapEditor from "@/app/kanji/features/kanji/components/TipTapEditor";
 
 interface Props {
   type: ReviewType;
@@ -44,8 +47,7 @@ interface Props {
 }
 
 function formatReviewTime(date: Date) {
-  const diff =
-    date.getTime() - Date.now();
+  const diff = date.getTime() - Date.now();
 
   const minutes = Math.max(
     0,
@@ -74,9 +76,7 @@ function formatReviewTime(date: Date) {
     return `${months}mo`;
   }
 
-  const years = Math.round(months / 12);
-
-  return `${years}y`;
+  return `${Math.round(months / 12)}y`;
 }
 
 export default function VocabularyReview({
@@ -92,14 +92,20 @@ export default function VocabularyReview({
     useState<Record<string, Usage>>({});
   const [ratingLoading, setRatingLoading] =
     useState(false);
-
+const [editingNote, setEditingNote] = useState(false);
+const [noteDraft, setNoteDraft] = useState(
+   ""
+);
+useEffect(() => {
+  setNoteDraft(current?.content?.note ?? "");
+  setEditingNote(false);
+}, [current]);
+const [savingNote, setSavingNote] = useState(false);
   async function loadNextCard() {
     try {
       setLoading(true);
 
-      const card = await getNextReviewCard(
-        type
-      );
+      const card = await getNextReviewCard(type);
 
       setCurrent(card);
       setShowAnswer(false);
@@ -151,7 +157,7 @@ export default function VocabularyReview({
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center sm:h-[70vh]">
+      <div className="flex min-h-[45vh] items-center justify-center sm:min-h-[60vh]">
         <div className="text-sm text-muted-foreground">
           Loading...
         </div>
@@ -161,7 +167,7 @@ export default function VocabularyReview({
 
   if (!current) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center sm:h-[70vh]">
+      <div className="flex min-h-[45vh] items-center justify-center px-4 sm:min-h-[60vh]">
         <div className="text-center">
           <h2 className="text-2xl font-bold sm:text-3xl">
             🎉 Finished
@@ -176,26 +182,17 @@ export default function VocabularyReview({
   }
 
   async function rate(rating: ReviewRating) {
-    if (ratingLoading || !current) {
-      return;
-    }
+    if (ratingLoading || !current) return;
 
     try {
       setRatingLoading(true);
 
-      const reviewItemId =
-        current.item.id;
+      const reviewItemId = current.item.id;
 
       if (onRate) {
-        await onRate(
-          reviewItemId,
-          rating
-        );
+        await onRate(reviewItemId, rating);
       } else {
-        await submitReview(
-          reviewItemId,
-          rating
-        );
+        await submitReview(reviewItemId, rating);
       }
 
       await loadNextCard();
@@ -209,35 +206,46 @@ export default function VocabularyReview({
     }
   }
 
-  const usageList =
-    Object.values(usages);
+  const usageList = Object.values(usages);
 
-  const previews =
-    getReviewPreviews(
-      current.progress
-    );
+  const previews = getReviewPreviews(
+    current.progress
+  );
 
   return (
-    <div className="mx-auto flex min-h-[65vh] max-w-5xl flex-col sm:min-h-[75vh]">
+    <div className="mx-auto flex  w-full max-w-5xl flex-col ">
       <div className="flex flex-1 items-center justify-center">
-        <div className="w-full rounded-2xl border bg-white p-5 shadow-sm sm:rounded-3xl sm:p-8 md:p-12">
+        <div
+          className="
+            w-full
+            rounded-xl border bg-white
+            p-4 shadow-sm
+            sm:rounded-3xl sm:p-8
+            md:p-12
+          "
+        >
           {/* Question */}
-          <div className="text-center">
-            <div className="break-words text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
+          <div className="flex min-h-[120px] items-center justify-center px-2 text-center sm:min-h-[180px]">
+            <div
+              className="
+                break-words
+                text-5xl font-bold tracking-tight
+                sm:text-6xl
+                md:text-7xl
+              "
+            >
               {current.content.word}
             </div>
           </div>
 
           {/* Show Answer */}
           {!showAnswer ? (
-            <div className="mt-10 flex justify-center sm:mt-14">
+            <div className="mt-6 flex justify-center sm:mt-10">
               <Button
                 size="lg"
-                className="w-full sm:w-auto"
+                className="h-11 w-full sm:h-12 sm:w-auto sm:px-10"
                 disabled={ratingLoading}
-                onClick={() =>
-                  setShowAnswer(true)
-                }
+                onClick={() => setShowAnswer(true)}
               >
                 <Eye className="mr-2 h-4 w-4" />
                 Show Answer
@@ -246,15 +254,15 @@ export default function VocabularyReview({
           ) : (
             <>
               {/* Answer */}
-              <div className="mt-8 border-t pt-7 sm:mt-12 sm:pt-10">
+              <div className="mt-6 border-t pt-6 sm:mt-10 sm:pt-10">
                 <div className="text-center">
                   {current.content.reading && (
-                    <div className="mt-2 text-xl text-muted-foreground sm:mt-4 sm:text-2xl">
+                    <div className="mt-1 break-words text-lg text-muted-foreground sm:mt-2 sm:text-2xl">
                       {current.content.reading}
                     </div>
                   )}
 
-                  <div className="mt-2 break-words text-2xl font-semibold sm:text-3xl">
+                  <div className="mt-2 break-words text-xl font-semibold sm:mt-3 sm:text-3xl">
                     {current.content.meaning}
                   </div>
                 </div>
@@ -268,6 +276,7 @@ export default function VocabularyReview({
                         <Button
                           variant="outline"
                           size="sm"
+                          className="h-9 px-4"
                           disabled={ratingLoading}
                         >
                           View Note
@@ -275,7 +284,15 @@ export default function VocabularyReview({
                       </div>
                     </DialogTrigger>
 
-                    <DialogContent className="w-[calc(100%-2rem)] max-w-4xl rounded-xl sm:w-full">
+                    <DialogContent
+                      className="
+                        w-[calc(100%-1.5rem)]
+                        !max-w-6xl
+                        rounded-xl
+                        p-4
+                        sm:w-full sm:p-6
+                      "
+                    >
                       <DialogHeader>
                         <DialogTitle>
                           {current.content.word}
@@ -283,18 +300,108 @@ export default function VocabularyReview({
                       </DialogHeader>
 
                       <div className="max-h-[70vh] overflow-y-auto">
-                        {/* Note */}
                         {current.content.note && (
-                          <div
-                            className="prose prose-neutral max-w-none text-sm sm:text-base"
-                            dangerouslySetInnerHTML={{
-                              __html:
-                                current.content.note,
-                            }}
-                          />
-                        )}
+  <div className="mt-4">
+    {!editingNote ? (
+      <>
+        {/* View mode */}
+        <div
+          className="
+            prose prose-neutral
+            max-w-none
+            text-sm
+            sm:text-base
+          "
+          dangerouslySetInnerHTML={{
+            __html: current.content.note,
+          }}
+        />
 
-                        {/* Expressions */}
+        <div className="mt-4 flex justify-end">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setNoteDraft(
+                current.content.note ?? ""
+              );
+              setEditingNote(true);
+            }}
+          >
+            Edit
+          </Button>
+        </div>
+      </>
+    ) : (
+      <>
+        {/* Edit mode */}
+        <TiptapEditor
+          value={noteDraft}
+          onChange={setNoteDraft}
+        />
+
+        <div className="mt-4 flex justify-end gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={savingNote}
+            onClick={() => {
+              setNoteDraft(
+                current.content.note ?? ""
+              );
+              setEditingNote(false);
+            }}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            type="button"
+            size="sm"
+            disabled={savingNote}
+            onClick={async () => {
+              try {
+                setSavingNote(true);
+
+                const updated =
+                  await updateVocabulary({
+                    ...current.content,
+                    note: noteDraft,
+                  });
+
+                setCurrent((prev) => {
+                  if (!prev) return prev;
+
+                  return {
+                    ...prev,
+                    content: {
+                      ...prev.content,
+                      note: updated.note,
+                    },
+                  };
+                });
+
+                setEditingNote(false);
+              } catch (error) {
+                console.error(
+                  "Failed to update note:",
+                  error
+                );
+              } finally {
+                setSavingNote(false);
+              }
+            }}
+          >
+            {savingNote ? "Saving..." : "Save"}
+          </Button>
+        </div>
+      </>
+    )}
+  </div>
+)}
+
                         {usageList.length > 0 && (
                           <div className="mt-6 border-t pt-5 sm:mt-8 sm:pt-6">
                             <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
@@ -303,139 +410,143 @@ export default function VocabularyReview({
 
                             <Accordion
                               type="multiple"
-                              className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3"
+                              className="
+                                grid grid-cols-1 gap-2
+                                md:grid-cols-2
+                                lg:grid-cols-3
+                              "
                             >
-                              {usageList.map(
-                                (usage) => {
-                                  const expression =
-                                    usage.expression.word;
+                              {usageList.map((usage) => {
+                                const expression =
+                                  usage.expression.word;
 
-                                  const word =
-                                    current.content.word;
+                                const word =
+                                  current.content.word;
 
-                                  const expressionIndex =
-                                    expression.indexOf(
-                                      word
-                                    );
+                                const expressionIndex =
+                                  expression.indexOf(word);
 
-                                  const examples =
-                                    Object.values(
-                                      usage.examples
-                                    );
+                                const examples =
+                                  Object.values(
+                                    usage.examples
+                                  );
 
-                                  return (
-                                    <AccordionItem
-                                      key={
-                                        usage.expression.id
-                                      }
-                                      value={
-                                        usage.expression.id
-                                      }
-                                      className="rounded-2xl border bg-muted/20 px-4 data-[state=open]:bg-muted/30 sm:px-5"
-                                    >
-                                      <AccordionTrigger className="py-3 hover:no-underline sm:py-4">
-                                        <div className="flex w-full min-w-0 flex-col items-start">
-                                          <div className="flex w-full min-w-0 items-center gap-2">
-                                            {examples.length >
-                                              0 && (
-                                              <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />
-                                            )}
+                                return (
+                                  <AccordionItem
+                                    key={
+                                      usage.expression.id
+                                    }
+                                    value={
+                                      usage.expression.id
+                                    }
+                                    className="
+                                      rounded-xl border
+                                      bg-muted/20
+                                      px-3
+                                      sm:rounded-2xl sm:px-5
+                                    "
+                                  >
+                                    <AccordionTrigger className="py-3 hover:no-underline">
+                                      <div className="flex w-full min-w-0 flex-col items-start">
+                                        <div className="flex w-full min-w-0 items-center gap-2">
+                                          {examples.length >
+                                            0 && (
+                                            <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />
+                                          )}
 
-                                            <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-                                              <div className="break-all text-lg font-bold tracking-tight sm:text-xl">
-                                                {expressionIndex ===
-                                                -1 ? (
-                                                  expression
-                                                ) : (
-                                                  <>
+                                          <div className="flex min-w-0 flex-wrap items-baseline gap-x-2">
+                                            <div className="break-all text-base font-bold sm:text-xl">
+                                              {expressionIndex ===
+                                              -1 ? (
+                                                expression
+                                              ) : (
+                                                <>
+                                                  {expression.slice(
+                                                    0,
+                                                    expressionIndex
+                                                  )}
+
+                                                  <span className="text-gray-400">
                                                     {expression.slice(
-                                                      0,
-                                                      expressionIndex
-                                                    )}
-
-                                                    <span className="text-gray-400">
-                                                      {expression.slice(
-                                                        expressionIndex,
-                                                        expressionIndex +
-                                                          word.length
-                                                      )}
-                                                    </span>
-
-                                                    {expression.slice(
+                                                      expressionIndex,
                                                       expressionIndex +
                                                         word.length
                                                     )}
-                                                  </>
-                                                )}
-                                              </div>
+                                                  </span>
 
-                                              {usage.expression
-                                                .reading && (
-                                                <span className="text-xs font-normal text-muted-foreground sm:text-sm">
-                                                  {
-                                                    usage
-                                                      .expression
-                                                      .reading
-                                                  }
-                                                </span>
+                                                  {expression.slice(
+                                                    expressionIndex +
+                                                      word.length
+                                                  )}
+                                                </>
                                               )}
                                             </div>
-                                          </div>
 
-                                          {usage.expression
-                                            .meaning && (
-                                            <div className="mt-1 ml-4 text-left text-xs font-medium text-muted-foreground sm:text-sm">
-                                              {
-                                                usage
-                                                  .expression
-                                                  .meaning
-                                              }
-                                            </div>
-                                          )}
-                                        </div>
-                                      </AccordionTrigger>
-
-                                      <AccordionContent className="pb-4 sm:pb-5">
-                                        {examples.length >
-                                        0 ? (
-                                          <div className="space-y-3 border-t pt-4">
-                                            {examples.map(
-                                              (example) => (
-                                                <div
-                                                  key={
-                                                    example.id
-                                                  }
-                                                  className="rounded-lg bg-background/60 p-3"
-                                                >
-                                                  <div className="text-sm leading-relaxed">
-                                                    <div className="break-words font-medium">
-                                                      {
-                                                        example.example
-                                                      }
-                                                    </div>
-                                                  </div>
-
-                                                  {example.meaning && (
-                                                    <div className="mt-1 text-sm text-muted-foreground">
-                                                      {
-                                                        example.meaning
-                                                      }
-                                                    </div>
-                                                  )}
-                                                </div>
-                                              )
+                                            {usage.expression
+                                              .reading && (
+                                              <span className="text-xs font-normal text-muted-foreground sm:text-sm">
+                                                {
+                                                  usage
+                                                    .expression
+                                                    .reading
+                                                }
+                                              </span>
                                             )}
                                           </div>
-                                        ) : (
-                                          <div className="border-t pt-4 text-sm text-muted-foreground">
-                                            No examples.
+                                        </div>
+
+                                        {usage.expression
+                                          .meaning && (
+                                          <div className="mt-1 ml-4 break-words text-left text-xs font-medium text-muted-foreground sm:text-sm">
+                                            {
+                                              usage
+                                                .expression
+                                                .meaning
+                                            }
                                           </div>
                                         )}
-                                      </AccordionContent>
-                                    </AccordionItem>
-                                  );
-                                }
-                              )}
+                                      </div>
+                                    </AccordionTrigger>
+
+                                    <AccordionContent className="pb-4 sm:pb-5">
+                                      {examples.length > 0 ? (
+                                        <div className="space-y-3 border-t pt-4">
+                                          {examples.map(
+                                            (example) => (
+                                              <div
+                                                key={
+                                                  example.id
+                                                }
+                                                className="rounded-lg bg-background/60 p-3"
+                                              >
+                                                <div className="text-sm leading-relaxed">
+                                                  <div className="break-words font-medium">
+                                                    {
+                                                      example.example
+                                                    }
+                                                  </div>
+                                                </div>
+
+                                                {example.meaning && (
+                                                  <div className="mt-1 text-sm text-muted-foreground">
+                                                    {
+                                                      example.meaning
+                                                    }
+                                                  </div>
+                                                )}
+                                              </div>
+                                            )
+                                          )}
+                                        </div>
+                                      ) : (
+                                        <div className="border-t pt-4 text-sm text-muted-foreground">
+                                          No examples.
+                                        </div>
+                                      )}
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                );
+                              })}
                             </Accordion>
                           </div>
                         )}
@@ -446,16 +557,24 @@ export default function VocabularyReview({
               </div>
 
               {/* Rating */}
-              <div className="mt-7 grid grid-cols-2 gap-2 sm:mt-10 sm:grid-cols-4 sm:gap-3">
+              <div
+                className="
+                  mt-6 grid grid-cols-2 gap-2
+                  sm:mt-10 sm:grid-cols-4 sm:gap-3
+                "
+              >
                 <Button
                   variant="destructive"
-                  className="h-auto min-h-11 py-2"
+                  className="h-auto min-h-12 w-full py-2 sm:min-h-14"
                   disabled={ratingLoading}
                   onClick={() => rate(1)}
                 >
                   <div className="flex flex-col items-center leading-tight">
-                    <span>Again</span>
-                    <span className="text-xs font-normal opacity-70">
+                    <span className="text-sm font-semibold sm:text-base">
+                      Again
+                    </span>
+
+                    <span className="mt-0.5 text-[11px] font-normal opacity-70 sm:text-xs">
                       {formatReviewTime(
                         previews.again.card.due
                       )}
@@ -465,13 +584,16 @@ export default function VocabularyReview({
 
                 <Button
                   variant="secondary"
-                  className="h-auto min-h-11 py-2"
+                  className="h-auto min-h-12 w-full py-2 sm:min-h-14"
                   disabled={ratingLoading}
                   onClick={() => rate(2)}
                 >
                   <div className="flex flex-col items-center leading-tight">
-                    <span>Hard</span>
-                    <span className="text-xs font-normal opacity-70">
+                    <span className="text-sm font-semibold sm:text-base">
+                      Hard
+                    </span>
+
+                    <span className="mt-0.5 text-[11px] font-normal opacity-70 sm:text-xs">
                       {formatReviewTime(
                         previews.hard.card.due
                       )}
@@ -480,13 +602,21 @@ export default function VocabularyReview({
                 </Button>
 
                 <Button
-                  className="h-auto min-h-11 py-2 bg-emerald-600 hover:bg-emerald-700"
+                  className="
+                    h-auto min-h-12 w-full py-2
+                    bg-emerald-600
+                    hover:bg-emerald-700
+                    sm:min-h-14
+                  "
                   disabled={ratingLoading}
                   onClick={() => rate(3)}
                 >
                   <div className="flex flex-col items-center leading-tight">
-                    <span>Good</span>
-                    <span className="text-xs font-normal opacity-70">
+                    <span className="text-sm font-semibold sm:text-base">
+                      Good
+                    </span>
+
+                    <span className="mt-0.5 text-[11px] font-normal opacity-70 sm:text-xs">
                       {formatReviewTime(
                         previews.good.card.due
                       )}
@@ -495,13 +625,16 @@ export default function VocabularyReview({
                 </Button>
 
                 <Button
-                  className="h-auto min-h-11 py-2"
+                  className="h-auto min-h-12 w-full py-2 sm:min-h-14"
                   disabled={ratingLoading}
                   onClick={() => rate(4)}
                 >
                   <div className="flex flex-col items-center leading-tight">
-                    <span>Easy</span>
-                    <span className="text-xs font-normal opacity-70">
+                    <span className="text-sm font-semibold sm:text-base">
+                      Easy
+                    </span>
+
+                    <span className="mt-0.5 text-[11px] font-normal opacity-70 sm:text-xs">
                       {formatReviewTime(
                         previews.easy.card.due
                       )}

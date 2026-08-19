@@ -51,25 +51,7 @@ export default function VocabularyReviewSection() {
     }
   }
 
-  const displayCards = useMemo(() => {
-    if (!shuffle) return cards;
-
-    return [...cards]
-      .map((card) => ({
-        card,
-        sort: Math.random(),
-      }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ card }) => card);
-  }, [cards, shuffle]);
-
-  if (cards.length === 0 && !loading) {
-    return (
-      <div className="rounded-xl border border-dashed py-12 text-center text-muted-foreground">
-        No vocabulary to review 🎉
-      </div>
-    );
-  }
+  
 
   return (
     <section
@@ -132,45 +114,7 @@ export default function VocabularyReviewSection() {
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <Tabs
-            value={mode}
-            onValueChange={(value) =>
-              setMode(value as ReviewMode)
-            }
-            className="w-full sm:w-auto"
-          >
-            <TabsList className="grid w-full grid-cols-4 sm:flex sm:w-auto">
-              <TabsTrigger value="review">
-                Review
-              </TabsTrigger>
-
-              <TabsTrigger value="new">
-                New
-              </TabsTrigger>
-
-              <TabsTrigger value="practice">
-                Practice
-              </TabsTrigger>
-
-              <TabsTrigger value="cram">
-                Cram
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-
-          <div className="flex items-center gap-2">
-            <Switch
-              id="vocabulary-shuffle"
-              checked={shuffle}
-              onCheckedChange={setShuffle}
-            />
-
-            <Label htmlFor="vocabulary-shuffle">
-              Shuffle
-            </Label>
-          </div>
-        </div>
+       
       </div>
 
       <VocabularyReview type="kanji" />
