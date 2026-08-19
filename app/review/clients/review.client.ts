@@ -157,7 +157,26 @@ export async function removeFromReview(
 /* -------------------------------------------------------------------------- */
 /*                                 Review                                     */
 /* -------------------------------------------------------------------------- */
+export async function getNextReviewCard(
+  type: ReviewType
+): Promise<ReviewCard<any> | null> {
+  const res = await fetch(
+    `/review/api/next?type=${type}`,
+    {
+      cache: "no-store",
+    }
+  );
 
+  if (!res.ok) {
+    throw new Error(
+      "Failed to fetch next review card."
+    );
+  }
+
+  return (await res.json()) as
+    | ReviewCard<any>
+    | null;
+}
 export async function getReviewItemByTarget(
   type: ReviewType,
   targetId: string

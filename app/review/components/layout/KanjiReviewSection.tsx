@@ -173,7 +173,7 @@ export default function VocabularyReviewSection() {
         </div>
       </div>
 
-      <VocabularyReview cards={displayCards} />
+      <VocabularyReview />
     </section>
   );
 }

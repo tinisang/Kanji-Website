@@ -246,7 +246,25 @@ export async function getReviewProgressByItemId(
 
   return rows[0] as ReviewProgress | undefined;
 }
+export async function getNextDueReviewProgress(
+  type: ReviewType
+): Promise<ReviewProgress | undefined> {
+  const rows = await sql`
+    SELECT rp.*
+    FROM review_progress rp
+    JOIN review_item ri
+      ON ri.id = rp.review_item_id
+    WHERE
+      ri.type = ${type}
+      AND ri.archived = FALSE
+      AND rp.due_at <= NOW()
+    ORDER BY
+      rp.due_at ASC
+    LIMIT 1;
+  `;
 
+  return rows[0] as ReviewProgress | undefined;
+}
 export async function getReviewItemByTarget(
   type: ReviewType,
   targetId: string

@@ -5,7 +5,7 @@
 /* -------------------------------------------------------------------------- */
 
 import { getKanjiById } from "@/app/kanji/lib/repositories/kanji.repository";
-import { createReviewHistory, createReviewItem, createReviewProgress, deleteReviewItem, getDueReviewProgress, getReviewHistory, getReviewItemById, getReviewItemByTarget as getReviewItemByTargetRepository, getReviewProgress, getReviewProgressByItemId as getReviewProgressByItemIdRepository, GetReviewProgressOptions, updateReviewProgress } from "../lib/repositories/review.repository";
+import { createReviewHistory, createReviewItem, createReviewProgress, deleteReviewItem, getDueReviewProgress, getNextDueReviewProgress, getReviewHistory, getReviewItemById, getReviewItemByTarget as getReviewItemByTargetRepository, getReviewProgress, getReviewProgressByItemId as getReviewProgressByItemIdRepository, GetReviewProgressOptions, updateReviewProgress } from "../lib/repositories/review.repository";
 import { ReviewCard } from "../lib/types/reviewCard";
 import { ReviewRating, ReviewType } from "../lib/types/reviewType";
 import { getCurrentUserId } from "@/lib/auth/auth-user";
@@ -248,4 +248,59 @@ export async function deleteReviewItemByTarget(
     type,
     targetId
   );
+}
+
+export async function getNextReviewCard(
+  type: ReviewType
+): Promise<ReviewCard<any> | null> {
+  const userId = await getCurrentUserId();
+
+  const progress =
+    await getNextDueReviewProgress(type);
+
+  if (!progress) {
+    return null;
+  }
+
+  const item = await getReviewItemById(
+    progress.review_item_id
+  );
+
+  if (!item) {
+    return null;
+  }
+
+  let content;
+
+  switch (item.type) {
+    case "kanji":
+      content = await getVocabularyById(
+        userId,
+        item.target_id
+      );
+      break;
+
+    case "vocabulary":
+      content = await getVocabularyById(
+        userId,
+        item.target_id
+      );
+      break;
+
+    case "grammar":
+      content = await getGrammarById(
+        item.target_id
+      );
+      break;
+  }
+
+  if (!content) {
+    return null;
+  }
+
+  return {
+    item,
+    progress,
+    content,
+  };
 }
