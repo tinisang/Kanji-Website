@@ -23,19 +23,12 @@ export default function KanjiCard({
 }: KanjiCardProps) {
   const { data, setData } = useKanji();
 
-const vocabularyIds =
-  data.kanji_vocabulary_items[kanji.id] ?? [];
+  const vocabulary = data.vocabularies[
+    data.kanji_vocabulary_items[kanji.id]?.[0]
+  ];
 
-const firstVocabulary =
-  vocabularyIds.length > 0
-    ? data.vocabularies[vocabularyIds[0]]
-    : null;
-
-  async function onClick() {
-    const updated = {
-      ...kanji,
-      learned: !kanji.learned,
-    };
+  const toggleLearned = async () => {
+    const updated = { ...kanji, learned: !kanji.learned };
 
     updateKanjiUI(setData, updated);
 
@@ -45,25 +38,25 @@ const firstVocabulary =
       updateKanjiUI(setData, kanji);
       console.error(error);
     }
-  }
+  };
 
   const content = (
-    <div className="w-full text-center">
-      <div className="mt-2 mb-2 flex flex-wrap justify-center gap-1">
+  <div className="w-full text-center">
+    {/* References */}
+    {referenceItems.length > 0 && (
+      <div className="mb-1 flex flex-wrap justify-center gap-0.5">
         {referenceItems.map((item) => {
-          const reference =
-            data.reference_sets[item.reference_set_id];
-
-          if (!reference) return null;
+          const ref = data.reference_sets[item.reference_set_id];
+          if (!ref) return null;
 
           return (
             <span
               key={item.id}
-              className="rounded-full border px-1 py-0 text-[8px] font-semibold"
+              className="rounded-full border px-1 text-[7px] font-semibold leading-3"
               style={{
-                backgroundColor: `${reference.color}20`,
-                borderColor: `${reference.color}55`,
-                color: reference.color,
+                backgroundColor: `${ref.color}20`,
+                borderColor: `${ref.color}55`,
+                color: ref.color,
               }}
             >
               {item.note || "-"}
@@ -71,83 +64,80 @@ const firstVocabulary =
           );
         })}
       </div>
+    )}
 
-      <div className="text-[2.8rem] leading-none">
-        {kanji.character}
-      </div>
-
-      <div className="uppercase mt-1 text-xs font-semibold text-lime-600">
-        {kanji.han_viet}
-      </div>
-
-      {isClassified && firstVocabulary && (
-        <>
-          <div className="mx-auto mt-3 inline-flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-xs">
-            <span className="font-semibold">
-              {firstVocabulary.word}
-            </span>
-
-            <span className="text-neutral-400">•</span>
-
-            <span className="text-neutral-500">
-              {firstVocabulary.reading}
-            </span>
-          </div>
-
-          <div className="mt-2 text-[11px] text-neutral-500">
-            {firstVocabulary.meaning}
-          </div>
-        </>
-      )}
+    {/* Kanji */}
+    <div className="text-[2rem] leading-none">
+      {kanji.character}
     </div>
-  );
+
+    {/* Han Viet */}
+    <div className="mt-0.5 text-[10px] font-semibold uppercase text-lime-600">
+      {kanji.han_viet}
+    </div>
+
+    {/* Vocabulary */}
+    {isClassified && vocabulary && (
+      <div className="mt-1">
+        <div className="mx-auto flex max-w-full items-center justify-center gap-1 truncate rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] leading-4">
+          <span className="truncate font-semibold">
+            {vocabulary.word}
+          </span>
+
+          <span className="shrink-0 text-neutral-300">•</span>
+
+          <span className="truncate text-neutral-500">
+            {vocabulary.reading}
+          </span>
+        </div>
+
+        <div className="mt-0.5 truncate text-[9px] leading-3 text-neutral-500">
+          {vocabulary.meaning}
+        </div>
+      </div>
+    )}
+  </div>
+);
 
   return (
     <article
-      className={`
-        group relative rounded-md p-2
-        transition-all duration-200
-        ${
-          kanji.learned
-            ? "opacity-10"
-            : ""
-        }
-        data-[state=open]:bg-lime-50
-        data-[state=open]:ring-1
-        data-[state=open]:ring-lime-300
-        ${
-          !dragEnabled
-            ? "bg-neutral-50 ring-1 ring-neutral-300 shadow-sm"
-            : "cursor-pointer"
-        }
-      `}
-    >
-      <div
-        ref={handleRef}
-        className="
-          absolute top-0 left-0
-          -translate-y-1
-          opacity-0 transition-opacity
-          group-hover:opacity-100
-          cursor-grab active:cursor-grabbing
-          bg-[#AEE509]
-          w-full
-        "
-      >
-        {dragEnabled && (
-          <GripHorizontal className="h-4 w-4 text-[#51670F]" />
-        )}
-      </div>
+  className={`
+    group relative rounded-md p-1.5
+    transition-all duration-150
+    ${kanji.learned ? "opacity-10" : ""}
+    ${
+      !dragEnabled
+        ? "bg-neutral-50 ring-1 ring-neutral-300"
+        : "cursor-pointer"
+    }
+    data-[state=open]:bg-lime-50
+    data-[state=open]:ring-1
+    data-[state=open]:ring-lime-300
+  `}
+>
+  <div
+    ref={handleRef}
+    className="
+      absolute left-0 top-0
+      w-full -translate-y-1
+      bg-[#AEE509]
+      opacity-0 transition-opacity
+      group-hover:opacity-100
+      cursor-grab active:cursor-grabbing
+    "
+  >
+    {dragEnabled && (
+      <GripHorizontal className="h-3 w-3 text-[#51670F]" />
+    )}
+  </div>
 
-      {!dragEnabled ? (
-        <div onClick={onClick}>
-          {content}
-        </div>
-      ) : (
-        <KanjiDetailModal kanji={kanji}>
-          {content}
-        </KanjiDetailModal>
-      )}
-    </article>
+  {!dragEnabled ? (
+    <div onClick={toggleLearned}>{content}</div>
+  ) : (
+    <KanjiDetailModal kanji={kanji}>
+      {content}
+    </KanjiDetailModal>
+  )}
+</article>
   );
 }

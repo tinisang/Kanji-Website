@@ -63,7 +63,7 @@ export default function Header({
   const current = themes[theme];
 
   return (
-    <div>
+    <div className="">
     <header className="relative px-2 sm:px-0">
       {/* Mascot */}
       <img

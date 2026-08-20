@@ -18,7 +18,7 @@ export default function ClassifiedKanjis({
  const groupIds = Object.values(globalData.groups).filter(group => group.name !="Unclassified")?.map(group => group.id);
 
   return (
-    <div className="flex flex-col gap-4">
+<div className="grid grid-cols-1 sm:grid-cols-2">
 
       {
         groupIds?.map((group, index)=>(

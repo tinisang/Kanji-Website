@@ -71,7 +71,7 @@ export default function KanjiGroup({
       ref={(node) => {
         sortableRef(node);
       }}
-      className="w-full"
+      className="w-full h-full border-b border-b-gray-200"
     >
       <ContextMenu>
         <ContextMenuTrigger asChild>
@@ -79,16 +79,17 @@ export default function KanjiGroup({
             id={`kanji-group-${id}`}
             className={`
               w-full
+              h-full
               border-l-4 border-l-kanji-primary
               bg-white
-              p-3 sm:p-4
+              p-1 sm:p-1
               transition-all
               data-[state=open]:bg-lime-50
               data-[state=open]:ring-1
               data-[state=open]:ring-lime-300
               ${
                 isDragSource
-                  ? "z-50 scale-[1.02] shadow-xl sm:scale-110"
+                  ? "z-10 scale-[1.02] shadow-xl sm:scale-110"
                   : "shadow-sm hover:shadow-md"
               }
             `}
