@@ -4,7 +4,7 @@ export async function getGrammarExpressions(
   grammarId: string
 ) {
   const res = await fetch(
-    `/grammar/api/grammar/${grammarId}/expression`
+    `/grammar/api/${grammarId}/expression`
   );
 
   if (!res.ok) {

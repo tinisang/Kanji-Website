@@ -9,6 +9,7 @@ import {
 
 import KanjiReviewSection from "./components/layout/KanjiReviewSection";
 import VocabularyReviewSection from "./components/layout/VocabularyReviewSection";
+import GrammarReviewSection from "./components/layout/GrammarReviewSection";
 
 export default function ReviewPage() {
   const triggerClass =
@@ -91,7 +92,7 @@ export default function ReviewPage() {
           value="grammar"
           className="mt-4 min-w-0 sm:mt-6"
         >
-          {/* Content */}
+          <GrammarReviewSection />
         </TabsContent>
       </Tabs>
     </div>
