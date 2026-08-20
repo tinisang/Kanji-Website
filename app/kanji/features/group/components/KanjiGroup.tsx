@@ -1,6 +1,9 @@
 'use client';
 
-import { Trash2 } from "lucide-react";
+import {
+  ArrowUp,
+  Trash2,
+} from "lucide-react";
 
 import {
   AlertDialog,
@@ -17,10 +20,19 @@ import { useState } from "react";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { CollisionPriority } from "@dnd-kit/abstract";
 
-import { removeGroupUI, useKanji } from "@/contexts/Context";
+import {
+  moveGroupToTopUI,
+  removeGroupUI,
+  useKanji,
+} from "@/contexts/Context";
+
 import KanjiItem from "../../kanji/components/KanjiItem";
 import AddKanjiModal from "../../kanji/components/AddKanjiModal";
-import { deleteGroupAPI } from "../api/group.client";
+
+import {
+  deleteGroupAPI,
+  moveGroupToTopAPI,
+} from "../api/group.client";
 
 import {
   ContextMenu,
@@ -41,7 +53,8 @@ export default function KanjiGroup({
   id,
   index,
 }: KanjiGroupProps) {
-  const [openDelete, setOpenDelete] = useState(false);
+  const [openDelete, setOpenDelete] =
+    useState(false);
 
   const {
     data: globalData,
@@ -55,16 +68,35 @@ export default function KanjiGroup({
 
   function setItemArray() {}
 
-  const { isDragSource, ref: sortableRef } =
-    useSortable({
-      id,
-      index,
-      type: "group",
-      accept: ["item", "group"],
-      group: "classified",
-      collisionPriority: CollisionPriority.Low,
-      disabled: !dragEnabled,
-    });
+  const {
+    isDragSource,
+    ref: sortableRef,
+  } = useSortable({
+    id,
+    index,
+    type: "group",
+    accept: ["item", "group"],
+    group: "classified",
+    collisionPriority:
+      CollisionPriority.Low,
+    disabled: !dragEnabled,
+  });
+
+  const handleMoveToTop = async () => {
+  try {
+    await moveGroupToTopAPI(id);
+
+    moveGroupToTopUI(
+      setData,
+      id
+    );
+  } catch (error) {
+    console.error(
+      "Failed to move group to top:",
+      error
+    );
+  }
+};
 
   return (
     <div
@@ -95,16 +127,18 @@ export default function KanjiGroup({
             `}
           >
             <div className="flex min-w-0 flex-wrap gap-2">
-              {itemArray?.map((item, itemIndex) => (
-                <KanjiItem
-                  setItemArray={setItemArray}
-                  isClassified={true}
-                  key={item.id}
-                  index={itemIndex}
-                  kanji={item}
-                  groupId={id}
-                />
-              ))}
+              {itemArray?.map(
+                (item, itemIndex) => (
+                  <KanjiItem
+                    setItemArray={setItemArray}
+                    isClassified={true}
+                    key={item.id}
+                    index={itemIndex}
+                    kanji={item}
+                    groupId={id}
+                  />
+                )
+              )}
 
               <AddKanjiModal
                 setItemArray={setItemArray}
@@ -115,6 +149,13 @@ export default function KanjiGroup({
         </ContextMenuTrigger>
 
         <ContextMenuContent>
+          <ContextMenuItem
+            onSelect={handleMoveToTop}
+          >
+            <ArrowUp className="mr-2 h-4 w-4" />
+            Move to top
+          </ContextMenuItem>
+
           <ContextMenuItem
             onSelect={() => setOpenDelete(true)}
             className="
@@ -141,7 +182,8 @@ export default function KanjiGroup({
 
             <AlertDialogDescription>
               This action cannot be undone.
-              All kanji inside this group will be removed.
+              All kanji inside this group
+              will be removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
 

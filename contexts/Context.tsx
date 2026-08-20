@@ -514,3 +514,49 @@ export function setKanjiVocabulariesUI(
     },
   }));
 }
+
+export function moveGroupToTopUI(
+  setData: React.Dispatch<
+    React.SetStateAction<KanjiData>
+  >,
+  groupId: string
+) {
+  setData(prev => {
+    const group = prev.groups[groupId];
+
+    if (!group || group.position === 0) {
+      return prev;
+    }
+
+    const nextGroups = {
+      ...prev.groups,
+    };
+
+    Object.values(nextGroups).forEach(
+      currentGroup => {
+        if (
+          currentGroup.id !== groupId &&
+          currentGroup.name !== "Unclassified" &&
+          currentGroup.position <
+            group.position
+        ) {
+          nextGroups[currentGroup.id] = {
+            ...currentGroup,
+            position:
+              currentGroup.position + 1,
+          };
+        }
+      }
+    );
+
+    nextGroups[groupId] = {
+      ...group,
+      position: 0,
+    };
+
+    return {
+      ...prev,
+      groups: nextGroups,
+    };
+  });
+}

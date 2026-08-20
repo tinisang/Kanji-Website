@@ -61,3 +61,29 @@ export async function deleteGroupAPI(
   }
 );
 }
+
+export async function moveGroupToTopAPI(
+  groupId: string
+) {
+  const response = await fetch(
+    "/kanji/api/kanji-group/move-to-top",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type":
+          "application/json",
+      },
+      body: JSON.stringify({
+        groupId,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to move group to top"
+    );
+  }
+
+  return response.json();
+}

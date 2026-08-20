@@ -7,11 +7,10 @@ import {
   getGroupById,
   getUnclassifiedGroup,
   moveAllItemsToGroup,
+  moveGroupToTop,
   updateGroupName,
   updateGroupPositions,
 } from "@/app/kanji/lib/repositories/group.repository";
-
-
 async function getCurrentUserId() {
   const session = await auth();
 
@@ -22,7 +21,17 @@ async function getCurrentUserId() {
   return session.user.id;
 }
 
+export async function moveGroupToTopAction(
+  groupId: string
+) {
+  const userId =
+    await getCurrentUserId();
 
+  return moveGroupToTop(
+    userId,
+    groupId
+  );
+}
 
 
 

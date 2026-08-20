@@ -16,7 +16,47 @@ export async function getAllGroupsByUserId(
 
   return rows as KanjiGroup[];
 }
+export async function moveGroupToTop(
+  userId: string,
+  groupId: string
+) {
+  
+  const group = await getGroupById(
+    userId,
+    groupId
+  );
 
+  if (!group) {
+    throw new Error("Group not found");
+  }
+
+  // Đã ở trên cùng
+  if (group.position === 0) {
+    return group;
+  }
+
+  // Đẩy các group phía trên xuống 1 position
+  await sql`
+    UPDATE kanji_group
+    SET position = position + 1
+    WHERE
+      user_id = ${userId}
+      AND name <> 'Unclassified'
+      AND position < ${group.position}
+  `;
+
+  // Đưa group hiện tại lên đầu
+  const rows = await sql`
+    UPDATE kanji_group
+    SET position = 0
+    WHERE
+      id = ${groupId}
+      AND user_id = ${userId}
+    RETURNING *
+  `;
+
+  return rows[0] as KanjiGroup;
+}
 export async function getGroupById(
   userId: string,
   groupId: string
