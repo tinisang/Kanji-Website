@@ -96,37 +96,42 @@ export default function VocabularyDeckHeader({
   }
 
   async function handleRevisionChange(
-    e: React.ChangeEvent<HTMLInputElement>
-  ) {
-    e.stopPropagation();
+  e: React.ChangeEvent<HTMLInputElement>
+) {
+  e.stopPropagation();
 
-    const checked = e.target.checked;
+  const checked = e.target.checked;
 
-    setNeedRevision(checked);
+  setNeedRevision(checked);
 
-    const reviewItem = await getReviewItemByTarget(
-      "vocabulary",
-      vocabulary.id
-    );
+  const reviewItem = await getReviewItemByTarget(
+    "vocabulary",
+    vocabulary.id
+  );
 
-    if (checked) {
-      if (!reviewItem) {
-        await addToReview(
-          "vocabulary",
-          vocabulary.id
-        );
-      }
-
-      return;
-    }
-
+  if (checked) {
     if (reviewItem) {
       await deleteReviewItemByTarget(
         "vocabulary",
         vocabulary.id
       );
     }
+
+    await addToReview(
+      "vocabulary",
+      vocabulary.id
+    );
+
+    return;
   }
+
+  if (reviewItem) {
+    await deleteReviewItemByTarget(
+      "vocabulary",
+      vocabulary.id
+    );
+  }
+}
 
   const inputClassName =
     "h-9 w-full rounded-md border border-zinc-200 bg-white px-2.5 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-100";

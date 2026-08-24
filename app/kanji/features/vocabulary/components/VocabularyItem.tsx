@@ -56,9 +56,8 @@ export default function VocabularyItem({
           return;
         }
 
-        const progress = await getReviewProgressByItemId(
-          item.id
-        );
+        const progress =
+          await getReviewProgressByItemId(item.id);
 
         setReview({
           item,
@@ -122,24 +121,71 @@ export default function VocabularyItem({
     if (!note) return false;
 
     return (
-      note
-        .replace(/<[^>]+>/g, "")
-        .trim().length > 0
+      note.replace(/<[^>]+>/g, "").trim().length > 0
     );
   }
 
+  function getReviewStateLabel(state?: string) {
+    switch (state) {
+      case "new":
+        return "New";
+
+      case "learning":
+        return "Learning";
+
+      case "review":
+        return "Review";
+
+      case "relearning":
+        return "Relearning";
+
+      default:
+        return null;
+    }
+  }
+
+  function getReviewStateClass(state?: string) {
+    switch (state) {
+      case "new":
+        return "bg-blue-100 text-blue-700";
+
+      case "learning":
+        return "bg-amber-100 text-amber-700";
+
+      case "review":
+        return "";
+
+      case "relearning":
+        return "bg-rose-100 text-rose-700";
+
+      default:
+        return "";
+    }
+  }
+const reviewState =
+    review?.progress?.state;
   const isActiveReview =
-    !!review && !review.item.archived;
+    !!review && reviewState !== "review";
+
+  
+
+  const reviewStateLabel =
+    isActiveReview
+      ? getReviewStateLabel(reviewState)
+      : null;
+
+  const reviewStateClass =
+    getReviewStateClass(reviewState);
 
   const reviewClass = !isActiveReview
     ? "border-neutral-200 bg-white"
-    : review.progress?.state === "new"
+    : reviewState === "new"
       ? "border-blue-200 bg-blue-50"
-      : review.progress?.state === "learning"
+      : reviewState === "learning"
         ? "border-amber-200 bg-amber-50"
-        : review.progress?.state === "review"
+        : reviewState === "review"
           ? "border-emerald-200 bg-emerald-50"
-          : review.progress?.state === "relearning"
+          : reviewState === "relearning"
             ? "border-rose-200 bg-rose-50"
             : "border-neutral-200 bg-white";
 
@@ -177,90 +223,108 @@ export default function VocabularyItem({
 
         {/* Main content */}
         <div
-          className="
-            grid min-w-0 flex-1
-            grid-cols-1 gap-3
-            sm:grid-cols-[minmax(180px,1.2fr)_minmax(120px,0.7fr)_minmax(180px,2fr)]
-            sm:items-center
-          "
-        >
-          {/* Word */}
-          <div className="flex min-w-0 items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setOpen((v) => !v)}
-              className="shrink-0 rounded p-1 hover:bg-black/5 sm:hidden"
-            >
-              {open ? (
-                <ChevronDown className="h-4 w-4" />
-              ) : (
-                <ChevronRight className="h-4 w-4" />
-              )}
-            </button>
+  className="
+    flex min-w-0 flex-1
+    flex-wrap items-center
+    gap-3
+  "
+>
+  {/* Word */}
+  <div className="flex min-w-0 items-center gap-2">
+    <button
+      type="button"
+      onClick={() => setOpen((v) => !v)}
+      className="
+        shrink-0 rounded p-1
+        hover:bg-black/5
+        sm:hidden
+      "
+    >
+      {open ? (
+        <ChevronDown className="h-4 w-4" />
+      ) : (
+        <ChevronRight className="h-4 w-4" />
+      )}
+    </button>
 
-            <EditableText
-              defaultValue={vocabulary.word}
-              placeholder="漢字"
-              className="
-                !w-full
-                min-w-0
-                break-words
-                whitespace-normal
-                text-3xl
-                font-bold
-                leading-none
-                sm:!w-[250px]
-                sm:text-4xl
-              "
-              onSave={(value) =>
-                onChange("word", value)
-              }
-            />
+    <EditableText
+      defaultValue={vocabulary.word}
+      placeholder="漢字"
+      className="
+        !w-full
+        min-w-0
+        break-words
+        whitespace-normal
+        text-3xl
+        font-bold
+        leading-none
+        sm:!w-[250px]
+        sm:text-4xl
+      "
+      onSave={(value) =>
+        onChange("word", value)
+      }
+    />
 
-            {hasNote(vocabulary.note) && (
-              <span className="shrink-0 rounded-full bg-lime-100 px-2 py-0.5 text-xs font-medium text-lime-700">
-                Note
-              </span>
-            )}
-          </div>
+    {hasNote(vocabulary.note) && (
+      <span
+        className="
+          shrink-0 rounded-full
+          bg-lime-100 px-2 py-0.5
+          text-xs font-medium
+          text-lime-700
+        "
+      >
+        Note
+      </span>
+    )}
 
-          {/* Reading */}
-          <EditableText
-            defaultValue={vocabulary.reading ?? ""}
-            placeholder="かんじ"
-            className="
-              min-w-0
-              max-w-full
-              text-xl
-              leading-none
-              sm:min-w-[140px]
-              sm:max-w-[180px]
-              sm:text-2xl
-            "
-            onSave={(value) =>
-              onChange("reading", value)
-            }
-          />
+    {reviewStateLabel && (
+      <span
+        className={`
+          shrink-0 rounded-full
+          px-2 py-0.5
+          text-xs font-medium
+          ${reviewStateClass}
+        `}
+      >
+        {reviewStateLabel}
+      </span>
+    )}
+  </div>
 
-          {/* Meaning */}
-          <EditableText
-            defaultValue={vocabulary.meaning ?? ""}
-            placeholder="Meaning"
-            className="
-              min-w-0
-              max-w-full
-              text-base
-              leading-normal
-              sm:min-w-[200px]
-              sm:flex-1
-              sm:text-xl
-              sm:leading-none
-            "
-            onSave={(value) =>
-              onChange("meaning", value)
-            }
-          />
-        </div>
+  {/* Reading */}
+  <EditableText
+    defaultValue={vocabulary.reading ?? ""}
+    placeholder="かんじ"
+    className="
+      min-w-0
+      text-xl
+      leading-none
+      sm:text-2xl
+    "
+    onSave={(value) =>
+      onChange("reading", value)
+    }
+  />
+
+  {/* Meaning */}
+  <EditableText
+    defaultValue={vocabulary.meaning ?? ""}
+    placeholder="Meaning"
+    className="
+      min-w-0
+      max-w-full
+      text-base
+      leading-normal
+      sm:text-xl
+      sm:leading-none
+    "
+    onSave={(value) =>
+      onChange("meaning", value)
+    }
+  />
+</div>
 
         {/* Actions */}
         <div
@@ -300,7 +364,8 @@ export default function VocabularyItem({
             type="button"
             onClick={onAddToReview}
             className={`
-              rounded p-1.5 transition-colors
+              rounded p-1.5
+              transition-colors
               ${
                 isActiveReview
                   ? "bg-emerald-100 text-emerald-700"

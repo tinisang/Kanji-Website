@@ -112,9 +112,9 @@ export default function VocabularyDeckItem({
     setOpenDelete(false);
   };
 
-  const isActiveReview =
-    reviewItem !== null &&
-    reviewItem.archived === false;
+const isActiveReview =
+  reviewItem !== null &&
+  reviewProgress?.state !== "review";
 const needRevision = isActiveReview;
   return (
     <div ref={ref}>
