@@ -20,7 +20,7 @@ export default function ClassifiedKanjis({
     .map(group => group.id);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-0">
       {groupIds.map((group, index) => (
         <KanjiGroup
           key={group}

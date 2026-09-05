@@ -114,7 +114,7 @@ export default function KanjiGroup({
               h-full
               border-l-4 border-l-kanji-primary
               bg-white
-              p-1 sm:p-1
+              p-1 sm:p-2
               transition-all
               data-[state=open]:bg-lime-50
               data-[state=open]:ring-1
