@@ -140,7 +140,7 @@ export default function FolderTree({
   }
 
   return (
-    <section className="w-full min-w-0">
+    <section className="w-full min-w-0 sticky top-8 z-10">
       <div className="flex w-full min-w-0 flex-col gap-4 sm:gap-6">
         {/* Folder tree */}
         <div

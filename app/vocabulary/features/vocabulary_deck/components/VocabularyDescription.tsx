@@ -45,7 +45,7 @@ export default function VocabularyDescription({
     setEditing(false);
   };
 return (
-  <div className="rounded-md bg-[#d7fff1] p-5">
+  <div className="rounded-md bg-gray-100 p-5">
     <div className="flex items-center justify-between">
       {!editing ? (
         <button
@@ -84,7 +84,7 @@ return (
         />
       ) : (
         <div
-          className="prose prose-sm max-w-none !text-[12px] text-gray-600"
+          className="prose prose-sm max-w-none  text-gray-600"
           dangerouslySetInnerHTML={{
             __html: vocabulary.note ?? "",
           }}

@@ -137,7 +137,7 @@ while (current.parent_id) {
   >
     <div className="mt-8 flex w-full flex-col gap-4 md:flex-row">
       {/* Folder */}
-      <div className="w-full shrink-0 md:w-64 lg:w-72">
+      <div className="w-full shrink-0 md:w-64 lg:w-72 ">
         <VocabFolders />
       </div>
 

@@ -41,6 +41,7 @@ import {
   getReviewItemByTarget,
   getReviewProgressByItemId,
 } from "@/app/review/clients/review.client";
+import ReviewKanji from "@/app/review/components/vocab/ReviewKanji";
 
 export default function VocabularyDeckItem({
   vocabulary,
@@ -165,14 +166,22 @@ const needRevision = isActiveReview;
           </AccordionTrigger>
 
           <AccordionContent>
-            <VocabularyDescription
-              vocabulary={vocabulary}
-            />
-
-            <VocabUsages
+            <div className="grid grid-cols-[6fr_1fr]">
+              <div>
+                <VocabularyDescription
+                  vocabulary={vocabulary}
+                />
+ <VocabUsages
               vocabulary={vocabulary}
               usages={Object.values(expressions)}
             />
+              </div>
+
+              <ReviewKanji vocabulary={vocabulary} />
+
+            </div>
+
+           
 
             {reviewItem && (
               <div className="mt-4">

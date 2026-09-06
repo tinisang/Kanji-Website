@@ -43,33 +43,40 @@ export default function VocabularyItem({
   const [open, setOpen] = useState(false);
   const [review, setReview] = useState<any>(null);
 
-  useEffect(() => {
-    async function fetchReview() {
-      try {
-        const item = await getReviewItemByTarget(
-          "kanji",
+ useEffect(() => {
+  async function fetchReview() {
+    try {
+      let item = await getReviewItemByTarget(
+        "kanji",
+        vocabulary.id
+      );
+
+      // Không có kanji → tìm vocabulary
+      if (!item) {
+        item = await getReviewItemByTarget(
+          "vocabulary",
           vocabulary.id
         );
-
-        if (!item) {
-          setReview(null);
-          return;
-        }
-
-        const progress =
-          await getReviewProgressByItemId(item.id);
-
-        setReview({
-          item,
-          progress,
-        });
-      } catch {
-        setReview(null);
       }
-    }
 
-    fetchReview();
-  }, [vocabulary.id]);
+      if (!item) {
+        setReview(null);
+        return;
+      }
+
+      const progress = await getReviewProgressByItemId(item.id);
+
+      setReview({
+        item,
+        progress,
+      });
+    } catch {
+      setReview(null);
+    }
+  }
+
+  fetchReview();
+}, [vocabulary.id]);
 
   async function onChange<K extends keyof Vocabulary>(
     key: K,
