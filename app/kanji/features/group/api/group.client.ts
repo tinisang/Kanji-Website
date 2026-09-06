@@ -87,3 +87,35 @@ export async function moveGroupToTopAPI(
 
   return response.json();
 }
+
+export async function getGroupByKanjiIdAPI(
+  kanjiId: string
+) {
+  const response = await fetch(
+    `/kanji/api/kanji-group/kanji/${kanjiId}`
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to fetch group by kanji"
+    );
+  }
+
+  return response.json();
+}
+
+export async function getKanjisByGroupIdAPI(
+  groupId: string
+) {
+  const response = await fetch(
+    `/kanji/api/kanji-group/group/${groupId}`
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to fetch kanjis by group"
+    );
+  }
+
+  return response.json();
+}

@@ -82,3 +82,19 @@ export async function updateKanjiVocabularyPositions(
     );
   }
 }
+
+export async function getVocabulariesByKanjiId(
+  kanjiId: string
+) {
+  const response = await fetch(
+    `/kanji/api/kanji-vocabulary/kanji/${kanjiId}/vocabularies`
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to fetch vocabularies"
+    );
+  }
+
+  return response.json();
+}

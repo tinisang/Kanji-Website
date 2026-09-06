@@ -13,6 +13,22 @@ export async function getKanjiVocabularyByKanjiId(
 
   return rows as KanjiVocabulary[];
 }
+export async function getVocabulariesByKanjiId(
+  kanjiId: string
+) {
+  const rows = await sql`
+    SELECT 
+      v.*,
+      kv.position
+    FROM kanji_vocabulary kv
+    INNER JOIN vocabulary v
+      ON v.id = kv.vocabulary_id
+    WHERE kv.kanji_id = ${kanjiId}
+    ORDER BY kv.position;
+  `;
+
+  return rows;
+}
 
 export async function getKanjiVocabularyByVocabularyId(
   vocabularyId: string

@@ -1,5 +1,6 @@
 import * as kanjiVocabularyRepository from "@/app/kanji/lib/repositories/kanji-vocabulary.repository";
 import { KanjiVocabulary } from "@/app/kanji/types/kanji-vocabulary";
+import { getCurrentUserId } from "@/lib/auth/auth-user";
 
 export async function getKanjiVocabularyByKanji(
   kanjiId: string
@@ -44,5 +45,16 @@ export async function updateKanjiVocabularyPositions(
 ) {
   return kanjiVocabularyRepository.updateKanjiVocabularyPositions(
     relations
+  );
+}
+
+export async function getVocabulariesByKanjiId(
+  kanjiId: string
+) {
+
+
+  return kanjiVocabularyRepository.getVocabulariesByKanjiId(
+   
+    kanjiId
   );
 }

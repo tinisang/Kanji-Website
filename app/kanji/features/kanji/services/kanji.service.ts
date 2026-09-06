@@ -26,7 +26,14 @@ export async function updateKanji(kanji: Kanji) {
   const userId = await getCurrentUserId();
   return updateKanjiById(userId, kanji);
 }
+export async function getKanjiById(kanjiId: string) {
+  const userId = await getCurrentUserId();
 
+  return kanjiRepository.getKanjiById(
+    userId,
+    kanjiId
+  );
+}
 export async function getKanjiVocabularies(
   userId: string,
   kanjiId: string

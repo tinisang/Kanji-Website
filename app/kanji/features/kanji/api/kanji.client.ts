@@ -76,3 +76,33 @@ export async function handleSaveKanji(kanji: Kanji) {
 
   return response.json();
 }
+
+export async function getKanjiById(
+  kanjiId: string
+): Promise<Kanji> {
+  const response = await fetch(
+    `/kanji/api/kanji/${kanjiId}`
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to fetch kanji"
+    );
+  }
+
+  return response.json();
+}
+
+export async function getAllKanjiAPI(): Promise<Kanji[]> {
+  const response = await fetch(
+    "/kanji/api/kanji"
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to fetch kanjis"
+    );
+  }
+
+  return response.json();
+}

@@ -11,6 +11,7 @@ import {
   updateVocabularyUI,
   useKanji,
 } from "@/contexts/Context";
+import ReviewExpressions from "@/app/review/components/vocab/ReviewExpressions";
 
 interface Props {
   vocabulary: Vocabulary;
@@ -57,55 +58,66 @@ export default function VocabularyItemContent({
   }
 
   return (
-  <>
-    <div className="border-t bg-white">
-     
+    <>
+      <div className="border-t bg-white grid grid-cols-2">
+        
 
-      <div className="p-4">
-        {editing ? (
-          <TiptapEditor
-            value={content}
-            onChange={setContent}
+
+        <div>
+          <div className="p-4">
+            {editing ? (
+              <TiptapEditor
+                value={content}
+                onChange={setContent}
+              />
+            ) : (
+              <div
+                className="prose prose-sm rounded p-2"
+                dangerouslySetInnerHTML={{
+                  __html: isEmptyContent(content)
+                    ? "<p class='text-neutral-400'>Chưa có ghi chú.</p>"
+                    : content,
+                }}
+              />
+            )}
+          </div>
+          <div className=" bg-white p-4">
+            <div className="flex justify-end gap-2">
+              {editing ? (
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={handleCancel}
+                  >
+                    Huỷ
+                  </Button>
+
+                  <Button onClick={handleSave}>
+                    Lưu
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={handleEdit}
+                >
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit
+                </Button>
+              )}
+            </div>
+          </div>
+
+        </div>
+<div>
+          <ReviewExpressions
+            vocabulary={vocabulary}
           />
-        ) : (
-          <div
-            className="prose prose-sm rounded p-2"
-            dangerouslySetInnerHTML={{
-              __html: isEmptyContent(content)
-                ? "<p class='text-neutral-400'>Chưa có ghi chú.</p>"
-                : content,
-            }}
-          />
-        )}
-      </div>
-    </div>
 
-    <div className=" bg-white p-4">
-      <div className="flex justify-end gap-2">
-        {editing ? (
-          <>
-            <Button
-              variant="outline"
-              onClick={handleCancel}
-            >
-              Huỷ
-            </Button>
+        </div>
 
-            <Button onClick={handleSave}>
-              Lưu
-            </Button>
-          </>
-        ) : (
-          <Button
-            variant="outline"
-            onClick={handleEdit}
-          >
-            <Pencil className="mr-2 h-4 w-4" />
-            Edit
-          </Button>
-        )}
       </div>
-    </div>
-  </>
-);
+
+    </>
+  );
 }

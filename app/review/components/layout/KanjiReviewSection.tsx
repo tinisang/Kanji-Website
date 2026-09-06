@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import VocabularyReview from "../VocabularyReview";
+import VocabularyReview from "../vocab/VocabularyReview";
 
 export default function VocabularyReviewSection() {
 

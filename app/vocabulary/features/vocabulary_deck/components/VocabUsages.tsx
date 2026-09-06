@@ -13,7 +13,7 @@ import { Usage } from "@/app/vocabulary/lib/types/Usage";
 
 interface Props {
   vocabulary: Vocabulary;
-  usages: Record<string, Usage>;
+  usages: Usage[];
 }
 
 export default function VocabUsages({
@@ -39,7 +39,7 @@ export default function VocabUsages({
   return (
     <div className="">
       <div className="grid lg:grid-cols-3">
-        {Object.values(usages).map((usage, index) => {
+        {usages.map((usage, index) => {
       
           return (
             <VocabularyUsageItem

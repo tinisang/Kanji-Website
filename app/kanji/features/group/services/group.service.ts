@@ -11,6 +11,9 @@ import {
   updateGroupName,
   updateGroupPositions,
 } from "@/app/kanji/lib/repositories/group.repository";
+import {
+  getGroupItemByKanjiId,
+} from "@/app/kanji/lib/repositories/kanji-group.repository";
 async function getCurrentUserId() {
   const session = await auth();
 
@@ -20,7 +23,24 @@ async function getCurrentUserId() {
 
   return session.user.id;
 }
+export async function getGroupByKanjiId(
+  kanjiId: string
+) {
+  const userId = await getCurrentUserId();
 
+  const item = await getGroupItemByKanjiId(
+    kanjiId
+  );
+
+  if (!item) {
+    return null;
+  }
+
+  return getGroupById(
+    userId,
+    item.group_id
+  );
+}
 export async function moveGroupToTopAction(
   groupId: string
 ) {
@@ -136,5 +156,41 @@ export async function deleteGroup(
 
   await deleteGroupById(
     groupId
+  );
+}
+
+import {
+  getItemsByGroupId,
+} from "@/app/kanji/lib/repositories/kanji-group.repository";
+
+import {
+  getKanjiById,
+} from "@/app/kanji/lib/repositories/kanji.repository";
+
+export async function getKanjisByGroupId(
+  groupId: string
+) {
+  const userId = await getCurrentUserId();
+
+  const group = await getGroupById(
+    userId,
+    groupId
+  );
+
+  if (!group) {
+    throw new Error("Group not found");
+  }
+
+  const items = await getItemsByGroupId(
+    groupId
+  );
+
+  return Promise.all(
+    items.map((item) =>
+      getKanjiById(
+        userId,
+        item.kanji_id
+      )
+    )
   );
 }

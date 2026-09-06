@@ -171,7 +171,7 @@ const needRevision = isActiveReview;
 
             <VocabUsages
               vocabulary={vocabulary}
-              usages={expressions}
+              usages={Object.values(expressions)}
             />
 
             {reviewItem && (
