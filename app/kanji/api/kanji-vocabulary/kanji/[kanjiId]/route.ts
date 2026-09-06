@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 interface Props {
   params: Promise<{
-    id: string;
+    kanjiId: string;
   }>;
 }
 
@@ -11,11 +11,11 @@ export async function GET(
   _: Request,
   { params }: Props
 ) {
-  const { id } = await params;
+  const { kanjiId } = await params;
 
   const relations =
     await kanjiVocabularyService.getKanjiVocabularyByKanji(
-      id
+      kanjiId
     );
 
   return NextResponse.json(relations);
