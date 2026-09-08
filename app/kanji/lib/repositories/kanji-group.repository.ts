@@ -5,7 +5,16 @@ export interface GroupItemUpdate {
   groupId: string;
   position: number;
 }
-
+export async function removeKanjiFromSpecificGroup(
+  kanjiId: string,
+  groupId: string
+) {
+  await sql`
+    DELETE FROM kanji_group_item
+    WHERE kanji_id = ${kanjiId}
+      AND group_id = ${groupId};
+  `;
+}
 export async function getItemsByGroupId(
   groupId: string
 ) {

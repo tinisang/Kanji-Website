@@ -7,6 +7,7 @@ import {
   getGroupItemByKanjiId,
   getMaxPosition,
   updateGroupItems,
+  removeKanjiFromSpecificGroup as removeKanjiFromSpecificGroupRepository
 } from "@/app/kanji/lib/repositories/kanji-group.repository";
 
 import {
@@ -159,5 +160,25 @@ export async function removeKanjiFromGroup(
 
   await deleteGroupItem(
     kanjiId
+  );
+}
+export async function removeKanjiFromSpecificGroup(
+  kanjiId: string,
+  groupId: string
+) {
+  const userId = await getCurrentUserId();
+
+  const group = await getGroupById(
+    userId,
+    groupId
+  );
+
+  if (!group) {
+    throw new Error("Group not found");
+  }
+
+  await removeKanjiFromSpecificGroupRepository(
+    kanjiId,
+    groupId
   );
 }

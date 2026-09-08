@@ -29,3 +29,34 @@ export async function updateGroupItemsAPI(
 
   return response.json();
 }
+
+
+export async function removeKanjiFromGroupAPI(
+  kanjiId: string,
+  groupId: string
+) {
+  const response = await fetch(
+    "/kanji/api/kanji-group-item/remove",
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        kanjiId,
+        groupId,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const data = await response.json();
+
+    throw new Error(
+      data.error ||
+        "Failed to remove kanji from group"
+    );
+  }
+
+  return response.json();
+}
