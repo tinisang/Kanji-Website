@@ -125,9 +125,9 @@ export default function AddKanjiModal({ groupId }: AddKanjiModalProps) {
       </DialogTrigger>
 
       <DialogContent
-        showCloseButton={false}
-        className="w-[calc(100%-1rem)] max-w-5xl max-h-[95vh] overflow-hidden p-0 font-inherit sm:w-full"
-      >
+  showCloseButton={false}
+  className="w-[calc(100%-1rem)] !max-w-[1600px] max-h-[95vh] overflow-hidden p-0 font-inherit sm:w-full"
+>
         <form
           onSubmit={handleSubmit}
           className="flex max-h-[95vh] flex-col overflow-hidden rounded-lg border-l-4 border-l-lime-500"
@@ -196,7 +196,7 @@ export default function AddKanjiModal({ groupId }: AddKanjiModalProps) {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-6">
                   {existingKanjis.map(kanji => {
                     const selected = selectedKanjiId === kanji.id;
 
@@ -211,27 +211,16 @@ export default function AddKanjiModal({ groupId }: AddKanjiModalProps) {
                             : "border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50"
                         }`}
                       >
-                        <div className="flex items-start gap-3">
-                          <div className="text-4xl font-bold">
+                        <div className="flex flex-col items-center justify-center gap-3">
+                          <div className="text-2xl font-bold">
                             {kanji.character}
                           </div>
 
                           <div className="min-w-0">
-                            <div className="truncate font-semibold uppercase">
+                            <div className="text-xs truncate font-normal uppercase">
                               {kanji.han_viet}
                             </div>
 
-                            {kanji.onyomi && (
-                              <div className="text-xs text-neutral-500">
-                                On: {kanji.onyomi}
-                              </div>
-                            )}
-
-                            {kanji.kunyomi && (
-                              <div className="text-xs text-neutral-500">
-                                Kun: {kanji.kunyomi}
-                              </div>
-                            )}
                           </div>
                         </div>
                       </button>
