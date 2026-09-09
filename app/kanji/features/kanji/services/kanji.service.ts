@@ -1,5 +1,6 @@
 import {
   createKanji,
+  createKanjiProxy,
   deleteKanjiById,
   getAllKanjiByUserId,
   updateKanjiById,
@@ -16,7 +17,27 @@ import {
 
 import { Kanji } from "@/app/kanji/types/kanji";
 import { getCurrentUserId } from "@/lib/auth/auth-user";
+export async function createKanjiProxyService(
+  referenceKanjiId: string
+) {
+  const userId = await getCurrentUserId();
 
+  const original = await getKanjiById(
+    referenceKanjiId
+  );
+
+  if (!original) {
+    throw new Error("Reference kanji not found");
+  }
+
+  const rootKanjiId =
+    original.reference_kanji_id ?? original.id;
+
+  return createKanjiProxy(
+    userId,
+    rootKanjiId
+  );
+}
 export async function getAllKanji() {
   const userId = await getCurrentUserId();
   return getAllKanjiByUserId(userId);

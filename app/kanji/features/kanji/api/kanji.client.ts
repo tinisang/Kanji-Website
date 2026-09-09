@@ -27,7 +27,37 @@ export async function createKanjiAndAssignGroupAPI(
 
   return response.json();
 }
+export async function createKanjiProxyAPI(
+  kanjiId: string
+) {
+  const response = await fetch(
+    "/kanji/api/kanji/create-proxy",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        kanjiId,
+      }),
+    }
+  );
 
+  if (!response.ok) {
+    const data =
+      await response.json();
+
+    throw new Error(
+      data.error ||
+        "Failed to create kanji proxy"
+    );
+  }
+
+  const data =
+    await response.json();
+
+  return data.kanji;
+}
 export async function deleteKanjiAPI(
   kanjiId: string
 ) {

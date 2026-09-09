@@ -1,9 +1,9 @@
-
 export interface Vocabulary {
   word: string;
   reading: string;
   meaning: string;
 }
+
 export interface Kanji {
   id: string;
 
@@ -21,7 +21,8 @@ export interface Kanji {
   content: string | null;
 
   learned: boolean;
- 
+
+  reference_kanji_id: string | null;
 
   created_at: string;
   updated_at: string;

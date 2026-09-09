@@ -121,3 +121,38 @@ export async function deleteKanjiById(
       AND user_id = ${userId}
   `;
 }
+
+export async function createKanjiProxy(
+  userId: string,
+  referenceKanjiId: string
+) {
+  const rows = await sql`
+    INSERT INTO kanji (
+      user_id,
+      character,
+      han_viet,
+      onyomi,
+      kunyomi,
+      vocabularies,
+      short_description,
+      content,
+      learned,
+      reference_kanji_id
+    )
+    VALUES (
+      ${userId},
+      '',
+      '',
+      NULL,
+      NULL,
+      '[]'::jsonb,
+      NULL,
+      NULL,
+      false,
+      ${referenceKanjiId}
+    )
+    RETURNING *
+  `;
+
+  return rows[0] as Kanji;
+}

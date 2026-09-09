@@ -119,3 +119,33 @@ export async function getKanjisByGroupIdAPI(
 
   return response.json();
 }
+
+export async function assignKanjiToGroupAPI(
+  kanjiId: string,
+  groupId: string
+) {
+  const response = await fetch(
+    "/kanji/api/kanji-group-item/assign",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        kanjiId,
+        groupId,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const data = await response.json();
+
+    throw new Error(
+      data.error ||
+        "Failed to assign kanji to group"
+    );
+  }
+
+  return response.json();
+}
