@@ -41,7 +41,6 @@ export async function getKanjiVocabularyByVocabularyId(
 
   return rows as KanjiVocabulary[];
 }
-
 export async function createKanjiVocabulary(
   relation: Omit<KanjiVocabulary, "position">
 ) {
@@ -60,10 +59,11 @@ export async function createKanjiVocabulary(
         WHERE kanji_id = ${relation.kanji_id}
       )
     )
+    ON CONFLICT (kanji_id, vocabulary_id) DO NOTHING
     RETURNING *;
   `;
 
-  return rows[0] as KanjiVocabulary;
+  return rows[0] as KanjiVocabulary | undefined;
 }
 
 export async function deleteKanjiVocabulary(

@@ -74,3 +74,28 @@ export async function deleteVocabulary(id: string) {
     throw new Error("Failed to delete vocabulary");
   }
 }
+
+export async function addVocabularyToKanjiAPI(
+  kanjiId: string,
+  vocabularyId: string
+) {
+  const res = await fetch(
+    "/kanji/api/kanji-vocabulary/add",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        kanjiId,
+        vocabularyId,
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to add vocabulary to kanji");
+  }
+
+  return res.json();
+}

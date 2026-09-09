@@ -54,3 +54,16 @@ export async function deleteVocabulary(
     vocabularyId
   );
 }
+
+import * as repository from "@/app/kanji/lib/repositories/kanji-vocabulary.repository";
+
+export async function addVocabularyToKanji(
+  kanjiId: string,
+  vocabularyId: string
+) {
+
+  return repository.createKanjiVocabulary({
+    kanji_id: kanjiId,
+    vocabulary_id: vocabularyId,
+  });
+}
