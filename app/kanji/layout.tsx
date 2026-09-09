@@ -9,7 +9,7 @@ export default function KanjiLayout({
     <body className="bg-[#F9FFE5] bg-[url('/images/background.png')]    bg-repeat-y
     bg-top
     bg-[length:100vw_auto]">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 pb-24">
         <Header theme="kanji" />
         {children}
       </div>
