@@ -99,3 +99,30 @@ export async function addVocabularyToKanjiAPI(
 
   return res.json();
 }
+
+export async function removeVocabularyFromKanjiAPI(
+  kanjiId: string,
+  vocabularyId: string
+) {
+  const res = await fetch(
+    "/kanji/api/kanji-vocabulary/remove",
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        kanjiId,
+        vocabularyId,
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      "Failed to remove vocabulary from kanji"
+    );
+  }
+
+  return res.json();
+}

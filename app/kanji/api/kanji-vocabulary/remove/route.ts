@@ -1,3 +1,5 @@
+// app/kanji/api/kanji-vocabulary/remove/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 
 import * as kanjiVocabularyService from "@/app/kanji/features/kanji-vocabulary/services/kanji-vocabulary.service";

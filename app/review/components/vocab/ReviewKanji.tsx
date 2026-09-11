@@ -1,22 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { X } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Vocabulary } from "@/app/vocabulary/lib/types/vocabulary";
 import { Kanji } from "@/app/kanji/types/kanji";
 
-import {
-  getKanjiVocabularyByVocabulary,
-} from "@/app/kanji/features/kanji-vocabulary/api/kanji-vocabulary.client";
 
-import {
-  getKanjiById,
-} from "@/app/kanji/features/kanji/api/kanji.client";
+
+import { getKanjiById } from "@/app/kanji/features/kanji/api/kanji.client";
 
 import ViewGroupButton from "./view/ViewGroupButton";
 import AddKanjiButton from "./AddKanjiButton";
+import { getKanjiVocabularyByVocabulary } from "@/app/kanji/features/kanji-vocabulary/api/kanji-vocabulary.client";
+import { removeVocabularyFromKanjiAPI } from "@/app/kanji/features/vocabulary/api/vocabulary.client";
 
 interface Props {
   vocabulary: Vocabulary;
@@ -56,6 +53,24 @@ export default function ReviewKanji({
     loadKanjis();
   }, [vocabulary.id]);
 
+  const handleRemoveKanji = async (kanjiId: string) => {
+    try {
+      await removeVocabularyFromKanjiAPI(
+        kanjiId,
+        vocabulary.id
+      );
+
+      setAttachedKanjis((prev) =>
+        prev.filter((kanji) => kanji.id !== kanjiId)
+      );
+    } catch (error) {
+      console.error(
+        "Failed to remove kanji from vocabulary:",
+        error
+      );
+    }
+  };
+
   return (
     <div className="p-5 sm:p-7">
       <h3 className="text-sm font-semibold">
@@ -67,6 +82,7 @@ export default function ReviewKanji({
           <div
             key={kanji.id}
             className="
+              relative
               flex
               min-h-[110px]
               flex-col
@@ -80,6 +96,29 @@ export default function ReviewKanji({
               sm:min-h-[120px]
             "
           >
+            <button
+              type="button"
+              onClick={() => handleRemoveKanji(kanji.id)}
+              className="
+                absolute
+                right-2
+                top-2
+                flex
+                h-6
+                w-6
+                items-center
+                justify-center
+                rounded-full
+                text-muted-foreground
+                transition-colors
+                hover:bg-red-100
+                hover:text-red-500
+              "
+              aria-label={`Remove ${kanji.character}`}
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+
             <div className="text-4xl font-bold sm:text-3xl">
               {kanji.character}
             </div>
