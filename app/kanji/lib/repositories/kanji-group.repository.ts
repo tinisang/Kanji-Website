@@ -50,15 +50,17 @@ export async function getGroupItemByKanjiId(
   kanjiId: string
 ) {
   const rows = await sql`
-    SELECT *
-    FROM kanji_group_item
-    WHERE kanji_id = ${kanjiId}
-    LIMIT 1;
+    SELECT DISTINCT kgi.*
+    FROM kanji_group_item kgi
+    INNER JOIN kanji k
+      ON k.id = kgi.kanji_id
+    WHERE
+      kgi.kanji_id = ${kanjiId}
+      OR k.reference_kanji_id = ${kanjiId};
   `;
 
-  return rows[0];
+  return rows;
 }
-
 export async function getMaxPosition(
   groupId: string
 ) {

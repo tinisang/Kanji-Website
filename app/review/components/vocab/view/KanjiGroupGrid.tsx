@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ChevronDown,
   Loader2,
@@ -8,6 +8,10 @@ import {
 } from "lucide-react";
 
 import { Kanji } from "@/app/kanji/types/kanji";
+
+import {
+  getKanjiById,
+} from "@/app/kanji/features/kanji/api/kanji.client";
 
 import {
   getVocabulariesByKanjiId,
@@ -50,6 +54,9 @@ interface KanjiGroupGridProps {
 export default function KanjiGroupGrid({
   kanjis,
 }: KanjiGroupGridProps) {
+  const [displayKanjis, setDisplayKanjis] =
+    useState<Kanji[]>([]);
+
   const [openKanjiId, setOpenKanjiId] =
     useState<string | null>(null);
 
@@ -71,6 +78,44 @@ export default function KanjiGroupGrid({
 
   const [reviews, setReviews] =
     useState<Record<string, ReviewData | null>>({});
+
+  useEffect(() => {
+    async function resolveProxyKanjis() {
+      const results = await Promise.all(
+        kanjis.map(async (kanji) => {
+          if (!kanji.reference_kanji_id) {
+            return kanji;
+          }
+
+          try {
+            return await getKanjiById(
+              kanji.reference_kanji_id
+            );
+          } catch (error) {
+            console.error(
+              "Failed to load original kanji:",
+              error
+            );
+
+            return kanji;
+          }
+        })
+      );
+
+      const uniqueKanjis = Array.from(
+        new Map(
+          results.map((kanji) => [
+            kanji.id,
+            kanji,
+          ])
+        ).values()
+      );
+
+      setDisplayKanjis(uniqueKanjis);
+    }
+
+    resolveProxyKanjis();
+  }, [kanjis]);
 
   async function loadReview(
     vocabularies: Vocabulary[]
@@ -237,7 +282,7 @@ export default function KanjiGroupGrid({
     <>
       <div className="space-y-2">
         <div className="flex gap-2 overflow-x-auto pb-1">
-          {kanjis.map((kanji) => {
+          {displayKanjis.map((kanji) => {
             const isOpen =
               openKanjiId === kanji.id;
 
@@ -409,7 +454,7 @@ export default function KanjiGroupGrid({
           }
         }}
       >
-       <AlertDialogContent className="sm:max-w-lg">
+        <AlertDialogContent className="sm:max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>
               Remove vocabulary?

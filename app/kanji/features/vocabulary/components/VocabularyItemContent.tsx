@@ -12,6 +12,7 @@ import {
   useKanji,
 } from "@/contexts/Context";
 import ReviewExpressions from "@/app/review/components/vocab/ReviewExpressions";
+import ReviewKanji from "@/app/review/components/vocab/ReviewKanji";
 
 interface Props {
   vocabulary: Vocabulary;
@@ -59,10 +60,7 @@ export default function VocabularyItemContent({
 
   return (
     <>
-      <div className="border-t bg-white grid grid-cols-2">
-        
-
-
+      <div className="border-t bg-white grid grid-cols-[1fr_1fr_0.5fr]">
         <div>
           <div className="p-4">
             {editing ? (
@@ -109,12 +107,17 @@ export default function VocabularyItemContent({
           </div>
 
         </div>
-<div>
+
+
+
+        <div>
           <ReviewExpressions
             vocabulary={vocabulary}
           />
 
         </div>
+
+          <ReviewKanji vocabulary={vocabulary} />
 
       </div>
 

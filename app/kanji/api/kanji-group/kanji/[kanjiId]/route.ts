@@ -1,7 +1,5 @@
-import { getGroupByKanjiId } from "@/app/kanji/features/group/services/group.service";
+import { getGroupsByKanjiId } from "@/app/kanji/features/group/services/group.service";
 import { NextResponse } from "next/server";
-
-
 
 export async function GET(
   request: Request,
@@ -10,23 +8,14 @@ export async function GET(
   try {
     const { kanjiId } = await params;
 
-    const group = await getGroupByKanjiId(
-      kanjiId
-    );
+    const groups = await getGroupsByKanjiId(kanjiId);
 
-    if (!group) {
-      return NextResponse.json(
-        null,
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(group);
+    return NextResponse.json(groups);
   } catch (error) {
     console.error(error);
 
     return NextResponse.json(
-      { error: "Failed to fetch group" },
+      { error: "Failed to fetch groups" },
       { status: 500 }
     );
   }

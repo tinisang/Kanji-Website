@@ -23,22 +23,21 @@ async function getCurrentUserId() {
 
   return session.user.id;
 }
-export async function getGroupByKanjiId(
+export async function getGroupsByKanjiId(
   kanjiId: string
 ) {
   const userId = await getCurrentUserId();
 
-  const item = await getGroupItemByKanjiId(
-    kanjiId
-  );
+  const items = await getGroupItemByKanjiId(kanjiId);
 
-  if (!item) {
-    return null;
+  if (items.length === 0) {
+    return [];
   }
 
-  return getGroupById(
-    userId,
-    item.group_id
+  return Promise.all(
+    items.map((item) =>
+      getGroupById(userId, item.group_id)
+    )
   );
 }
 export async function moveGroupToTopAction(
