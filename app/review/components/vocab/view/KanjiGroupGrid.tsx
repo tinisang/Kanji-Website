@@ -340,7 +340,7 @@ export default function KanjiGroupGrid({
         </div>
 
         {openKanjiId && (
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {loadingId === openKanjiId ? (
               <div className="flex justify-center py-5">
                 <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
