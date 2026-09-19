@@ -21,44 +21,36 @@ export default function ReviewAnswer({
   ratingLoading,
 }: Props) {
   return (
-    <div
-      className="
-        grid
-        grid-cols-1
-        md:grid-cols-[0.85fr_1.7fr_0.5fr]
-        md:divide-x
-      "
-    >
-    {/* Meaning */}
-<div className="p-5 sm:p-7">
-  <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground sm:text-sm">
-    Nghĩa
-  </h3>
-
-  <div
-    className="
-      mt-3
+    <div>
+      {/* Meaning */}
+      <div className="p-5 sm:p-7 grid  gap-2 bg-emerald-50/80">
+        <div className="flex flex-col">
+      
+        <div
+          className="
+    
       flex
+      flex-1
       min-h-[125px]
       flex-col
-      justify-center
+      
       rounded-2xl
-      bg-muted/50
+      bg-emerald-100
       px-5
       py-4
       sm:px-6
     "
-  >
-    {/* Reading */}
-    {vocabulary.reading && (
-      <div className="break-words text-base font-medium text-muted-foreground sm:text-lg">
-        {vocabulary.reading}
-      </div>
-    )}
+        >
+          {/* Reading */}
+          {vocabulary.reading && (
+            <div className="break-words text-base font-medium text-muted-foreground sm:text-lg">
+              {vocabulary.reading}
+            </div>
+          )}
 
-    {/* Meaning */}
-    <div
-      className="
+          {/* Meaning */}
+          <div
+            className="
         mt-1.5
         break-words
         text-xl
@@ -67,28 +59,39 @@ export default function ReviewAnswer({
         tracking-tight
         sm:text-2xl
       "
-    >
-      {vocabulary.meaning}
-    </div>
-  </div>
-
-  {vocabulary.note && (
-    <ReviewNote
-      vocabulary={vocabulary}
-      ratingLoading={ratingLoading}
-    />
-  )}
+          >
+            {vocabulary.meaning}
+          </div>
+        </div>
 </div>
- {/* Expressions */}
-    
-      <ReviewExpressions
-    
-        vocabulary={vocabulary}
-      />
-      {/* Kanji */}
-      <ReviewKanji vocabulary={vocabulary} />
+        {vocabulary.note && (
+          <ReviewNote
+            vocabulary={vocabulary}
+            ratingLoading={ratingLoading}
+          />
+        )}
+      </div>
 
-     
+      <div
+        className="
+        grid
+        grid-cols-1
+        md:grid-cols-[2fr_0.5fr]
+        md:divide-x
+      "
+      >
+
+        {/* Expressions */}
+
+        <ReviewExpressions
+
+          vocabulary={vocabulary}
+        />
+        {/* Kanji */}
+        <ReviewKanji vocabulary={vocabulary} />
+
+
+      </div>
     </div>
   );
 }

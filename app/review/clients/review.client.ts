@@ -158,10 +158,22 @@ export async function removeFromReview(
 /*                                 Review                                     */
 /* -------------------------------------------------------------------------- */
 export async function getNextReviewCard(
-  type: ReviewType
+  type: ReviewType,
+  folderIds: string[] = []
 ): Promise<ReviewCard<any> | null> {
+  const params = new URLSearchParams();
+
+  params.set("type", type);
+
+  if (folderIds.length > 0) {
+    params.set(
+      "folderIds",
+      folderIds.join(",")
+    );
+  }
+
   const res = await fetch(
-    `/review/api/next?type=${type}`,
+    `/review/api/next?${params.toString()}`,
     {
       cache: "no-store",
     }

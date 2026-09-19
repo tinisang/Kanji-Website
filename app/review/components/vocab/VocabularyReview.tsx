@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import { Eye } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+
 import { Vocabulary } from "@/app/vocabulary/lib/types/vocabulary";
+import { Usage } from "@/app/vocabulary/lib/types/Usage";
+import { FolderItem } from "@/app/vocabulary/lib/types/vocabularyFolder";
+
 import { ReviewCard } from "../../lib/types/reviewCard";
 import {
   ReviewRating,
@@ -16,21 +20,21 @@ import {
   submitReview,
 } from "../../clients/review.client";
 
-import { Usage } from "@/app/vocabulary/lib/types/Usage";
-
 import {
   getUsagesByVocabularyId,
 } from "@/app/vocabulary/features/vocabulary_deck/clients/vocabularyExpressionClient";
 
+
 import { getReviewPreviews } from "../../services/reviewScheduler";
+
 import ReviewQuestion from "./ReviewQuestion";
 import ReviewAnswer from "./ReviewAnswer";
 import ReviewRatingButtons from "./ReviewRatingButtons";
-
-
+import { getAllVocabularyFolder } from "@/app/vocabulary/features/vocab_folders/clients/vocabularyFolderClient";
 
 interface Props {
   type: ReviewType;
+
   onRate?: (
     reviewItemId: string,
     rating: ReviewRating
@@ -53,11 +57,44 @@ export default function VocabularyReview({
   const [ratingLoading, setRatingLoading] =
     useState(false);
 
+  const [folders, setFolders] =
+    useState<FolderItem[]>([]);
+
+  const [selectedFolderIds, setSelectedFolderIds] =
+    useState<string[]>([]);
+
+  useEffect(() => {
+    if (type !== "vocabulary") return;
+
+    async function loadFolders() {
+      try {
+        const data =
+          await getAllVocabularyFolder();
+
+        setFolders(data);
+      } catch (error) {
+        console.error(
+          "Failed to load vocabulary folders:",
+          error
+        );
+
+        setFolders([]);
+      }
+    }
+
+    loadFolders();
+  }, [type]);
+
   async function loadNextCard() {
     try {
       setLoading(true);
 
-      const card = await getNextReviewCard(type);
+      const card = await getNextReviewCard(
+        type,
+        type === "vocabulary"
+          ? selectedFolderIds
+          : []
+      );
 
       setCurrent(card);
       setShowAnswer(false);
@@ -76,11 +113,11 @@ export default function VocabularyReview({
 
   useEffect(() => {
     loadNextCard();
-  }, []);
+  }, [type, selectedFolderIds.join(",")]);
 
   const vocabId = current?.content?.id;
 
- useEffect(() => {
+useEffect(() => {
   if (!vocabId) {
     setUsages({});
     return;
@@ -105,7 +142,6 @@ export default function VocabularyReview({
 
   loadUsages();
 }, [vocabId]);
-
   async function rate(rating: ReviewRating) {
     if (ratingLoading || !current) return;
 
@@ -115,9 +151,15 @@ export default function VocabularyReview({
       const reviewItemId = current.item.id;
 
       if (onRate) {
-        await onRate(reviewItemId, rating);
+        await onRate(
+          reviewItemId,
+          rating
+        );
       } else {
-        await submitReview(reviewItemId, rating);
+        await submitReview(
+          reviewItemId,
+          rating
+        );
       }
 
       await loadNextCard();
@@ -165,6 +207,79 @@ export default function VocabularyReview({
 
   return (
     <div className="mx-auto w-full max-w-5xl px-2 sm:px-4">
+      {type === "vocabulary" && (
+        <div className="mb-4 rounded-xl border bg-background p-4">
+          <div className="mb-3">
+            <h3 className="text-sm font-semibold">
+              Review folders
+            </h3>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              Select one or more folders to review.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {folders.map((folder) => {
+              const selected =
+                selectedFolderIds.includes(
+                  folder.id
+                );
+
+              return (
+                <button
+                  key={folder.id}
+                  type="button"
+                  disabled={ratingLoading}
+                  onClick={() => {
+                    setSelectedFolderIds(
+                      (prev) =>
+                        selected
+                          ? prev.filter(
+                              (id) =>
+                                id !== folder.id
+                            )
+                          : [
+                              ...prev,
+                              folder.id,
+                            ]
+                    );
+                  }}
+                  className={`
+                    rounded-lg
+                    border
+                    px-3
+                    py-1.5
+                    text-sm
+                    transition-colors
+                    ${
+                      selected
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "bg-background hover:bg-muted"
+                    }
+                  `}
+                >
+                  {folder.name}
+                </button>
+              );
+            })}
+          </div>
+
+          {selectedFolderIds.length > 0 && (
+            <button
+              type="button"
+              disabled={ratingLoading}
+              onClick={() =>
+                setSelectedFolderIds([])
+              }
+              className="mt-3 text-xs text-muted-foreground hover:text-foreground"
+            >
+              Clear selection
+            </button>
+          )}
+        </div>
+      )}
+
       <div
         className="
           overflow-hidden
@@ -185,7 +300,9 @@ export default function VocabularyReview({
               size="lg"
               className="h-11 w-full sm:h-12 sm:w-auto sm:px-12"
               disabled={ratingLoading}
-              onClick={() => setShowAnswer(true)}
+              onClick={() =>
+                setShowAnswer(true)
+              }
             >
               <Eye className="mr-2 h-4 w-4" />
               Show Answer

@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getNextReviewCard } from "@/app/review/services/review.service";
+import {
+  getNextReviewCard,
+} from "@/app/review/services/review.service";
 
 export async function GET(req: NextRequest) {
   try {
-    const type = req.nextUrl.searchParams.get("type");
+    const type =
+      req.nextUrl.searchParams.get("type");
 
     if (!type) {
       return NextResponse.json(
@@ -13,7 +16,16 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const card = await getNextReviewCard(type as any);
+    const folderIds =
+      req.nextUrl.searchParams
+        .get("folderIds")
+        ?.split(",")
+        .filter(Boolean) ?? [];
+
+    const card = await getNextReviewCard(
+      type as any,
+      folderIds
+    );
 
     return NextResponse.json(card);
   } catch (error) {

@@ -251,12 +251,16 @@ export async function deleteReviewItemByTarget(
 }
 
 export async function getNextReviewCard(
-  type: ReviewType
+  type: ReviewType,
+  folderIds: string[] = []
 ): Promise<ReviewCard<any> | null> {
   const userId = await getCurrentUserId();
 
   const progress =
-    await getNextDueReviewProgress(type);
+    await getNextDueReviewProgress(
+      type,
+      folderIds
+    );
 
   if (!progress) {
     return null;

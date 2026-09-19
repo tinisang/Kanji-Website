@@ -1,16 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Pencil } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
 import { Vocabulary } from "@/app/vocabulary/lib/types/vocabulary";
 
@@ -29,8 +22,6 @@ export default function ReviewNote({
   vocabulary,
   ratingLoading,
 }: Props) {
-  const [editing, setEditing] = useState(false);
-
   const [note, setNote] = useState(
     vocabulary.note ?? ""
   );
@@ -39,6 +30,7 @@ export default function ReviewNote({
     vocabulary.note ?? ""
   );
 
+  const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -58,10 +50,10 @@ export default function ReviewNote({
         note: draft,
       });
 
-      // update content đang hiển thị ngay lập tức
-      setNote(updated.note ?? draft);
+      const value = updated.note ?? draft;
 
-      setDraft(updated.note ?? draft);
+      setNote(value);
+      setDraft(value);
       setEditing(false);
     } catch (error) {
       console.error(
@@ -78,97 +70,91 @@ export default function ReviewNote({
     setEditing(false);
   }
 
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          variant="secondary"
-          size="sm"
-          className="mt-4 rounded-full px-4"
-          disabled={ratingLoading}
-        >
-          View Note
-        </Button>
-      </DialogTrigger>
+  if (!editing) {
+    return (
+      <div className="">
+      
 
-      <DialogContent
-        className="
-          w-[calc(100%-1.5rem)]
-          !max-w-4xl
-          rounded-xl
-          p-4
-          sm:p-6
-        "
-      >
-        <DialogHeader>
-          <DialogTitle>
-            {vocabulary.word}
-          </DialogTitle>
-        </DialogHeader>
+        <div
+          className="
+            prose
+            prose-neutral
+            max-w-none
+            rounded-xl
+            border
+            bg-muted/30
+            px-4
+            py-3
+            text-sm
+            leading-relaxed
+            sm:text-base
+          "
+          dangerouslySetInnerHTML={{
+            __html:
+              note ||
+              '<span class="text-muted-foreground">No note</span>',
+          }}
+        />
 
-        <div className="max-h-[70vh] overflow-y-auto">
-          {!editing ? (
-            <>
-              <div
-                className="
-                  prose
-                  prose-neutral
-                  max-w-none
-                  text-sm
-                  sm:text-base
-                "
-                dangerouslySetInnerHTML={{
-                  __html: note,
-                }}
-              />
+          <div className="mb-2 flex items-center justify-between">
+       
 
-              <div className="mt-5 flex justify-end">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setDraft(note);
-                    setEditing(true);
-                  }}
-                >
-                  Edit
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <TiptapEditor
-                value={draft}
-                onChange={setDraft}
-              />
-
-              <div className="mt-4 flex justify-end gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={saving}
-                  onClick={cancel}
-                >
-                  Cancel
-                </Button>
-
-                <Button
-                  type="button"
-                  size="sm"
-                  disabled={saving}
-                  onClick={save}
-                >
-                  {saving
-                    ? "Saving..."
-                    : "Save"}
-                </Button>
-              </div>
-            </>
-          )}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={ratingLoading}
+            onClick={() => {
+              setDraft(note);
+              setEditing(true);
+            }}
+            className="h-7 px-2"
+          >
+            <Pencil className="mr-1.5 h-3.5 w-3.5" />
+            Edit
+          </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-5">
+      <div className="mb-2">
+        <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Note
+        </h4>
+      </div>
+
+      <TiptapEditor
+        value={draft}
+        onChange={setDraft}
+      />
+
+      <div className="mt-3 flex justify-end gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={saving}
+          onClick={cancel}
+        >
+          Cancel
+        </Button>
+
+        <Button
+          type="button"
+          size="sm"
+          disabled={
+            saving ||
+            ratingLoading ||
+            draft === note
+          }
+          onClick={save}
+        >
+          {saving ? "Saving..." : "Save"}
+        </Button>
+      </div>
+    </div>
   );
 }

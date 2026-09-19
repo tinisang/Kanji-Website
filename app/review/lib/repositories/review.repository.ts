@@ -247,7 +247,8 @@ export async function getReviewProgressByItemId(
   return rows[0] as ReviewProgress | undefined;
 }
 export async function getNextDueReviewProgress(
-  type: ReviewType
+  type: ReviewType,
+  folderIds: string[] = []
 ): Promise<ReviewProgress | undefined> {
   const rows = await sql`
     SELECT rp.*
@@ -258,6 +259,21 @@ export async function getNextDueReviewProgress(
       ri.type = ${type}
       AND ri.archived = FALSE
       AND rp.due_at <= NOW()
+
+      ${
+        type === "vocabulary" && folderIds.length > 0
+          ? sql`
+              AND EXISTS (
+                SELECT 1
+                FROM vocabulary_folder_item vfi
+                WHERE
+                  vfi.vocabulary_id = ri.target_id
+                  AND vfi.folder_id = ANY(${folderIds})
+              )
+            `
+          : sql``
+      }
+
     ORDER BY
       CASE
         WHEN rp.state IN ('learning', 'relearning') THEN 0
