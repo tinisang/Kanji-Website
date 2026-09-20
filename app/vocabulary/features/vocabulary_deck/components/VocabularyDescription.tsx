@@ -76,21 +76,18 @@ return (
       )}
     </div>
 
-    <div className="max-h-[300px] overflow-y-auto px-2 py-2">
-      {editing ? (
-        <TiptapEditor
-          value={value}
-          onChange={setValue}
-        />
-      ) : (
-        <div
-          className="prose prose-sm max-w-none  text-gray-600"
-          dangerouslySetInnerHTML={{
-            __html: vocabulary.note ?? "",
-          }}
-        />
-      )}
-    </div>
+   <div className="px-2 py-2">
+  {editing ? (
+    <TiptapEditor value={value} onChange={setValue} />
+  ) : (
+    <div
+      className="prose prose-sm max-w-none text-gray-600"
+      dangerouslySetInnerHTML={{
+        __html: vocabulary.note ?? "",
+      }}
+    />
+  )}
+</div>
   </div>
 );
 }
